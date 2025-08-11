@@ -1,0 +1,39 @@
+From 6957b1f02d37a13a6ea5dbdd85e66642d40e4231 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Sun, 8 Jun 2025 12:44:05 -0400
+Subject: [PATCH] camera: Fix legacy camera
+
+Change-Id: I1d4ad3b9f838c31b321f2591401d833ee7c72f64
+---
+ camera/device/1.0-legacy/Android.bp           | 1 +
+ camera/provider/2.4-legacy/CameraProvider.cpp | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/camera/device/1.0-legacy/Android.bp b/camera/device/1.0-legacy/Android.bp
+index 2005caa..32ed064 100644
+--- a/camera/device/1.0-legacy/Android.bp
++++ b/camera/device/1.0-legacy/Android.bp
+@@ -23,6 +23,7 @@ cc_library_shared {
+         "libgralloctypes",
+         "libhardware",
+         "libcamera_metadata",
++        "libui"
+     ],
+     static_libs: [
+         "android.hardware.camera.common@1.0-helper"
+diff --git a/camera/provider/2.4-legacy/CameraProvider.cpp b/camera/provider/2.4-legacy/CameraProvider.cpp
+index 877d826..68ae060 100644
+--- a/camera/provider/2.4-legacy/CameraProvider.cpp
++++ b/camera/provider/2.4-legacy/CameraProvider.cpp
+@@ -324,7 +324,7 @@ bool CameraProvider::setUpVendorTags() {
+     }
+     mVendorTagSections.resize(numSections);
+     for (size_t s = 0; s < numSections; s++) {
+-        mVendorTagSections[s].sectionName = (*sectionNames)[s].string();
++        mVendorTagSections[s].sectionName = (*sectionNames)[s].c_str();
+         mVendorTagSections[s].tags = tagsBySection[s];
+     }
+     return true;
+-- 
+2.45.2
+

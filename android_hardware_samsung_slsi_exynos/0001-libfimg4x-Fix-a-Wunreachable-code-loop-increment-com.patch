@@ -1,0 +1,64 @@
+From 984b5ced02c9bd7e3694e05007e2dc90517cd7d1 Mon Sep 17 00:00:00 2001
+From: garak <elim.garak.dev@gmail.com>
+Date: Sun, 22 May 2022 22:50:26 +0200
+Subject: [PATCH 1/2] libfimg4x: Fix a -Wunreachable-code-loop-increment
+ compilation error
+
+hardware/samsung_slsi/exynos/libfimg4x/FimgExynos5.cpp:56:58: error: loop will run at most once (loop increment never executed) [-Werror,-Wunreachable-code-loop-increment]
+    for(int i = m_curFimgV4xIndex; i < NUMBER_FIMG_LIST; i++) {
+                                                         ^~~
+
+Change-Id: I8f77a59f1749ba904668f50338f94fda1d14e957
+---
+ libfimg4x/FimgExynos5.cpp | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
+
+diff --git a/libfimg4x/FimgExynos5.cpp b/libfimg4x/FimgExynos5.cpp
+index ea03e56..c4f5219 100644
+--- a/libfimg4x/FimgExynos5.cpp
++++ b/libfimg4x/FimgExynos5.cpp
+@@ -53,30 +53,28 @@ FimgApi *FimgV4x::CreateInstance()
+ {
+     FimgApi *ptrFimg = NULL;
+ 
+-    for(int i = m_curFimgV4xIndex; i < NUMBER_FIMG_LIST; i++) {
+-        if (m_ptrFimgApiList[i] == NULL)
+-            m_ptrFimgApiList[i] = new FimgV4x;
++    while (m_curFimgV4xIndex < NUMBER_FIMG_LIST) {
++        if (m_ptrFimgApiList[m_curFimgV4xIndex] == NULL)
++            m_ptrFimgApiList[m_curFimgV4xIndex] = new FimgV4x;
+ 
+-        if (m_ptrFimgApiList[i]->FlagCreate() == false) {
+-            if (m_ptrFimgApiList[i]->Create() == false) {
+-                PRINT("%s::Create(%d) fail\n", __func__, i);
++        if (m_ptrFimgApiList[m_curFimgV4xIndex]->FlagCreate() == false) {
++            if (m_ptrFimgApiList[m_curFimgV4xIndex]->Create() == false) {
++                PRINT("%s::Create(%d) fail\n", __func__, m_curFimgV4xIndex);
+                 goto CreateInstance_End;
+-            }
+-            else
++            } else
+                 m_numOfInstance++;
+         }
+ 
+-        if (i < NUMBER_FIMG_LIST - 1)
+-            m_curFimgV4xIndex = i + 1;
++        if (m_curFimgV4xIndex < NUMBER_FIMG_LIST - 1)
++            m_curFimgV4xIndex++;
+         else
+             m_curFimgV4xIndex = 0;
+ 
+-        ptrFimg = m_ptrFimgApiList[i];
++        ptrFimg = m_ptrFimgApiList[m_curFimgV4xIndex];
+         goto CreateInstance_End;
+     }
+ 
+-CreateInstance_End :
+-
++CreateInstance_End:
+     return ptrFimg;
+ }
+ 
+-- 
+2.45.2
+

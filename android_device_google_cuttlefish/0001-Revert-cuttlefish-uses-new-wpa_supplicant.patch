@@ -1,0 +1,89 @@
+From 832a4d4d9a4f3645973962f434d7bc01b3073d6e Mon Sep 17 00:00:00 2001
+From: Yaroslav Zviezda <acroreiser@gmail.com>
+Date: Sun, 7 Apr 2024 21:40:12 +0300
+Subject: [PATCH] Revert "cuttlefish uses new wpa_supplicant"
+
+This reverts commit ef95b1e0eba77daeeb48c182bd1a2a1cb95e6b89.
+---
+ apex/com.google.cf.wifi/Android.bp            |  2 +-
+ apex/com.google.cf.wifi/com.google.cf.wifi.rc |  2 +-
+ apex/com.google.cf.wifi/file_contexts         |  2 +-
+ guest/hals/wpa_supplicant/Android.bp          | 27 +++++++++++++++++++
+ 4 files changed, 30 insertions(+), 3 deletions(-)
+ create mode 100644 guest/hals/wpa_supplicant/Android.bp
+
+diff --git a/apex/com.google.cf.wifi/Android.bp b/apex/com.google.cf.wifi/Android.bp
+index cd6d7a6..6d63886 100644
+--- a/apex/com.google.cf.wifi/Android.bp
++++ b/apex/com.google.cf.wifi/Android.bp
+@@ -42,7 +42,7 @@ apex {
+     soc_specific: true,
+     binaries: [
+         "rename_netiface",
+-        "//external/wpa_supplicant_8/wpa_supplicant/wpa_supplicant:wpa_supplicant",
++        "wpa_supplicant_cf",
+         "setup_wifi",
+         "//device/generic/goldfish:mac80211_create_radios",
+         "hostapd_cf",
+diff --git a/apex/com.google.cf.wifi/com.google.cf.wifi.rc b/apex/com.google.cf.wifi/com.google.cf.wifi.rc
+index c0fff55..1465d13 100644
+--- a/apex/com.google.cf.wifi/com.google.cf.wifi.rc
++++ b/apex/com.google.cf.wifi/com.google.cf.wifi.rc
+@@ -15,7 +15,7 @@ service init_wifi_sh /apex/com.android.wifi.hal/bin/init.wifi
+     oneshot
+     disabled    # Started on post-fs-data
+ 
+-service wpa_supplicant /apex/com.android.wifi.hal/bin/hw/wpa_supplicant \
++service wpa_supplicant /apex/com.android.wifi.hal/bin/hw/wpa_supplicant_cf \
+         -O/data/vendor/wifi/wpa/sockets -puse_p2p_group_interface=1p2p_device=1 \
+         -m/apex/com.android.wifi.hal/etc/wifi/p2p_supplicant.conf \
+         -g@android:wpa_wlan0 -dd
+diff --git a/apex/com.google.cf.wifi/file_contexts b/apex/com.google.cf.wifi/file_contexts
+index bb96251..8c9bf89 100644
+--- a/apex/com.google.cf.wifi/file_contexts
++++ b/apex/com.google.cf.wifi/file_contexts
+@@ -2,7 +2,7 @@
+ /bin/rename_netiface         u:object_r:rename_netiface_exec:s0
+ /bin/setup_wifi              u:object_r:setup_wifi_exec:s0
+ /bin/init\.wifi            u:object_r:init_wifi_sh_exec:s0
+-/bin/hw/wpa_supplicant    u:object_r:hal_wifi_supplicant_default_exec:s0
++/bin/hw/wpa_supplicant_cf    u:object_r:hal_wifi_supplicant_default_exec:s0
+ /bin/hw/hostapd_cf           u:object_r:hal_wifi_hostapd_default_exec:s0
+ /bin/mac80211_create_radios  u:object_r:mac80211_create_radios_exec:s0
+ /etc/permissions(/.*)?       u:object_r:vendor_configs_file:s0
+diff --git a/guest/hals/wpa_supplicant/Android.bp b/guest/hals/wpa_supplicant/Android.bp
+new file mode 100644
+index 0000000..888b6e0
+--- /dev/null
++++ b/guest/hals/wpa_supplicant/Android.bp
+@@ -0,0 +1,27 @@
++// Copyright (C) 2021 The Android Open Source Project
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package {
++    default_applicable_licenses: [
++        "external_wpa_supplicant_8_license",
++    ],
++}
++
++cc_binary {
++    name: "wpa_supplicant_cf",
++    defaults: ["wpa_supplicant_defaults"],
++    static_libs: [
++        "lib_driver_cmd_simulated_cf_bp",
++    ],
++}
+-- 
+2.45.2
+
