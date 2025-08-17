@@ -1,7 +1,7 @@
-From 6957b1f02d37a13a6ea5dbdd85e66642d40e4231 Mon Sep 17 00:00:00 2001
+From 2890ad8e7a6fa6e557d88f2e14e397fecf038b59 Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Sun, 8 Jun 2025 12:44:05 -0400
-Subject: [PATCH] camera: Fix legacy camera
+Subject: [PATCH 01/12] camera: Fix legacy camera
 
 Change-Id: I1d4ad3b9f838c31b321f2591401d833ee7c72f64
 ---

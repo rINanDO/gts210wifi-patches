@@ -1,0 +1,51 @@
+From e331aa70d07eea0af2b54381bb55192522825098 Mon Sep 17 00:00:00 2001
+From: TARKZiM <tom8476oo@gmail.com>
+Date: Thu, 11 Jan 2024 20:46:29 +0800
+Subject: [PATCH 11/12] camera: Move to system and add missing includes
+
+---
+ camera/device/1.0-legacy/Android.bp   | 2 +-
+ camera/provider/2.4-legacy/Android.bp | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/camera/device/1.0-legacy/Android.bp b/camera/device/1.0-legacy/Android.bp
+index 32ed064..b6afc55 100644
+--- a/camera/device/1.0-legacy/Android.bp
++++ b/camera/device/1.0-legacy/Android.bp
+@@ -1,13 +1,13 @@
+ cc_library_shared {
+     name: "camera.device@1.0-impl-legacy",
+     defaults: ["hidl_defaults"],
+-    proprietary: true,
+     srcs: [
+         "CameraDevice.cpp",
+     ],
+     shared_libs: [
+         "libhidlbase",
+         "libhidlmemory",
++        "libmedia",
+         "libutils",
+         "android.hardware.camera.device@1.0",
+         "android.hardware.camera.common@1.0",
+diff --git a/camera/provider/2.4-legacy/Android.bp b/camera/provider/2.4-legacy/Android.bp
+index 9b23ada..4feacdb 100644
+--- a/camera/provider/2.4-legacy/Android.bp
++++ b/camera/provider/2.4-legacy/Android.bp
+@@ -1,13 +1,13 @@
+ cc_library_shared {
+     name: "android.hardware.camera.provider@2.4-impl-legacy",
+     defaults: ["hidl_defaults"],
+-    proprietary: true,
+     relative_install_path: "hw",
+     srcs: ["CameraProvider.cpp"],
+     shared_libs: [
+         "libhidlbase",
+         "libutils",
+         "libcutils",
++        "libmedia",
+         "android.hardware.camera.device@1.0",
+         "camera.device@1.0-impl-legacy",
+         "android.hardware.camera.provider@2.4",
+-- 
+2.45.2
+
