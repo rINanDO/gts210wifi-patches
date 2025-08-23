@@ -31,6 +31,7 @@ declare -A patches=(
     ["system/core"]="android_system_core"
     ["system/libhidl"]="android_system_libhidl"
     ["system/netd"]="android_system_netd"
+    ["system/sepolicy"]="android_system_sepolicy"
     ["vendor/lineage"]="android_vendor_lineage"
 )
 
