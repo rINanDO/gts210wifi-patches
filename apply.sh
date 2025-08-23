@@ -7,6 +7,7 @@ declare -A patches=(
     ["build/make"]="android_build"
     ["build/soong"]="android_build_soong"
     ["device/google/cuttlefish"]="android_device_google_cuttlefish"
+    ["device/lineage/sepolicy"]="android_device_lineage_sepolicy"
     ["external/wpa_supplicant_8"]="android_external_wpa_supplicant_8"
     ["external/perfetto"]="android_external_perfetto"
     ["frameworks/av"]="android_frameworks_av"
