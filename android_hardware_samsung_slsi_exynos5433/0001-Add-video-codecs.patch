@@ -1,0 +1,33 @@
+From b765440f338bb7f650bb5aef17abc38aebd25d2a Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Wed, 3 Sep 2025 03:40:50 -0400
+Subject: [PATCH] Add video codecs
+
+Change-Id: Ifa71ba587e1c9a739fb8dc099cbd9d292d0cb563
+---
+ exynos5433.mk | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/exynos5433.mk b/exynos5433.mk
+index 49cbbc4..9572ceb 100644
+--- a/exynos5433.mk
++++ b/exynos5433.mk
+@@ -15,6 +15,15 @@
+ #
+ 
+ # video codecs
++PRODUCT_PACKAGES := \
++	libOMX.Exynos.AVC.Decoder \
++	libOMX.Exynos.AVC.Encoder \
++	libOMX.Exynos.HEVC.Decoder \
++	libOMX.Exynos.MPEG4.Decoder \
++	libOMX.Exynos.MPEG4.Encoder \
++	libOMX.Exynos.VP8.Decoder \
++	libOMX.Exynos.VP8.Encoder \
++	libOMX.Exynos.WMV.Decoder
+ 
+ # stagefright and device specific modules
+ PRODUCT_PACKAGES += \
+-- 
+2.45.2
+
