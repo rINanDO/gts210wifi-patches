@@ -1,4 +1,4 @@
-From 67b7b2199e431d601c266e2048f99b68ea57be90 Mon Sep 17 00:00:00 2001
+From d064745963b86a3250b15dfd117ff0a9aada235c Mon Sep 17 00:00:00 2001
 From: Yaroslav Zviezda <acroreiser@gmail.com>
 Date: Sun, 7 Apr 2024 21:24:37 +0300
 Subject: [PATCH 1/5] Revert "Migrate libwifi-hal-qcom to Android.bp"
@@ -9,10 +9,10 @@ This reverts commit 1dfa583cb0cf8863d0069dc80df50c4c54191a32.
  1 file changed, 127 insertions(+), 1 deletion(-)
 
 diff --git a/libwifi_hal/Android.bp b/libwifi_hal/Android.bp
-index 9e75776..19facb8 100644
+index 1af3df0..5eec720 100644
 --- a/libwifi_hal/Android.bp
 +++ b/libwifi_hal/Android.bp
-@@ -160,7 +160,7 @@ wifi_cc_defaults {
+@@ -162,7 +162,7 @@ wifi_cc_defaults {
                  whole_static_libs: ["libwifi-hal-syna"],
              },
              qcwcn: {
@@ -21,7 +21,7 @@ index 9e75776..19facb8 100644
              },
              mrvl: {
                  // this is commented because none of the nexus devices
-@@ -201,6 +201,9 @@ wifi_cc_defaults {
+@@ -206,6 +206,9 @@ wifi_cc_defaults {
                  shared_libs: ["libcrypto"],
                  defaults: ["google_wifi_config_lib_defaults"],
              },
@@ -31,7 +31,7 @@ index 9e75776..19facb8 100644
          },
      },
  }
-@@ -236,3 +239,126 @@ cc_library_shared {
+@@ -241,3 +244,126 @@ cc_library_shared {
          integer_overflow: true,
      },
  }

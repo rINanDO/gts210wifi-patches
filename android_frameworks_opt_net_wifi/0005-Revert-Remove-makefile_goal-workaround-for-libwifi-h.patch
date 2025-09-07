@@ -1,4 +1,4 @@
-From d018d58ee581cf78ce7d110e80fddb1304edd324 Mon Sep 17 00:00:00 2001
+From 8434b4e85fa81d48deffb3ec41b7bf60815354fa Mon Sep 17 00:00:00 2001
 From: Yaroslav Zviezda <acroreiser@gmail.com>
 Date: Sun, 7 Apr 2024 21:29:45 +0300
 Subject: [PATCH 5/5] Revert "Remove makefile_goal workaround for
@@ -10,10 +10,10 @@ This reverts commit ff1f7d9f66956653a02407cc1e4de76e05ec9af0.
  1 file changed, 65 insertions(+), 1 deletion(-)
 
 diff --git a/libwifi_hal/Android.bp b/libwifi_hal/Android.bp
-index 831277e..cc8157b 100644
+index 0cc3454..a4c251f 100644
 --- a/libwifi_hal/Android.bp
 +++ b/libwifi_hal/Android.bp
-@@ -167,7 +167,7 @@ wifi_cc_defaults {
+@@ -169,7 +169,7 @@ wifi_cc_defaults {
                  // whole_static_libs: ["libwifi-hal-mrvl"],
              },
              mediaTek: {
@@ -22,7 +22,7 @@ index 831277e..cc8157b 100644
              },
              realtek: {
                  whole_static_libs: ["libwifi-hal-rtk"],
-@@ -295,6 +295,38 @@ soong_config_module_type {
+@@ -300,6 +300,38 @@ soong_config_module_type {
      ],
  }
  
@@ -61,7 +61,7 @@ index 831277e..cc8157b 100644
  // libwifi-hal-qcom
  
  wifi_cc_prebuilt_library_static {
-@@ -358,3 +390,35 @@ wifi_makefile_goal {
+@@ -363,3 +395,35 @@ wifi_makefile_goal {
          },
      },
  }
