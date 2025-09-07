@@ -1,4 +1,4 @@
-From c7202023ad91830d88fbd10dcbd887c11fabe86d Mon Sep 17 00:00:00 2001
+From 472aa14d8c76501a52a75a33b73d6ac4fe3bc94c Mon Sep 17 00:00:00 2001
 From: Arne Coucheron <arco68@gmail.com>
 Date: Thu, 7 Oct 2021 12:59:15 +0100
 Subject: [PATCH] adb: Bring back support for legacy FunctionFS
@@ -6,7 +6,7 @@ Subject: [PATCH] adb: Bring back support for legacy FunctionFS
 Signed-off-by: Kyle Harrison <khwebmail@gmail.com>
 Change-Id: Ibaaf031c167d66e1f08957763b5353d71134b4e0
 ---
- Android.bp            |   9 +-
+ Android.bp            |   8 ++
  daemon/usb.cpp        |  26 +++-
  daemon/usb_dummy.cpp  |  42 ++++++
  daemon/usb_legacy.cpp | 327 ++++++++++++++++++++++++++++++++++++++++++
@@ -14,26 +14,25 @@ Change-Id: Ibaaf031c167d66e1f08957763b5353d71134b4e0
  transport.cpp         |   4 +-
  transport.h           |   8 +-
  transport_legacy.cpp  | 212 +++++++++++++++++++++++++++
- 8 files changed, 689 insertions(+), 7 deletions(-)
+ 8 files changed, 689 insertions(+), 6 deletions(-)
  create mode 100644 daemon/usb_dummy.cpp
  create mode 100644 daemon/usb_legacy.cpp
  create mode 100644 daemon/usb_legacy.h
  create mode 100644 transport_legacy.cpp
 
 diff --git a/Android.bp b/Android.bp
-index 2b37c025..b3a9f387 100644
+index 88ab71f6..aa14dc21 100644
 --- a/Android.bp
 +++ b/Android.bp
-@@ -112,7 +112,7 @@ cc_defaults {
-     name: "adbd_defaults",
-     defaults: ["adb_defaults"],
- 
--    cflags: ["-UADB_HOST", "-DADB_HOST=0"],
-+    cflags: ["-UADB_HOST", "-DADB_HOST=0", "-DLEGACY_FFS=1"],
+@@ -116,6 +116,7 @@ cc_defaults {
+     cflags: [
+         "-UADB_HOST",
+         "-DADB_HOST=0",
++        "-DLEGACY_FFS=1",
+     ],
  }
  
- cc_defaults {
-@@ -220,6 +220,7 @@ libadb_srcs = [
+@@ -224,6 +225,7 @@ libadb_srcs = [
      "sysdeps/errno.cpp",
      "transport.cpp",
      "transport_fd.cpp",
@@ -41,13 +40,13 @@ index 2b37c025..b3a9f387 100644
      "types.cpp",
  ]
  
-@@ -549,9 +550,15 @@ cc_library_static {
+@@ -588,9 +590,15 @@ cc_library_static {
                  "daemon/property_monitor.cpp",
                  "daemon/usb.cpp",
                  "daemon/usb_ffs.cpp",
 +                "daemon/usb_legacy.cpp",
                  "daemon/watchdog.cpp",
-             ]
+             ],
          },
 +        linux_glibc: {
 +            srcs: [
@@ -580,10 +579,10 @@ index 00000000..2204246c
 +bool open_functionfs(android::base::unique_fd* control, android::base::unique_fd* bulk_out,
 +                     android::base::unique_fd* bulk_in);
 diff --git a/transport.cpp b/transport.cpp
-index d17ead76..244c2539 100644
+index b99e8bcf..935807e4 100644
 --- a/transport.cpp
 +++ b/transport.cpp
-@@ -1561,8 +1561,9 @@ void kick_all_tcp_devices() {
+@@ -1567,8 +1567,9 @@ void kick_all_tcp_devices() {
      }
      reconnect_handler.CheckForKicked();
  }
@@ -594,7 +593,7 @@ index d17ead76..244c2539 100644
  void register_usb_transport(std::shared_ptr<Connection> connection, const char* serial,
                              const char* devpath, unsigned writeable) {
      atransport* t = new atransport(writeable ? kCsOffline : kCsNoPerm);
-@@ -1615,6 +1616,7 @@ void unregister_usb_transport(usb_handle* usb) {
+@@ -1621,6 +1622,7 @@ void unregister_usb_transport(usb_handle* usb) {
  }
  #endif
  
@@ -603,10 +602,10 @@ index d17ead76..244c2539 100644
  // an 'allow-list':
  //   - adb reverse tcp:<device_port> localhost:<host_port> : responds with the
 diff --git a/transport.h b/transport.h
-index 97391a88..022f0dad 100644
+index 71decb21..86df020e 100644
 --- a/transport.h
 +++ b/transport.h
-@@ -260,7 +260,7 @@ enum class ReconnectResult {
+@@ -251,7 +251,7 @@ enum class ReconnectResult {
      Abort,
  };
  
@@ -615,7 +614,7 @@ index 97391a88..022f0dad 100644
  struct usb_handle;
  #endif
  
-@@ -310,7 +310,7 @@ class atransport : public enable_weak_from_this<atransport> {
+@@ -301,7 +301,7 @@ class atransport : public enable_weak_from_this<atransport> {
      bool HandleRead(std::unique_ptr<apacket> p);
      void HandleError(const std::string& error);
  
@@ -624,7 +623,7 @@ index 97391a88..022f0dad 100644
      void SetUsbHandle(usb_handle* h) { usb_handle_ = h; }
      usb_handle* GetUsbHandle() { return usb_handle_; }
  
-@@ -434,7 +434,7 @@ class atransport : public enable_weak_from_this<atransport> {
+@@ -425,7 +425,7 @@ class atransport : public enable_weak_from_this<atransport> {
      // The underlying connection object.
      std::shared_ptr<Connection> connection_ GUARDED_BY(mutex_);
  
@@ -633,7 +632,7 @@ index 97391a88..022f0dad 100644
      // USB handle for the connection, if available.
      usb_handle* usb_handle_ = nullptr;
  #endif
-@@ -505,7 +505,7 @@ void kick_all_transports_by_auth_key(std::string_view auth_key);
+@@ -498,7 +498,7 @@ void kick_all_transports_by_auth_key(std::string_view auth_key);
  
  void register_transport(atransport* transport);
  
