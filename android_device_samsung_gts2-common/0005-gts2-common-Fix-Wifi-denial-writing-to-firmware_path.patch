@@ -1,0 +1,91 @@
+From 579b7219285b7293e96de3bfc3883fe0afa3098c Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Wed, 27 Aug 2025 16:16:28 -0400
+Subject: [PATCH 5/5] gts2-common: Fix Wifi denial writing to firmware_path
+
+Change-Id: I3e1de0782b5203878fb30322d4028c6ce9e06c21
+---
+ sepolicy/vendor/file_contexts       |  2 ++
+ sepolicy/vendor/genfs_contexts      |  2 ++
+ sepolicy/vendor/hal_wifi_default.te | 23 ++++++++++++++++++-----
+ sepolicy/vendor/init.te             |  5 ++++-
+ 4 files changed, 26 insertions(+), 6 deletions(-)
+
+diff --git a/sepolicy/vendor/file_contexts b/sepolicy/vendor/file_contexts
+index 4ce6b69..58b76b3 100755
+--- a/sepolicy/vendor/file_contexts
++++ b/sepolicy/vendor/file_contexts
+@@ -202,3 +202,5 @@
+ 
+ # Wifi
+ #/(vendor|system/vendor)/bin/hw/android\.hardware\.wifi@1\.0-service\.legacy              u:object_r:hal_wifi_default_exec:s0
++
++/sys/module/dhd/parameters/firmware_path	u:object_r:sysfs_wifi_writable:s0
+diff --git a/sepolicy/vendor/genfs_contexts b/sepolicy/vendor/genfs_contexts
+index de37c4c..b0cd79f 100755
+--- a/sepolicy/vendor/genfs_contexts
++++ b/sepolicy/vendor/genfs_contexts
+@@ -27,3 +27,5 @@ genfscon proc /sys/vm/lowmem_reserve_ratio      u:object_r:proc_vm:s0
+ 
+ ##########
+ genfscon sysfs /devices/platform/soc/soc:battery/power_supply/battery/batt_slate_mode                       u:object_r:sysfs_battery_writable:s0
++
++genfscon sysfs /module/dhd/parameters/firmware_path	u:object_r:sysfs_wifi_writable:s0
+diff --git a/sepolicy/vendor/hal_wifi_default.te b/sepolicy/vendor/hal_wifi_default.te
+index 0e42e73..f5618c5 100755
+--- a/sepolicy/vendor/hal_wifi_default.te
++++ b/sepolicy/vendor/hal_wifi_default.te
+@@ -1,5 +1,18 @@
+-#============= hal_wifi_default ==============
+-allow hal_wifi_default efs_file:dir search;
+-allow hal_wifi_default sysfs:file write;
+-allow hal_wifi_default wifi_efs_file:dir search;
+-allow hal_wifi_default wifi_efs_file:file { open read };
++allow hal_wifi_default {
++    efs_file
++    wifi_efs_file
++}:dir search;
++
++allow hal_wifi_default wifi_efs_file:file r_file_perms;
++
++allow hal_wifi_default {
++    conn_vendor_data_file
++    wifi_data_file
++}:dir search;
++
++allow hal_wifi_default system_data_file:file r_file_perms;
++allow hal_wifi_default wifi_data_file:file rw_file_perms;
++allow hal_wifi_default sysfs_wifi_writable:file { w_file_perms setattr };
++
++set_prop(hal_wifi_default, wifi_prop)
++set_prop(hal_wifi_default, vendor_wifi_prop)
+diff --git a/sepolicy/vendor/init.te b/sepolicy/vendor/init.te
+index 2c0ffa6..732b359 100755
+--- a/sepolicy/vendor/init.te
++++ b/sepolicy/vendor/init.te
+@@ -51,6 +51,7 @@ allow init sysfs_bluetooth_writable:file setattr;
+ allow init sysfs_devices_system_cpu:file write;
+ allow init sysfs_sec_switch:lnk_file read;
+ allow init sysfs_sensor:lnk_file read;
++allow init sysfs_wifi_writable:file setattr;
+ allow init system_data_file:file lock;
+ allow init system_data_root_file:file rename;
+ allow init system_file:file execute_no_trans;
+@@ -58,10 +59,12 @@ allow init system_file:file mounton;
+ allow init system_server:binder call;
+ allow init system_server:binder transfer;
+ allow init system_server:unix_stream_socket read;
++
++
+ allow init vendor_file:file x_file_perms;
+ allow init vndbinder_device:chr_file rw_file_perms;
+ allow init vndservicemanager:binder call;
+ 
+ allow init {
+     sysfs_batteryinfo
+-}:file setattr;
+\ No newline at end of file
++}:file setattr;
+-- 
+2.45.2
+

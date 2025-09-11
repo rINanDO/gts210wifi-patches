@@ -1,0 +1,37 @@
+From 4f180d875b5728aed228a279d44da804f2d91f0f Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Tue, 9 Sep 2025 13:52:45 -0400
+Subject: [PATCH 2/5] gts2-common: Explicitly set as an non-AB target
+
+We will be changing AB to be the default, existing non-AB targets
+need to explicitly set AB_OTA_UPDATER to false
+
+Change-Id: I8bf33c226d6353e918a167961e5660c9f6b2f387
+---
+ device-common.mk | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/device-common.mk b/device-common.mk
+index c58a432..f4fa4d4 100644
+--- a/device-common.mk
++++ b/device-common.mk
+@@ -104,6 +104,7 @@ PRODUCT_PACKAGES += \
+ PRODUCT_PACKAGES += \
+     android.hardware.drm@1.0-impl \
+     android.hardware.drm@1.0-service \
++    android.hardware.drm@1.3 \
+     android.hardware.drm-service.clearkey
+ 
+ # Fingerprint
+@@ -277,6 +278,8 @@ PRODUCT_PACKAGES += \
+ # Setup dalvik vm configs
+ $(call inherit-product, frameworks/native/build/phone-xhdpi-4096-dalvik-heap.mk)
+ 
++AB_OTA_UPDATER := false
++
+ # Soong namespaces
+ PRODUCT_SOONG_NAMESPACES += \
+     $(LOCAL_PATH) \
+-- 
+2.45.2
+
