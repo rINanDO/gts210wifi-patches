@@ -1,4 +1,4 @@
-From 067423f505d8fe19a808a4d72438d61f1a918c1e Mon Sep 17 00:00:00 2001
+From 5e3b58b4793b232dbbc64f4c51065d6fead7372e Mon Sep 17 00:00:00 2001
 From: Khalvat-M <mmba313@gmail.com>
 Date: Tue, 4 Oct 2022 08:19:59 +0330
 Subject: [PATCH 2/4] Revert "Remove legacy camera HAL1 sepolicy"

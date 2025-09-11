@@ -1,4 +1,4 @@
-From 77d0380cb2e22c4724aabeab4c8847c47d262607 Mon Sep 17 00:00:00 2001
+From c9ad32a517f51511942236cba97e6c96330a612c Mon Sep 17 00:00:00 2001
 From: khalvat-M <mmba313@gmail.com>
 Date: Sun, 2 Jun 2024 13:21:30 +0330
 Subject: [PATCH 4/4] Revert "Remove legacy sepolicy leftover"
