@@ -1,14 +1,14 @@
-From 4684f8e7ada77e3a714c23e0764d50d89dfdf8d4 Mon Sep 17 00:00:00 2001
+From 85d459c0818f1bb6c90b6e0fff77eb63f90aaf67 Mon Sep 17 00:00:00 2001
 From: z3DD3r <z3dd3r@gmail.com>
 Date: Tue, 16 Apr 2024 12:36:46 +0300
-Subject: [PATCH 10/15] [UL] dnsresolver: Support no-bpf usecase
+Subject: [PATCH 04/14] dnsresolver: Support no-bpf usecase
 
 ---
  DnsResolver/DnsBpfHelper.cpp | 22 +++++++++++++++++-----
  1 file changed, 17 insertions(+), 5 deletions(-)
 
 diff --git a/DnsResolver/DnsBpfHelper.cpp b/DnsResolver/DnsBpfHelper.cpp
-index de8bef5860..232902dfc9 100644
+index 0719ade395..34eb272d5c 100644
 --- a/DnsResolver/DnsBpfHelper.cpp
 +++ b/DnsResolver/DnsBpfHelper.cpp
 @@ -38,9 +38,19 @@ base::Result<void> DnsBpfHelper::init() {

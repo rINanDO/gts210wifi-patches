@@ -1,19 +1,18 @@
-From d7fce3f2d8eb1953f136ff48dc1ceffa1a523ef5 Mon Sep 17 00:00:00 2001
+From c8f4e2bb685f538e0337e46d1f525abd569a0098 Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Wed, 12 Oct 2022 15:27:37 +0200
-Subject: [PATCH 14/15] NetdUpdatable: Disable bpf initialization when eBPF is
+Subject: [PATCH 08/14] NetdUpdatable: Disable bpf initialization when eBPF is
  not available
 
-Change-Id: I3f6aac7baae3945fe825c196008cea3c3097c066
-Change-Id: Ia99e1703da175ae16d8b47b23185054b33d7204b
+Change-Id: I9d2b933311797af6386c89faa73f2e1e1d2ef8d5
 ---
- netd/NetdUpdatable.cpp | 13 +++++++++----
+ bpf/netd/NetdUpdatable.cpp | 13 +++++++++----
  1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/netd/NetdUpdatable.cpp b/netd/NetdUpdatable.cpp
-index 8b9e5a759c..681ea64e22 100644
---- a/netd/NetdUpdatable.cpp
-+++ b/netd/NetdUpdatable.cpp
+diff --git a/bpf/netd/NetdUpdatable.cpp b/bpf/netd/NetdUpdatable.cpp
+index 8b9e5a759c..e3e59268ee 100644
+--- a/bpf/netd/NetdUpdatable.cpp
++++ b/bpf/netd/NetdUpdatable.cpp
 @@ -19,6 +19,7 @@
  #include "BpfHandler.h"
  
@@ -31,7 +30,7 @@ index 8b9e5a759c..681ea64e22 100644
 -        LOG(ERROR) << __func__ << ": Failed. " << ret.code() << " " << ret.msg();
 -        return -ret.code();
 +    char value[PROP_VALUE_MAX] = "";
-+    bool ebpf_supported = __system_property_get("ro.kernel.ebpf.supported", value) != 0 || strcmp(value, "false") == 0;
++    bool ebpf_supported = __system_property_get("ro.kernel.ebpf.supported", value) == 0 || strcmp(value, "true") == 0;
 +    if (ebpf_supported) {
 +        android::netdutils::Status ret = sBpfHandler.init(cg2_path);
 +        if (!android::netdutils::isOk(ret)) {
