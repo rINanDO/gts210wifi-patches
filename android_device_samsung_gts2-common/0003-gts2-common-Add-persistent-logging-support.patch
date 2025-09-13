@@ -1,7 +1,7 @@
-From ddc412062d134a5d36881c509d5ebdf8d0c841f8 Mon Sep 17 00:00:00 2001
+From 56fba1c5c15dbe8a25bfccaec75d2b24c1ccae91 Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Wed, 20 Aug 2025 05:36:32 -0400
-Subject: [PATCH 4/5] gts210-common: Add persistent logging support
+Subject: [PATCH 3/4] gts2-common: Add persistent logging support
 
 Change-Id: Ic977af83bf3524887b2bcc73a830953e4398be50
 ---
