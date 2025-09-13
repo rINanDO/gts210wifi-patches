@@ -1,7 +1,7 @@
-From 64e3afc10b22afa86b7a325aeeedbabaeac3764d Mon Sep 17 00:00:00 2001
+From 5212a563e4833848b3b6d6d595f164079d7639a6 Mon Sep 17 00:00:00 2001
 From: Yaroslav Zviezda <acroreiser@gmail.com>
 Date: Tue, 2 Apr 2024 23:57:39 +0300
-Subject: [PATCH 8/9] Revert "[BR13] dump Device Configs to dumpsys"
+Subject: [PATCH 7/8] Revert "[BR13] dump Device Configs to dumpsys"
 
 This reverts commit 3a666f3bc7df47de78b05906a206fb4b2ac9d078.
 ---
@@ -9,10 +9,10 @@ This reverts commit 3a666f3bc7df47de78b05906a206fb4b2ac9d078.
  1 file changed, 16 deletions(-)
 
 diff --git a/src/com/android/server/NetworkStackService.java b/src/com/android/server/NetworkStackService.java
-index 40aee283..347200b6 100644
+index 4d10c3b..700c411 100644
 --- a/src/com/android/server/NetworkStackService.java
 +++ b/src/com/android/server/NetworkStackService.java
-@@ -22,8 +22,6 @@ import static android.net.dhcp.IDhcpServer.STATUS_UNKNOWN_ERROR;
+@@ -23,8 +23,6 @@ import static android.net.util.RawSocketUtils.sendRawPacketDownStream;
  
  import static com.android.net.module.util.DeviceConfigUtils.getResBooleanConfig;
  import static com.android.net.module.util.FeatureVersions.FEATURE_IS_UID_NETWORKING_BLOCKED;
@@ -21,7 +21,7 @@ index 40aee283..347200b6 100644
  import static com.android.server.util.PermissionUtil.checkDumpPermission;
  
  import android.app.Service;
-@@ -442,20 +440,6 @@ public class NetworkStackService extends Service {
+@@ -436,20 +434,6 @@ public class NetworkStackService extends Service {
                  return;
              }
  
