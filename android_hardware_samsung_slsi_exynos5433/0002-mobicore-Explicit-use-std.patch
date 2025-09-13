@@ -1,0 +1,112 @@
+From e185201905a5e73d5578ac7756a58d7013921d86 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Mon, 8 Sep 2025 15:47:09 -0400
+Subject: [PATCH 2/2] mobicore: Explicit use std::
+
+Change-Id: I156c6ae691b7cae67eed55f5ad2ffd8bb44fd959
+---
+ mobicore/daemon/Common/CThread.h              |  1 -
+ mobicore/daemon/Daemon/FSD/FSD.cpp            | 12 ++++++------
+ mobicore/daemon/Daemon/MobiCoreDriverDaemon.h |  2 +-
+ mobicore/daemon/Daemon/Server/public/Server.h |  2 +-
+ 4 files changed, 8 insertions(+), 9 deletions(-)
+
+diff --git a/mobicore/daemon/Common/CThread.h b/mobicore/daemon/Common/CThread.h
+index ad2e4e7..8a4a61f 100644
+--- a/mobicore/daemon/Common/CThread.h
++++ b/mobicore/daemon/Common/CThread.h
+@@ -40,7 +40,6 @@
+ #include "CSemaphore.h"
+ #include "pthread.h"
+ 
+-using namespace std;
+ 
+ 
+ class CThread
+diff --git a/mobicore/daemon/Daemon/FSD/FSD.cpp b/mobicore/daemon/Daemon/FSD/FSD.cpp
+index 87c9bd1..346dbaf 100644
+--- a/mobicore/daemon/Daemon/FSD/FSD.cpp
++++ b/mobicore/daemon/Daemon/FSD/FSD.cpp
+@@ -45,7 +45,7 @@
+ //#define LOG_VERBOSE
+ #include "log.h"
+ 
+-extern string getTlRegistryPath();
++extern std::string getTlRegistryPath();
+ 
+ extern pthread_mutex_t         syncMutex;
+ extern pthread_cond_t          syncCondition;
+@@ -74,7 +74,7 @@ void FSD::run(
+ {
+ 	struct stat st;
+ 	mcResult_t ret;
+-	string storage = getTlRegistryPath()+"/TbStorage";
++	std::string storage = getTlRegistryPath()+"/TbStorage";
+ 	const char* tbstpath = storage.c_str();
+ 
+ 	/*Create Tbase storage directory*/
+@@ -326,7 +326,7 @@ mcResult_t FSD::FSD_LookFile(void){
+ 	FILE * pFile=NULL;
+ 	STH_FSD_message_t* sth_request=NULL;
+ 	uint32_t res=0;
+-	string storage = getTlRegistryPath()+"/TbStorage";
++	std::string storage = getTlRegistryPath()+"/TbStorage";
+ 	const char* tbstpath = storage.c_str();
+ 	char tadirname[TEE_UUID_STRING_SIZE+1];
+ 	char filename[2*FILENAMESIZE+1];
+@@ -373,7 +373,7 @@ mcResult_t FSD::FSD_ReadFile(void){
+ 	FILE * pFile=NULL;
+ 	STH_FSD_message_t* sth_request=NULL;
+ 	uint32_t res=0;
+-	string storage = getTlRegistryPath()+"/TbStorage";
++	std::string storage = getTlRegistryPath()+"/TbStorage";
+ 	const char* tbstpath = storage.c_str();
+ 	char tadirname[TEE_UUID_STRING_SIZE+1];
+ 	char filename[2*FILENAMESIZE+1];
+@@ -422,7 +422,7 @@ mcResult_t FSD::FSD_WriteFile(void){
+ 	STH_FSD_message_t* sth_request=NULL;
+ 	uint32_t res=0;
+ 	int stat=0;
+-	string storage = getTlRegistryPath()+"/TbStorage";
++	std::string storage = getTlRegistryPath()+"/TbStorage";
+ 	const char* tbstpath = storage.c_str();
+ 	char tadirname[TEE_UUID_STRING_SIZE+1];
+ 	char filename[2*FILENAMESIZE+1];
+@@ -517,7 +517,7 @@ mcResult_t FSD::FSD_DeleteFile(void){
+ 	FILE * pFile=NULL;
+ 	uint32_t res=0;
+ 	STH_FSD_message_t* sth_request=NULL;
+-	string storage = getTlRegistryPath()+"/TbStorage";
++	std::string storage = getTlRegistryPath()+"/TbStorage";
+ 	const char* tbstpath = storage.c_str();
+ 	char tadirname[TEE_UUID_STRING_SIZE+1];
+ 	char filename[2*FILENAMESIZE+1];
+diff --git a/mobicore/daemon/Daemon/MobiCoreDriverDaemon.h b/mobicore/daemon/Daemon/MobiCoreDriverDaemon.h
+index 148d457..c3e1b1a 100644
+--- a/mobicore/daemon/Daemon/MobiCoreDriverDaemon.h
++++ b/mobicore/daemon/Daemon/MobiCoreDriverDaemon.h
+@@ -48,7 +48,7 @@
+ 
+ #define MAX_SERVERS 2
+ 
+-extern string getTlRegistryPath();
++extern std::string getTlRegistryPath();
+ 
+ class MobicoreDriverResources
+ {
+diff --git a/mobicore/daemon/Daemon/Server/public/Server.h b/mobicore/daemon/Daemon/Server/public/Server.h
+index fb09f23..7270b28 100644
+--- a/mobicore/daemon/Daemon/Server/public/Server.h
++++ b/mobicore/daemon/Daemon/Server/public/Server.h
+@@ -99,7 +99,7 @@ public:
+ 
+ protected:
+     int serverSock;
+-    string socketAddr;
++    std::string socketAddr;
+     ConnectionHandler   *connectionHandler; /**< Connection handler registered to the server */
+ 
+ private:
+-- 
+2.45.2
+
