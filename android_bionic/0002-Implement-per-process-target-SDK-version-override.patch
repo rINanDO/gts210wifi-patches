@@ -1,31 +1,32 @@
-From 904800eaf7b61b62e03fa5dda2698c84cecbfe71 Mon Sep 17 00:00:00 2001
+From 6cb6cb9edd53687575a49c3d19463cd2c31718e4 Mon Sep 17 00:00:00 2001
 From: Danny Baumann <dannybaumann@web.de>
 Date: Wed, 29 Aug 2018 11:21:52 +0200
-Subject: [PATCH 1/9] Implement per-process target SDK version override.
+Subject: [PATCH 02/10] Implement per-process target SDK version override.
 
-Change-Id: I65bbdbe96541d8aacdd4de125cdb9c1435129413
+Change-Id: Id11b5d76708787d66afc94c9d3dc9fc7b3c6eb79
+Signed-off-by: Dominggoes Isakh <drjisakh@gmail.com>
 ---
  linker/Android.bp |  1 +
  linker/linker.cpp | 13 ++++++++++++-
  2 files changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/linker/Android.bp b/linker/Android.bp
-index 33fdcea3b..c5552d728 100644
+index 274452f6a..4f12aa9a0 100644
 --- a/linker/Android.bp
 +++ b/linker/Android.bp
-@@ -76,6 +76,7 @@ cc_defaults {
+@@ -77,6 +77,7 @@ cc_object {
+ cc_defaults {
      name: "linker_defaults",
      defaults: [
-         "shim_libs_defaults",
 +        "process_sdk_version_overrides_defaults",
+         "shim_libs_defaults",
      ],
      arch: {
-         arm: {
 diff --git a/linker/linker.cpp b/linker/linker.cpp
-index f9bb02913..8081ee005 100644
+index f31724684..e3f1d77bb 100644
 --- a/linker/linker.cpp
 +++ b/linker/linker.cpp
-@@ -3716,7 +3716,18 @@ std::vector<android_namespace_t*> init_default_namespaces(const char* executable
+@@ -3709,7 +3709,18 @@ std::vector<android_namespace_t*> init_default_namespaces(const char* executable
      }
    }
  

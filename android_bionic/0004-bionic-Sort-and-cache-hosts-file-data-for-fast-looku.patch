@@ -1,7 +1,7 @@
-From 01f03d0fdfd0ef948bd75f72d3a41f10404fda35 Mon Sep 17 00:00:00 2001
+From 3871b02ba7c805d2ca8b624843b0545ad8060cac Mon Sep 17 00:00:00 2001
 From: Tom Marshall <tdm@cyngn.com>
 Date: Fri, 17 Jun 2016 16:38:12 -0700
-Subject: [PATCH 2/9] bionic: Sort and cache hosts file data for fast lookup
+Subject: [PATCH 04/10] bionic: Sort and cache hosts file data for fast lookup
 
 The hosts file is normally searched linearly.  This is very slow when
 the file is large.  To mitigate this, read the hosts file and sort the

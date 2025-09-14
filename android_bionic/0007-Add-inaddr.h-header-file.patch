@@ -1,7 +1,7 @@
-From d5e4a3d70f3a571e62596af35bc0da11b43350f9 Mon Sep 17 00:00:00 2001
+From 2189a06bda2023c2fe0e03af9a8f4b52fb250259 Mon Sep 17 00:00:00 2001
 From: Roopesh Rajashekharaiah Nataraja <roopeshr@codeaurora.org>
 Date: Tue, 23 Jan 2018 15:31:48 -0800
-Subject: [PATCH 6/9] Add inaddr.h header file
+Subject: [PATCH 07/10] Add inaddr.h header file
 
 Change-Id: Iad92c39fb729538cf51bf9d9037b15515104b453
 ---

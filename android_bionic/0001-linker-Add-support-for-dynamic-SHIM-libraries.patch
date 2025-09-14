@@ -1,7 +1,7 @@
-From 87e486dc93a426f16d6c0aad78479f15bb3f55c4 Mon Sep 17 00:00:00 2001
+From b96c31c3c92b8cfc7c11ef810143cf5ff34b578a Mon Sep 17 00:00:00 2001
 From: "Christopher R. Palmer" <crpalmer@gmail.com>
 Date: Sat, 8 Apr 2017 22:40:01 +0200
-Subject: [PATCH] linker: Add support for dynamic SHIM libraries
+Subject: [PATCH 01/10] linker: Add support for dynamic SHIM libraries
 
 Author: Christopher R. Palmer <crpalmer@gmail.com>
 Date:   Tue Nov 3 16:44:44 2015 -0500

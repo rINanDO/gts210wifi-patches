@@ -1,7 +1,7 @@
-From 2fc5ba5b79c74c6bc6da63ea3e907d88195010de Mon Sep 17 00:00:00 2001
+From 866cd98da6509eba199a07e6829f08afb4ecb2fa Mon Sep 17 00:00:00 2001
 From: html6405 <peter.schelchshorn@mhs-solutions.at>
 Date: Mon, 25 Dec 2023 20:49:17 +0100
-Subject: [PATCH 7/9] Revert "Rewrite renameat()."
+Subject: [PATCH 08/10] Revert "Rewrite renameat()."
 
 We still want to support kernels without renameat2
 
@@ -12,10 +12,10 @@ This reverts commit 6660d6c00b2253a941aaa3fcd01ead885327b3b5.
  2 files changed, 2 insertions(+), 5 deletions(-)
 
 diff --git a/libc/SYSCALLS.TXT b/libc/SYSCALLS.TXT
-index 0db5d79aa..bf279f4da 100644
+index 8c5572eb3..fd9cffdfb 100644
 --- a/libc/SYSCALLS.TXT
 +++ b/libc/SYSCALLS.TXT
-@@ -162,6 +162,7 @@ int linkat(int, const char*, int, const char*, int)  all
+@@ -161,6 +161,7 @@ int linkat(int, const char*, int, const char*, int)  all
  int mkdirat(int, const char*, mode_t)  all
  int mknodat(int, const char*, mode_t, dev_t)  all
  ssize_t readlinkat(int, const char*, char*, size_t)  all

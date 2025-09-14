@@ -1,7 +1,7 @@
-From 475ff0e1d6b592385720dd8b80e6a896ce468dd4 Mon Sep 17 00:00:00 2001
+From 8852daea93430ac82a5899d786442bcfbc26df7c Mon Sep 17 00:00:00 2001
 From: TARKZiM <tom8476oo@gmail.com>
 Date: Tue, 9 Jan 2024 01:45:55 +0800
-Subject: [PATCH 8/9] Revert "Remove <signal.h> inlines for obsolete API
+Subject: [PATCH 09/10] Revert "Remove <signal.h> inlines for obsolete API
  levels."
 
 This reverts commit 432a4afb1e08721d8cc2e975d7fad8250eb7831e.
@@ -176,7 +176,7 @@ index 000000000..f2bdcf695
 +
 +#endif
 diff --git a/libc/include/signal.h b/libc/include/signal.h
-index cf83db8e9..672248212 100644
+index 893fa9d4f..7b0e58185 100644
 --- a/libc/include/signal.h
 +++ b/libc/include/signal.h
 @@ -64,6 +64,7 @@ int sigaction64(int __signal, const struct sigaction64* _Nullable __new_action,
@@ -197,7 +197,7 @@ index cf83db8e9..672248212 100644
  
  int sigpending(sigset_t* _Nonnull __set);
  int sigpending64(sigset64_t* _Nonnull __set) __INTRODUCED_IN(28);
-@@ -124,4 +128,6 @@ int sigwaitinfo64(const sigset64_t* _Nonnull __set, siginfo_t* _Nullable __info)
+@@ -152,4 +156,6 @@ int str2sig(const char* _Nonnull __name, int* _Nonnull __signal) __INTRODUCED_IN
  
  __END_DECLS
  
