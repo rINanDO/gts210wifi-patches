@@ -1,7 +1,7 @@
-From b73bc977e570e4b7724b90791372609a548ea597 Mon Sep 17 00:00:00 2001
+From a70769858fe87da6c3240fb913838e4572ee2872 Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Thu, 13 Feb 2025 02:55:37 -0500
-Subject: [PATCH 1/2] Revert "soong: Remove LD_SHIM_LIBS support"
+Subject: [PATCH 1/4] Revert "soong: Remove LD_SHIM_LIBS support"
 
 This reverts commit 426aa2d8628833f52007cc52cf1374456f2d6893.
 ---
@@ -10,7 +10,7 @@ This reverts commit 426aa2d8628833f52007cc52cf1374456f2d6893.
  2 files changed, 19 insertions(+)
 
 diff --git a/build/soong/Android.bp b/build/soong/Android.bp
-index 6492264..fddcd3b 100644
+index 64922646..fddcd3b1 100644
 --- a/build/soong/Android.bp
 +++ b/build/soong/Android.bp
 @@ -162,6 +162,23 @@ gralloc_handle_ubwcp_format {
@@ -38,7 +38,7 @@ index 6492264..fddcd3b 100644
      name: "vendor_init",
      module_type: "cc_defaults",
 diff --git a/config/BoardConfigSoong.mk b/config/BoardConfigSoong.mk
-index 736a1c2..c71e3aa 100644
+index 736a1c20..c71e3aa0 100644
 --- a/config/BoardConfigSoong.mk
 +++ b/config/BoardConfigSoong.mk
 @@ -41,6 +41,7 @@ SOONG_CONFIG_lineageGlobalVars += \
