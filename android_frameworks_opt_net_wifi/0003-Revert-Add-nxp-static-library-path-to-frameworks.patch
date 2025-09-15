@@ -1,0 +1,27 @@
+From e66ae1f7aa15a65bfa3cdcd7365ab25f975ee674 Mon Sep 17 00:00:00 2001
+From: Yaroslav Zviezda <acroreiser@gmail.com>
+Date: Sun, 7 Apr 2024 21:29:18 +0300
+Subject: [PATCH 3/5] Revert "Add nxp static library path to frameworks."
+
+This reverts commit fad476a1f31931dd2e99e7c6a4b6441b0fbe098f.
+---
+ libwifi_hal/Android.bp | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/libwifi_hal/Android.bp b/libwifi_hal/Android.bp
+index d40ee0a..76cd9ee 100644
+--- a/libwifi_hal/Android.bp
++++ b/libwifi_hal/Android.bp
+@@ -172,9 +172,6 @@ wifi_cc_defaults {
+             mediaTek: {
+                 whole_static_libs: ["//vendor/mediatek/mokey:libwifi-hal-mt66xx"],
+             },
+-            nxp: {
+-                whole_static_libs: ["libwifi-hal-nxp"],
+-            },
+             realtek: {
+                 whole_static_libs: ["libwifi-hal-rtk"],
+             },
+-- 
+2.45.2
+

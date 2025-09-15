@@ -1,0 +1,25 @@
+From 3683655a25c8719b9a39bdf07d4fecf25090c39f Mon Sep 17 00:00:00 2001
+From: Yaroslav Zviezda <acroreiser@gmail.com>
+Date: Sun, 7 Apr 2024 21:29:28 +0300
+Subject: [PATCH 4/5] Revert "Add static_libs to cc_wifi_defaults property"
+
+This reverts commit eb05b2916244ea704cb4065d55896a9c351600ae.
+---
+ libwifi_hal/Android.bp | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/libwifi_hal/Android.bp b/libwifi_hal/Android.bp
+index 76cd9ee..0cc3454 100644
+--- a/libwifi_hal/Android.bp
++++ b/libwifi_hal/Android.bp
+@@ -44,7 +44,6 @@ soong_config_module_type {
+         "defaults",
+         "shared_libs",
+         "srcs",
+-        "static_libs",
+         "whole_static_libs",
+     ],
+ }
+-- 
+2.45.2
+
