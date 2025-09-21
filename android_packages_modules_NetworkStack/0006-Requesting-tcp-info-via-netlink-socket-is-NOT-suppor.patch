@@ -1,7 +1,7 @@
-From d3120e7048d3925e63afa26d9f4e629dc658d845 Mon Sep 17 00:00:00 2001
+From 1172d666ffef27b39c91a8226b50345804aaad3e Mon Sep 17 00:00:00 2001
 From: Yaroslav Zviezda <acroreiser@gmail.com>
 Date: Sun, 31 Mar 2024 21:32:02 +0300
-Subject: [PATCH 6/8] Requesting tcp info via netlink socket is NOT supported
+Subject: [PATCH 06/14] Requesting tcp info via netlink socket is NOT supported
 
 Change-Id: Iec515ea5e50f1bb0ad929e78661363f33dd5bc64
 ---
@@ -9,7 +9,7 @@ Change-Id: Iec515ea5e50f1bb0ad929e78661363f33dd5bc64
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/com/android/networkstack/netlink/TcpSocketTracker.java b/src/com/android/networkstack/netlink/TcpSocketTracker.java
-index dd84932..bda6ff1 100644
+index dd849324..bda6ff14 100644
 --- a/src/com/android/networkstack/netlink/TcpSocketTracker.java
 +++ b/src/com/android/networkstack/netlink/TcpSocketTracker.java
 @@ -686,7 +686,7 @@ public class TcpSocketTracker {

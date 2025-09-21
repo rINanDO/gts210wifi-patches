@@ -1,7 +1,7 @@
-From 9b7971d8bfef9141ec7ed2c4a2c96308e808c617 Mon Sep 17 00:00:00 2001
+From a5181f6c37837bc1ec527215a32ed0ec37f41ee8 Mon Sep 17 00:00:00 2001
 From: khalvat-M <mmba313@gmail.com>
 Date: Wed, 26 Jun 2024 15:27:10 +0330
-Subject: [PATCH 4/8] Revert "No-op refactoring of quitting NetworkMonitor in
+Subject: [PATCH 04/14] Revert "No-op refactoring of quitting NetworkMonitor in
  the test"
 
 This reverts commit 434aa342c28e1a8f45bd728051eb4a43e35632e9.
@@ -10,7 +10,7 @@ This reverts commit 434aa342c28e1a8f45bd728051eb4a43e35632e9.
  1 file changed, 24 insertions(+), 40 deletions(-)
 
 diff --git a/tests/unit/src/com/android/server/connectivity/NetworkMonitorTest.java b/tests/unit/src/com/android/server/connectivity/NetworkMonitorTest.java
-index f8f1e18..859c2b1 100644
+index f8f1e186..859c2b17 100644
 --- a/tests/unit/src/com/android/server/connectivity/NetworkMonitorTest.java
 +++ b/tests/unit/src/com/android/server/connectivity/NetworkMonitorTest.java
 @@ -277,10 +277,8 @@ public class NetworkMonitorTest {

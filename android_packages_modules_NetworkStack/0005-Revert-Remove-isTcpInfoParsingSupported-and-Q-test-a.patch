@@ -1,7 +1,7 @@
-From 5a9dbe9df77730d77ec1082510f1dcbd0744e85d Mon Sep 17 00:00:00 2001
+From cabe9005350f010a68dfecf1bce238cf51344c6d Mon Sep 17 00:00:00 2001
 From: Yaroslav Zviezda <acroreiser@gmail.com>
 Date: Tue, 2 Apr 2024 23:49:13 +0300
-Subject: [PATCH 5/8] Revert "Remove isTcpInfoParsingSupported and Q test
+Subject: [PATCH 05/14] Revert "Remove isTcpInfoParsingSupported and Q test
  annotations"
 
 This reverts commit d2f699c4608939e2f5a7589f6385b56d27243dfe.
@@ -14,7 +14,7 @@ Change-Id: Iab1753134d0c2566f77436b18fa31dbadf0bc7f5
  3 files changed, 86 insertions(+), 3 deletions(-)
 
 diff --git a/src/com/android/networkstack/netlink/TcpSocketTracker.java b/src/com/android/networkstack/netlink/TcpSocketTracker.java
-index 4b66c0a..dd84932 100644
+index 4b66c0ae..dd849324 100644
 --- a/src/com/android/networkstack/netlink/TcpSocketTracker.java
 +++ b/src/com/android/networkstack/netlink/TcpSocketTracker.java
 @@ -73,6 +73,7 @@ import com.android.net.module.util.netlink.StructInetDiagMsg;
@@ -102,7 +102,7 @@ index 4b66c0a..dd84932 100644
           * Receive the request message from kernel via given fd.
           */
 diff --git a/tests/unit/src/com/android/networkstack/netlink/TcpSocketTrackerTest.java b/tests/unit/src/com/android/networkstack/netlink/TcpSocketTrackerTest.java
-index e4081a3..6834203 100644
+index e4081a36..68342032 100644
 --- a/tests/unit/src/com/android/networkstack/netlink/TcpSocketTrackerTest.java
 +++ b/tests/unit/src/com/android/networkstack/netlink/TcpSocketTrackerTest.java
 @@ -33,9 +33,12 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -228,7 +228,7 @@ index e4081a3..6834203 100644
          setupNormalTestTcpInfo();
          assertTrue(tst.pollSocketsInfo());
 diff --git a/tests/unit/src/com/android/server/connectivity/NetworkMonitorTest.java b/tests/unit/src/com/android/server/connectivity/NetworkMonitorTest.java
-index 859c2b1..67c5d5e 100644
+index 859c2b17..67c5d5e3 100644
 --- a/tests/unit/src/com/android/server/connectivity/NetworkMonitorTest.java
 +++ b/tests/unit/src/com/android/server/connectivity/NetworkMonitorTest.java
 @@ -556,6 +556,10 @@ public class NetworkMonitorTest {

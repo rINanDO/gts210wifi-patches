@@ -1,8 +1,8 @@
-From f8785a162f3cecab2c49d56952e2a27499791eb2 Mon Sep 17 00:00:00 2001
+From 83aec9216ba1031207bbdcf186de1ab4d5e29371 Mon Sep 17 00:00:00 2001
 From: Yaroslav Zviezda <acroreiser@gmail.com>
 Date: Tue, 2 Apr 2024 23:47:42 +0300
-Subject: [PATCH 3/8] Revert "[BR04] Skip traffic of networking-blocked uid in
- data stall detection"
+Subject: [PATCH 03/14] Revert "[BR04] Skip traffic of networking-blocked uid
+ in data stall detection"
 
 This reverts commit db9c872f04ac44fff310262ad4961512ea8cbc6a.
 ---
@@ -12,7 +12,7 @@ This reverts commit db9c872f04ac44fff310262ad4961512ea8cbc6a.
  3 files changed, 16 insertions(+), 146 deletions(-)
 
 diff --git a/src/com/android/networkstack/netlink/TcpSocketTracker.java b/src/com/android/networkstack/netlink/TcpSocketTracker.java
-index 0a8e2ae..4b66c0a 100644
+index 0a8e2aed..4b66c0ae 100644
 --- a/src/com/android/networkstack/netlink/TcpSocketTracker.java
 +++ b/src/com/android/networkstack/netlink/TcpSocketTracker.java
 @@ -27,14 +27,12 @@ import static android.system.OsConstants.AF_INET6;
@@ -126,7 +126,7 @@ index 0a8e2ae..4b66c0a 100644
      }
  }
 diff --git a/src/com/android/networkstack/util/NetworkStackUtils.java b/src/com/android/networkstack/util/NetworkStackUtils.java
-index fce06e4..dca8367 100755
+index fce06e49..dca83676 100755
 --- a/src/com/android/networkstack/util/NetworkStackUtils.java
 +++ b/src/com/android/networkstack/util/NetworkStackUtils.java
 @@ -299,13 +299,6 @@ public class NetworkStackUtils {
@@ -144,7 +144,7 @@ index fce06e4..dca8367 100755
       * Kill switch flag to disable the feature of handle arp offload in Apf.
       * Warning: the following flag String is incorrect. The feature that is not chickened out is
 diff --git a/tests/unit/src/com/android/networkstack/netlink/TcpSocketTrackerTest.java b/tests/unit/src/com/android/networkstack/netlink/TcpSocketTrackerTest.java
-index d9bde66..e4081a3 100644
+index d9bde661..e4081a36 100644
 --- a/tests/unit/src/com/android/networkstack/netlink/TcpSocketTrackerTest.java
 +++ b/tests/unit/src/com/android/networkstack/netlink/TcpSocketTrackerTest.java
 @@ -34,7 +34,6 @@ import static org.mockito.ArgumentMatchers.anyInt;

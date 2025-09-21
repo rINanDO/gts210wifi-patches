@@ -1,7 +1,7 @@
-From 3c642e2f48c87ed081a1a14a980d490ec9cef3a4 Mon Sep 17 00:00:00 2001
+From 860ab03359eaa726c9b827e5f2e76345828a308f Mon Sep 17 00:00:00 2001
 From: Yaroslav Zviezda <acroreiser@gmail.com>
 Date: Tue, 2 Apr 2024 23:47:30 +0300
-Subject: [PATCH 2/8] Revert "[BR10] Skip tcp info for uids which blocked by
+Subject: [PATCH 02/14] Revert "[BR10] Skip tcp info for uids which blocked by
  data saver"
 
 This reverts commit 294b54adfc193b4c2381b6bfbdd8a66f52d9cb0b.
@@ -13,7 +13,7 @@ This reverts commit 294b54adfc193b4c2381b6bfbdd8a66f52d9cb0b.
  4 files changed, 3 insertions(+), 75 deletions(-)
 
 diff --git a/src/com/android/networkstack/netlink/TcpSocketTracker.java b/src/com/android/networkstack/netlink/TcpSocketTracker.java
-index d01847d..0a8e2ae 100644
+index d01847d7..0a8e2aed 100644
 --- a/src/com/android/networkstack/netlink/TcpSocketTracker.java
 +++ b/src/com/android/networkstack/netlink/TcpSocketTracker.java
 @@ -47,7 +47,6 @@ import android.net.INetd;
@@ -62,7 +62,7 @@ index d01847d..0a8e2ae 100644
       * Dependencies class for testing.
       */
 diff --git a/src/com/android/server/connectivity/NetworkMonitor.java b/src/com/android/server/connectivity/NetworkMonitor.java
-index 60bb927..ce7dbf8 100755
+index 60bb9279..ce7dbf80 100755
 --- a/src/com/android/server/connectivity/NetworkMonitor.java
 +++ b/src/com/android/server/connectivity/NetworkMonitor.java
 @@ -1009,7 +1009,6 @@ public class NetworkMonitor extends StateMachine {
@@ -85,7 +85,7 @@ index 60bb927..ce7dbf8 100755
          mNetworkCapabilities = newCap;
          suppressNotificationIfNetworkRestricted();
 diff --git a/tests/unit/src/com/android/networkstack/netlink/TcpSocketTrackerTest.java b/tests/unit/src/com/android/networkstack/netlink/TcpSocketTrackerTest.java
-index 065441e..d9bde66 100644
+index 065441e1..d9bde661 100644
 --- a/tests/unit/src/com/android/networkstack/netlink/TcpSocketTrackerTest.java
 +++ b/tests/unit/src/com/android/networkstack/netlink/TcpSocketTrackerTest.java
 @@ -16,9 +16,6 @@
@@ -167,7 +167,7 @@ index 065441e..d9bde66 100644
      public void testTcpInfoParsingWithMultipleMsgs() throws Exception {
          final TcpSocketTracker tst = new TcpSocketTracker(mDependencies, mNetwork);
 diff --git a/tests/unit/src/com/android/server/connectivity/NetworkMonitorTest.java b/tests/unit/src/com/android/server/connectivity/NetworkMonitorTest.java
-index 4273d95..f8f1e18 100644
+index 4273d952..f8f1e186 100644
 --- a/tests/unit/src/com/android/server/connectivity/NetworkMonitorTest.java
 +++ b/tests/unit/src/com/android/server/connectivity/NetworkMonitorTest.java
 @@ -2681,19 +2681,6 @@ public class NetworkMonitorTest {
