@@ -1,7 +1,7 @@
-From 4f180d875b5728aed228a279d44da804f2d91f0f Mon Sep 17 00:00:00 2001
+From 2f0144fce50f1e19c4b570119e336748f5c67a43 Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Tue, 9 Sep 2025 13:52:45 -0400
-Subject: [PATCH 1/4] gts2-common: Explicitly set as an non-AB target
+Subject: [PATCH 1/5] gts2-common: Explicitly set as an non-AB target
 
 We will be changing AB to be the default, existing non-AB targets
 need to explicitly set AB_OTA_UPDATER to false

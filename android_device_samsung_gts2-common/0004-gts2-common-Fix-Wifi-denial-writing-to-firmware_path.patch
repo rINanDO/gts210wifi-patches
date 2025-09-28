@@ -1,7 +1,7 @@
-From 361d77ec74aa4b3f806313ed1feb1913ea30e2f7 Mon Sep 17 00:00:00 2001
+From 6da3041f4bc61eff079a35d928864d29a50bbf00 Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Wed, 27 Aug 2025 16:16:28 -0400
-Subject: [PATCH 4/4] gts2-common: Fix Wifi denial writing to firmware_path
+Subject: [PATCH 4/5] gts2-common: Fix Wifi denial writing to firmware_path
 
 Change-Id: I3e1de0782b5203878fb30322d4028c6ce9e06c21
 ---

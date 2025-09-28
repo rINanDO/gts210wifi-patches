@@ -1,7 +1,7 @@
-From f6fe8b84ee1242739fc727e41507c784356cc459 Mon Sep 17 00:00:00 2001
+From 4efaf6659a37a4860f67c9131e04cbda12210658 Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Tue, 9 Sep 2025 13:54:34 -0400
-Subject: [PATCH 2/4] gts2-common: Allow to access bootable/deprecated-ota
+Subject: [PATCH 2/5] gts2-common: Allow to access bootable/deprecated-ota
  targets
 
 gts2-common is still using non-AB update.

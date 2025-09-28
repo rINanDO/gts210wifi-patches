@@ -1,0 +1,33 @@
+From ab0119d52e080c86ae7ebc087d055b5431f26574 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Sun, 28 Sep 2025 15:39:13 -0400
+Subject: [PATCH 5/5] gts2-common: Fix DRM playback, drop ICryptoFactory 1.4
+
+Change-Id: Ie4756ebf13e75b6d4e49e645aec90d258342ef55
+---
+ manifest.xml | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/manifest.xml b/manifest.xml
+index eebec6d..d5d574c 100644
+--- a/manifest.xml
++++ b/manifest.xml
+@@ -85,7 +85,6 @@
+         <version>1.0</version>
+         <interface>
+             <name>ICryptoFactory</name>
+-            <instance>clearkey</instance>
+             <instance>default</instance>
+             <instance>widevine</instance>
+         </interface>
+@@ -94,7 +93,6 @@
+             <instance>default</instance>
+             <instance>widevine</instance>
+         </interface>
+-        <fqname>@1.4::ICryptoFactory/clearkey</fqname>
+         <fqname>@1.1::ICryptoFactory/widevine</fqname>
+         <fqname>@1.1::IDrmFactory/widevine</fqname>
+     </hal>
+-- 
+2.45.2
+
