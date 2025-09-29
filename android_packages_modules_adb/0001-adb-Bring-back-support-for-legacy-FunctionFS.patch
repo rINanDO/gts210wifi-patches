@@ -1,7 +1,7 @@
-From 472aa14d8c76501a52a75a33b73d6ac4fe3bc94c Mon Sep 17 00:00:00 2001
+From da064ff8173489ecd17bcbb2ea7daa698d153a21 Mon Sep 17 00:00:00 2001
 From: Arne Coucheron <arco68@gmail.com>
 Date: Thu, 7 Oct 2021 12:59:15 +0100
-Subject: [PATCH] adb: Bring back support for legacy FunctionFS
+Subject: [PATCH 1/2] adb: Bring back support for legacy FunctionFS
 
 Signed-off-by: Kyle Harrison <khwebmail@gmail.com>
 Change-Id: Ibaaf031c167d66e1f08957763b5353d71134b4e0

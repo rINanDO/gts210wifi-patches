@@ -1,0 +1,116 @@
+From 370d5067afa59afbcc372e91e47cccfe66902739 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Wed, 24 Sep 2025 12:33:53 -0400
+Subject: [PATCH 2/2] adb: Fix "Bring back support of legacy FunctionFS"-patch
+ for Android 15
+
+Move and merge transport_legacy.cpp into transport_usb.cpp
+
+Change-Id: I158c6d9a6b4dee82cde944e8c8925fcc020eb912
+---
+ Android.bp                                |  3 +--
+ client/transport_usb.cpp                  | 30 +++++++++++++++++++++++
+ client/usb_linux.cpp                      | 12 +++++++++
+ transport_legacy.cpp => transport_usb.cpp |  0
+ 4 files changed, 43 insertions(+), 2 deletions(-)
+ rename transport_legacy.cpp => transport_usb.cpp (100%)
+
+diff --git a/Android.bp b/Android.bp
+index aa14dc21..80ee465b 100644
+--- a/Android.bp
++++ b/Android.bp
+@@ -225,7 +225,7 @@ libadb_srcs = [
+     "sysdeps/errno.cpp",
+     "transport.cpp",
+     "transport_fd.cpp",
+-    "transport_legacy.cpp",
++    "transport_usb.cpp",
+     "types.cpp",
+ ]
+ 
+@@ -280,7 +280,6 @@ cc_library_host_static {
+         "client/mdnsresponder_client.cpp",
+         "client/mdns_utils.cpp",
+         "client/transport_mdns.cpp",
+-        "client/transport_usb.cpp",
+         "client/pairing/pairing_client.cpp",
+     ],
+ 
+diff --git a/client/transport_usb.cpp b/client/transport_usb.cpp
+index 58d50252..ce32603d 100644
+--- a/client/transport_usb.cpp
++++ b/client/transport_usb.cpp
+@@ -31,6 +31,8 @@
+ 
+ #include "adb.h"
+ 
++#if ADB_HOST
++
+ #if defined(__APPLE__)
+ #define CHECK_PACKET_OVERFLOW 0
+ #else
+@@ -120,6 +122,34 @@ static int remote_read(apacket* p, usb_handle* usb) {
+     return 0;
+ }
+ 
++#else
++
++// On Android devices, we rely on the kernel to provide buffered read.
++// So we can recover automatically from EOVERFLOW.
++static int remote_read(apacket* p, usb_handle* usb) {
++    if (usb_read(usb, &p->msg, sizeof(amessage)) != sizeof(amessage)) {
++        PLOG(ERROR) << "remote usb: read terminated (message)";
++        return -1;
++    }
++
++    if (p->msg.data_length) {
++        if (p->msg.data_length > MAX_PAYLOAD) {
++            PLOG(ERROR) << "remote usb: read overflow (data length = " << p->msg.data_length << ")";
++            return -1;
++        }
++
++        p->payload.resize(p->msg.data_length);
++        if (usb_read(usb, &p->payload[0], p->payload.size()) !=
++            static_cast<int>(p->payload.size())) {
++            PLOG(ERROR) << "remote usb: terminated (data)";
++            return -1;
++        }
++    }
++
++    return 0;
++}
++#endif
++
+ UsbConnection::~UsbConnection() {
+     usb_close(handle_);
+ }
+diff --git a/client/usb_linux.cpp b/client/usb_linux.cpp
+index 96d7a8a3..6c11d2a4 100644
+--- a/client/usb_linux.cpp
++++ b/client/usb_linux.cpp
+@@ -642,6 +642,18 @@ void usb_init() {
+     std::thread(device_poll_thread).detach();
+ }
+ 
++bool is_libusb_enabled() {
++    bool enable = true;
++#if defined(_WIN32)
++    enable = false;
++#endif
++    char* env = getenv("ADB_LIBUSB");
++    if (env) {
++        enable = (strcmp(env, "1") == 0);
++    }
++    return enable;
++}
++
+ void usb_cleanup() {
+     if (is_libusb_enabled()) {
+         VLOG(USB) << "Linux libusb cleanup";
+diff --git a/transport_legacy.cpp b/transport_usb.cpp
+similarity index 100%
+rename from transport_legacy.cpp
+rename to transport_usb.cpp
+-- 
+2.45.2
+
