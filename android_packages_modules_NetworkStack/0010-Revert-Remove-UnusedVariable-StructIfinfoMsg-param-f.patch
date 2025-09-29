@@ -1,7 +1,7 @@
-From 6c922503b821ac0554a9b778532d4834c9b441cd Mon Sep 17 00:00:00 2001
+From ff52746757cea4a1ed5e93efac7b614c54f75dca Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Sun, 21 Sep 2025 09:47:11 -0400
-Subject: [PATCH 10/14] Revert "Remove UnusedVariable StructIfinfoMsg param
+Subject: [PATCH 10/15] Revert "Remove UnusedVariable StructIfinfoMsg param
  from updateClatInterfaceLinkState."
 
 This reverts commit dfc02315da2ef6b3f8575197c3e7efe59544cc12.

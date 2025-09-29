@@ -1,7 +1,7 @@
-From 860ab03359eaa726c9b827e5f2e76345828a308f Mon Sep 17 00:00:00 2001
+From a7e2a9abbc12c27d8424091c43ccc616f8a5d309 Mon Sep 17 00:00:00 2001
 From: Yaroslav Zviezda <acroreiser@gmail.com>
 Date: Tue, 2 Apr 2024 23:47:30 +0300
-Subject: [PATCH 02/14] Revert "[BR10] Skip tcp info for uids which blocked by
+Subject: [PATCH 02/15] Revert "[BR10] Skip tcp info for uids which blocked by
  data saver"
 
 This reverts commit 294b54adfc193b4c2381b6bfbdd8a66f52d9cb0b.

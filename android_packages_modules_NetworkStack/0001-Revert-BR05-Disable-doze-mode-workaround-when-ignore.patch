@@ -1,7 +1,7 @@
-From faf97cf1bace5b565972ac1bb6fe51fbcad70221 Mon Sep 17 00:00:00 2001
+From 5863e4369c4ffdc406db96cf03a1e231bb3546bc Mon Sep 17 00:00:00 2001
 From: Yaroslav Zviezda <acroreiser@gmail.com>
 Date: Tue, 2 Apr 2024 23:47:20 +0300
-Subject: [PATCH 01/14] Revert "[BR05] Disable doze mode workaround when ignore
+Subject: [PATCH 01/15] Revert "[BR05] Disable doze mode workaround when ignore
  blocked uids"
 
 This reverts commit b578a0dedfcae14759edcbec8677093d8c166c0f.

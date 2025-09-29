@@ -1,7 +1,7 @@
-From 302059980880a466d496158e87c2c7f3687c831b Mon Sep 17 00:00:00 2001
+From a6f31196b6cd1288911ea98da7cb50ddc1bd9631 Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Sun, 21 Sep 2025 09:53:27 -0400
-Subject: [PATCH 12/14] Revert "Follow up on
+Subject: [PATCH 12/15] Revert "Follow up on
  IPCLIENT_PARSE_NETLINK_EVENTS_FORCE_DISABLE removal"
 
 This reverts commit a4a9d2cd08ad8849498881c02a65e9c8720d8de3.
