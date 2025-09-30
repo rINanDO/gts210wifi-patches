@@ -1,0 +1,30 @@
+From 2e69a8127089887150d5eaeab0ef29253cf9b4b4 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Fri, 12 Sep 2025 16:13:40 -0400
+Subject: [PATCH 3/3] vfs: dirty use renameat syscall for renameat2
+
+Change-Id: I250d75c8014d2f0ca1ce2276461bd080e2b56472
+---
+ fs/namei.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index e90237d3aec1..af5bf2a2c786 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -4115,6 +4115,12 @@ exit:
+ 	return error;
+ }
+ 
++SYSCALL_DEFINE5(renameat2, int, olddfd, const char __user *, oldname,
++		int, newdfd, const char __user *, newname, unsigned int, flags)
++{
++	return sys_renameat(AT_FDCWD, oldname, AT_FDCWD, newname);
++}
++
+ SYSCALL_DEFINE2(rename, const char __user *, oldname, const char __user *, newname)
+ {
+ 	return sys_renameat(AT_FDCWD, oldname, AT_FDCWD, newname);
+-- 
+2.45.2
+

@@ -15,6 +15,7 @@ declare -A patches=(
     ["hardware/samsung"]="android_hardware_samsung"
     ["hardware/samsung_slsi/exynos"]="android_hardware_samsung_slsi_exynos"
     ["hardware/samsung_slsi/exynos5433"]="android_hardware_samsung_slsi_exynos5433"
+    ["kernel/samsung/universal5433"]="android_kernel_samsung_universal5433"
     ["packages/modules/adb"]="android_packages_modules_adb"
     ["packages/modules/Connectivity"]="android_packages_modules_Connectivity"
     ["packages/modules/DnsResolver"]="android_packages_modules_DnsResolver"

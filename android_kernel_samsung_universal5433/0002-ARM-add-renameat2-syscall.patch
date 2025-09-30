@@ -1,0 +1,44 @@
+From 6b98266fc2df4516f8b2ec24c592bb1d13066309 Mon Sep 17 00:00:00 2001
+From: Miklos Szeredi <mszeredi@suse.cz>
+Date: Fri, 11 Apr 2014 12:25:39 +0200
+Subject: [PATCH 2/3] ARM: add renameat2 syscall
+
+Change-Id: I2bf8a492271513790ca903ff8b0a9a9394582c83
+Signed-off-by: Miklos Szeredi <mszeredi@suse.cz>
+[dropped arch/arm/include/asm/unistd.h changes --rmk]
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+---
+ arch/arm/include/uapi/asm/unistd.h | 2 +-
+ arch/arm/kernel/calls.S            | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/include/uapi/asm/unistd.h b/arch/arm/include/uapi/asm/unistd.h
+index 23d74d883d93..a77a25ff5e1c 100644
+--- a/arch/arm/include/uapi/asm/unistd.h
++++ b/arch/arm/include/uapi/asm/unistd.h
+@@ -409,8 +409,8 @@
+ /* Reserve for later
+ #define __NR_sched_setattr		(__NR_SYSCALL_BASE+380)
+ #define __NR_sched_getattr		(__NR_SYSCALL_BASE+381)
+-#define __NR_renameat2			(__NR_SYSCALL_BASE+382)
+ */
++#define __NR_renameat2			(__NR_SYSCALL_BASE+382)
+ #define __NR_seccomp			(__NR_SYSCALL_BASE+383)
+ 
+ #define __NR_getrandom			(__NR_SYSCALL_BASE+384)
+diff --git a/arch/arm/kernel/calls.S b/arch/arm/kernel/calls.S
+index ca1077f2bbaf..14c5f64c4194 100644
+--- a/arch/arm/kernel/calls.S
++++ b/arch/arm/kernel/calls.S
+@@ -391,7 +391,7 @@
+ 		CALL(sys_finit_module)
+ /* 380 */	CALL(sys_ni_syscall)		/* reserved sys_sched_setattr */
+ 		CALL(sys_ni_syscall)		/* reserved sys_sched_getattr */
+-		CALL(sys_ni_syscall)		/* reserved sys_renameat2     */
++		CALL(sys_renameat2)
+ 		CALL(sys_seccomp)
+ 		CALL(sys_getrandom)
+ /* 385 */	CALL(sys_memfd_create)
+-- 
+2.45.2
+
