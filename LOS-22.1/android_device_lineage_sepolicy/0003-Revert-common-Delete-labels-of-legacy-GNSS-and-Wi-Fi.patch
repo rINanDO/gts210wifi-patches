@@ -1,0 +1,28 @@
+From ea93b72c7724487302843ec2a054e5f8bfadbc19 Mon Sep 17 00:00:00 2001
+From: khalvat-M <mmba313@gmail.com>
+Date: Tue, 21 May 2024 18:41:34 +0330
+Subject: [PATCH 3/4] Revert "common: Delete labels of legacy GNSS and Wi-Fi
+ service HALs"
+
+This reverts commit 0afbffaae94b7a745ed488223dadf40dd2adc7b9.
+---
+ common/vendor/file_contexts | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/common/vendor/file_contexts b/common/vendor/file_contexts
+index 2c9a29c..3f353de 100644
+--- a/common/vendor/file_contexts
++++ b/common/vendor/file_contexts
+@@ -32,3 +32,9 @@
+ # Vibrator HAL
+ /(vendor|system/vendor)/bin/hw/android\.hardware\.vibrator@1\.0-service\.lineage u:object_r:hal_vibrator_default_exec:s0
+ /(vendor|system/vendor)/bin/hw/android\.hardware\.vibrator-service\.legacy       u:object_r:hal_vibrator_default_exec:s0
++
++# GNSS HAL
++/(vendor|system/vendor)/bin/hw/android\.hardware\.gnss@1\.0-service\.legacy u:object_r:hal_gnss_default_exec:s0
++
++# Wi-Fi HAL
++/(vendor|system/vendor)/bin/hw/android\.hardware\.wifi@1\.0-service\.legacy u:object_r:hal_wifi_default_exec:s0
+-- 
+2.45.2
+
