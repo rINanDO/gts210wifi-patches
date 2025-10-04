@@ -6,8 +6,6 @@ declare -A patches=(
     ["bionic"]="android_bionic"
     ["build/make"]="android_build"
     ["device/lineage/sepolicy"]="android_device_lineage_sepolicy"
-    ["device/samsung/gts2-common"]="android_device_samsung_gts2-common"
-    ["device/samsung/gts210wifi"]="android_device_samsung_gts210wifi"
     ["external/perfetto"]="android_external_perfetto"
     ["frameworks/base"]="android_frameworks_base"
     ["frameworks/native"]="android_frameworks_native"
@@ -15,7 +13,6 @@ declare -A patches=(
     ["hardware/samsung"]="android_hardware_samsung"
     ["hardware/samsung_slsi/exynos"]="android_hardware_samsung_slsi_exynos"
     ["hardware/samsung_slsi/exynos5433"]="android_hardware_samsung_slsi_exynos5433"
-    ["kernel/samsung/universal5433"]="android_kernel_samsung_universal5433"
     ["packages/modules/adb"]="android_packages_modules_adb"
     ["packages/modules/Connectivity"]="android_packages_modules_Connectivity"
     ["packages/modules/DnsResolver"]="android_packages_modules_DnsResolver"
@@ -28,7 +25,7 @@ declare -A patches=(
 )
 
 # Base path for the patches
-patches_base_path=~/patches
+patches_base_path=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 for dir in "${!patches[@]}"; do
     cd $dir || { echo "Directory $dir not found"; exit 1; }
