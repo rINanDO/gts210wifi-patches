@@ -5,6 +5,7 @@ declare -A patches=(
     ["art"]="android_art"
     ["bionic"]="android_bionic"
     ["build/make"]="android_build"
+    ["build/soong"]="android_build_soong"
     ["device/lineage/sepolicy"]="android_device_lineage_sepolicy"
     ["external/perfetto"]="android_external_perfetto"
     ["frameworks/base"]="android_frameworks_base"

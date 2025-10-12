@@ -1,0 +1,25 @@
+From ac5fe9ed31b80c3c54b28e301eb1aa4a30149913 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Sun, 12 Oct 2025 10:45:00 +0200
+Subject: [PATCH] config: Allow xz to be used in kernel builds
+
+Change-Id: I0c4ff21dc9ff050b678756840f0a8f885482d13d
+---
+ ui/build/paths/config.go | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/ui/build/paths/config.go b/ui/build/paths/config.go
+index 6c9a1ebb9..8e23ec510 100644
+--- a/ui/build/paths/config.go
++++ b/ui/build/paths/config.go
+@@ -107,6 +107,7 @@ var Configuration = map[string]PathConfig{
+ 	"stubby":      Allowed,
+ 	"tr":          Allowed,
+ 	"unzip":       Allowed,
++	"xz":          Allowed,
+ 	"zip":         Allowed,
+ 
+ 	// Host toolchain is removed. In-tree toolchain should be used instead.
+-- 
+2.51.0
+
