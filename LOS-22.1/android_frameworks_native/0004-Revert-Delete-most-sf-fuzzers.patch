@@ -1,7 +1,7 @@
-From 7a94ab6265527228ed349e36d82149f1f3203b8a Mon Sep 17 00:00:00 2001
+From 405b09683051ae355003115323ff2236e73f6427 Mon Sep 17 00:00:00 2001
 From: TARKZiM <tom8476oo@gmail.com>
 Date: Tue, 17 Sep 2024 18:30:14 +0800
-Subject: [PATCH 4/4] Revert "Delete (most) sf fuzzers"
+Subject: [PATCH 4/5] Revert "Delete (most) sf fuzzers"
 
 This reverts commit 300a944ee32a302e4891fdf53025490568387071.
 ---
@@ -27,7 +27,7 @@ This reverts commit 300a944ee32a302e4891fdf53025490568387071.
  create mode 100644 services/surfaceflinger/fuzzer/surfaceflinger_scheduler_fuzzer.h
 
 diff --git a/services/surfaceflinger/fuzzer/Android.bp b/services/surfaceflinger/fuzzer/Android.bp
-index ae502cf..618a583 100644
+index ae502cf4b4..618a583e68 100644
 --- a/services/surfaceflinger/fuzzer/Android.bp
 +++ b/services/surfaceflinger/fuzzer/Android.bp
 @@ -27,18 +27,46 @@ package {
@@ -146,7 +146,7 @@ index ae502cf..618a583 100644
      defaults: [
 diff --git a/services/surfaceflinger/fuzzer/README.md b/services/surfaceflinger/fuzzer/README.md
 new file mode 100644
-index 0000000..a06c41b
+index 0000000000..a06c41b139
 --- /dev/null
 +++ b/services/surfaceflinger/fuzzer/README.md
 @@ -0,0 +1,108 @@
@@ -260,7 +260,7 @@ index 0000000..a06c41b
 +```
 diff --git a/services/surfaceflinger/fuzzer/surfaceflinger_displayhardware_fuzzer.cpp b/services/surfaceflinger/fuzzer/surfaceflinger_displayhardware_fuzzer.cpp
 new file mode 100644
-index 0000000..682079f
+index 0000000000..682079f979
 --- /dev/null
 +++ b/services/surfaceflinger/fuzzer/surfaceflinger_displayhardware_fuzzer.cpp
 @@ -0,0 +1,663 @@
@@ -929,7 +929,7 @@ index 0000000..682079f
 +} // namespace android::fuzz
 diff --git a/services/surfaceflinger/fuzzer/surfaceflinger_displayhardware_fuzzer_utils.h b/services/surfaceflinger/fuzzer/surfaceflinger_displayhardware_fuzzer_utils.h
 new file mode 100644
-index 0000000..b2dc20e
+index 0000000000..b2dc20e216
 --- /dev/null
 +++ b/services/surfaceflinger/fuzzer/surfaceflinger_displayhardware_fuzzer_utils.h
 @@ -0,0 +1,109 @@
@@ -1044,7 +1044,7 @@ index 0000000..b2dc20e
 +} // namespace android::hardware::graphics::composer::hal
 diff --git a/services/surfaceflinger/fuzzer/surfaceflinger_frametracer_fuzzer.cpp b/services/surfaceflinger/fuzzer/surfaceflinger_frametracer_fuzzer.cpp
 new file mode 100644
-index 0000000..ce8d47e
+index 0000000000..ce8d47e71c
 --- /dev/null
 +++ b/services/surfaceflinger/fuzzer/surfaceflinger_frametracer_fuzzer.cpp
 @@ -0,0 +1,147 @@
@@ -1197,7 +1197,7 @@ index 0000000..ce8d47e
 +} // namespace android::fuzz
 diff --git a/services/surfaceflinger/fuzzer/surfaceflinger_fuzzer.cpp b/services/surfaceflinger/fuzzer/surfaceflinger_fuzzer.cpp
 new file mode 100644
-index 0000000..d13189e
+index 0000000000..d13189e439
 --- /dev/null
 +++ b/services/surfaceflinger/fuzzer/surfaceflinger_fuzzer.cpp
 @@ -0,0 +1,257 @@
@@ -1460,7 +1460,7 @@ index 0000000..d13189e
 +} // namespace android::fuzz
 diff --git a/services/surfaceflinger/fuzzer/surfaceflinger_fuzzers_utils.h b/services/surfaceflinger/fuzzer/surfaceflinger_fuzzers_utils.h
 new file mode 100644
-index 0000000..0d15f62
+index 0000000000..0d15f6264f
 --- /dev/null
 +++ b/services/surfaceflinger/fuzzer/surfaceflinger_fuzzers_utils.h
 @@ -0,0 +1,807 @@
@@ -2273,7 +2273,7 @@ index 0000000..0d15f62
 +} // namespace android
 diff --git a/services/surfaceflinger/fuzzer/surfaceflinger_layer_fuzzer.cpp b/services/surfaceflinger/fuzzer/surfaceflinger_layer_fuzzer.cpp
 new file mode 100644
-index 0000000..7aae3c4
+index 0000000000..7aae3c4a1a
 --- /dev/null
 +++ b/services/surfaceflinger/fuzzer/surfaceflinger_layer_fuzzer.cpp
 @@ -0,0 +1,206 @@
@@ -2485,7 +2485,7 @@ index 0000000..7aae3c4
 +} // namespace android::fuzzer
 diff --git a/services/surfaceflinger/fuzzer/surfaceflinger_scheduler_fuzzer.cpp b/services/surfaceflinger/fuzzer/surfaceflinger_scheduler_fuzzer.cpp
 new file mode 100644
-index 0000000..ff2ee7e
+index 0000000000..ff2ee7e0f4
 --- /dev/null
 +++ b/services/surfaceflinger/fuzzer/surfaceflinger_scheduler_fuzzer.cpp
 @@ -0,0 +1,482 @@
@@ -2973,7 +2973,7 @@ index 0000000..ff2ee7e
 +} // namespace android::fuzz
 diff --git a/services/surfaceflinger/fuzzer/surfaceflinger_scheduler_fuzzer.h b/services/surfaceflinger/fuzzer/surfaceflinger_scheduler_fuzzer.h
 new file mode 100644
-index 0000000..114f3b0
+index 0000000000..114f3b0e7a
 --- /dev/null
 +++ b/services/surfaceflinger/fuzzer/surfaceflinger_scheduler_fuzzer.h
 @@ -0,0 +1,204 @@
@@ -3182,5 +3182,5 @@ index 0000000..114f3b0
 +};
 +} // namespace android::scheduler
 -- 
-2.45.2
+2.43.0
 

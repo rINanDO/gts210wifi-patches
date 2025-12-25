@@ -1,0 +1,82 @@
+From 174b8354efb275f926e39dad8daa70baddbe847f Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Thu, 25 Dec 2025 10:19:55 +0100
+Subject: [PATCH 5/5] Revert "Avoid string allocations when checking for
+ permissions"
+
+This reverts commit 01b92c7891d59dc14b6690514ac932547aa4a054.
+---
+ libs/gui/LayerStatePermissions.cpp           | 14 +++++++-------
+ libs/gui/include/gui/LayerStatePermissions.h |  7 ++++---
+ 2 files changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/libs/gui/LayerStatePermissions.cpp b/libs/gui/LayerStatePermissions.cpp
+index c467cfdc68..28697ca953 100644
+--- a/libs/gui/LayerStatePermissions.cpp
++++ b/libs/gui/LayerStatePermissions.cpp
+@@ -23,31 +23,31 @@
+ #include <gui/LayerState.h>
+ 
+ namespace android {
+-std::vector<std::pair<String16, int>> LayerStatePermissions::mPermissionMap = {
++std::unordered_map<std::string, int> LayerStatePermissions::mPermissionMap = {
+         // If caller has ACCESS_SURFACE_FLINGER, they automatically get ROTATE_SURFACE_FLINGER
+         // permission, as well
+-        {String16("android.permission.ACCESS_SURFACE_FLINGER"),
++        {"android.permission.ACCESS_SURFACE_FLINGER",
+          layer_state_t::Permission::ACCESS_SURFACE_FLINGER |
+                  layer_state_t::Permission::ROTATE_SURFACE_FLINGER},
+-        {String16("android.permission.ROTATE_SURFACE_FLINGER"),
++        {"android.permission.ROTATE_SURFACE_FLINGER",
+          layer_state_t::Permission::ROTATE_SURFACE_FLINGER},
+-        {String16("android.permission.INTERNAL_SYSTEM_WINDOW"),
++        {"android.permission.INTERNAL_SYSTEM_WINDOW",
+          layer_state_t::Permission::INTERNAL_SYSTEM_WINDOW},
+ };
+ 
+-static bool callingThreadHasPermission(const String16& permission __attribute__((unused)),
++static bool callingThreadHasPermission(const std::string& permission __attribute__((unused)),
+                                        int pid __attribute__((unused)),
+                                        int uid __attribute__((unused))) {
+ #ifndef __ANDROID_VNDK__
+     return uid == AID_GRAPHICS || uid == AID_SYSTEM ||
+-            PermissionCache::checkPermission(permission, pid, uid);
++            PermissionCache::checkPermission(String16(permission.c_str()), pid, uid);
+ #endif // __ANDROID_VNDK__
+     return false;
+ }
+ 
+ uint32_t LayerStatePermissions::getTransactionPermissions(int pid, int uid) {
+     uint32_t permissions = 0;
+-    for (const auto& [permissionName, permissionVal] : mPermissionMap) {
++    for (auto [permissionName, permissionVal] : mPermissionMap) {
+         if (callingThreadHasPermission(permissionName, pid, uid)) {
+             permissions |= permissionVal;
+         }
+diff --git a/libs/gui/include/gui/LayerStatePermissions.h b/libs/gui/include/gui/LayerStatePermissions.h
+index b6588a2a82..a90f30c621 100644
+--- a/libs/gui/include/gui/LayerStatePermissions.h
++++ b/libs/gui/include/gui/LayerStatePermissions.h
+@@ -15,14 +15,15 @@
+  */
+ 
+ #include <stdint.h>
+-#include <utils/String16.h>
+-#include <vector>
++#include <string>
++#include <unordered_map>
++
+ namespace android {
+ class LayerStatePermissions {
+ public:
+     static uint32_t getTransactionPermissions(int pid, int uid);
+ 
+ private:
+-    static std::vector<std::pair<String16, int>> mPermissionMap;
++    static std::unordered_map<std::string, int> mPermissionMap;
+ };
+ } // namespace android
+\ No newline at end of file
+-- 
+2.43.0
+
