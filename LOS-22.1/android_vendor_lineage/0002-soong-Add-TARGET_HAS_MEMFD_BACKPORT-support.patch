@@ -1,7 +1,7 @@
-From 610e3f5741fbc11fe8356c411321619691855620 Mon Sep 17 00:00:00 2001
+From e3d25f51b92f4758f751fbceb601baebb1d1fcaa Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Fri, 12 Sep 2025 06:55:41 -0400
-Subject: [PATCH 2/4] soong: Add TARGET_HAS_MEMFD_BACKPORT support
+Subject: [PATCH 2/5] soong: Add TARGET_HAS_MEMFD_BACKPORT support
 
 Change-Id: I1e793abebd748231f4479a966b704b208d1a456b
 ---
@@ -55,5 +55,5 @@ index c71e3aa0..6829220b 100644
  SOONG_CONFIG_lineageNvidiaVars_uses_nvidia_enhancements := $(NV_ANDROID_FRAMEWORK_ENHANCEMENTS)
  SOONG_CONFIG_lineageQcomVars_qti_vibrator_use_effect_stream := $(TARGET_QTI_VIBRATOR_USE_EFFECT_STREAM)
 -- 
-2.45.2
+2.43.0
 

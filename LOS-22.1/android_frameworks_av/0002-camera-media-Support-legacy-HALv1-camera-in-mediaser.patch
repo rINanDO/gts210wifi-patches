@@ -1,0 +1,175 @@
+From 0b384098b7054dcd882a9c76720d97471ac27bb4 Mon Sep 17 00:00:00 2001
+From: Simon Shields <keepcalm444@gmail.com>
+Date: Thu, 6 Oct 2016 20:25:32 +1100
+Subject: [PATCH 2/2] camera/media: Support legacy HALv1 camera in mediaserver
+
+Pre 7.0 camera HALv1 can not share its video buffers
+across different processes, which requires us to
+disable this security feature.
+
+This change allows devices to re-integrate cameraserver
+and mediaserver which is the first step to support older
+prebuilt camera HALs. A follow-up change will add back
+support for legacy buffer handling.
+
+To enable:
+TARGET_HAS_LEGACY_CAMERA_HAL1 := true
+media.stagefright.legacyencoder=true
+media.stagefright.less-secure=true
+
+Change-Id: I4fcc8907ea235b7e83af26122b4da97ca5117816
+
+mediaserver: Update HALv1 dependencies for 8.1.0
+
+ * Add libcameraservice shared library dependency
+ * Add new libgui, android.hardware.camera.common@1.0
+    and android.hardware.camera.provider@2.4 shared
+    libraries and exported headers HAL dependencies
+
+ * Match cameraserver HIDL additions and dependencies
+
+ * When TARGET_HAS_LEGACY_CAMERA_HAL1 is set, the mediaserver
+    includes CameraService.h but exported headers are missing
+
+ * Error upon build due to missing libcameraservice linkage:
+    fatal error: 'android/hardware/BnCameraService.h' file not found
+
+mediaserver: Update HALv1 dependencies for 9.0.0
+
+ * Disable active state UID validation for HAL1 devices
+
+Change-Id: Ib6bb8a4e9ef18606c64e2dff13504d2eeaac13b1
+Signed-off-by: Adrian DC <radian.dc@gmail.com>
+---
+ media/mediaserver/Android.bp                  |  4 +++-
+ media/mediaserver/main_mediaserver.cpp        | 13 +++++++++++++
+ services/camera/libcameraservice/Android.bp   |  1 +
+ .../camera/libcameraservice/CameraService.cpp | 19 +++++++++++++++++--
+ 4 files changed, 34 insertions(+), 3 deletions(-)
+
+diff --git a/media/mediaserver/Android.bp b/media/mediaserver/Android.bp
+index 6ea40e379a..2ea5fbd7a2 100644
+--- a/media/mediaserver/Android.bp
++++ b/media/mediaserver/Android.bp
+@@ -53,7 +53,9 @@ soong_config_module_type {
+ 
+ mediaserver_cc_binary {
+     name: "mediaserver",
+-
++    defaults: [
++        "camera_in_mediaserver_defaults",
++    ],
+     srcs: ["main_mediaserver.cpp"],
+ 
+     shared_libs: [
+diff --git a/media/mediaserver/main_mediaserver.cpp b/media/mediaserver/main_mediaserver.cpp
+index 026847a527..b1385db535 100644
+--- a/media/mediaserver/main_mediaserver.cpp
++++ b/media/mediaserver/main_mediaserver.cpp
+@@ -25,6 +25,11 @@
+ #include <utils/Log.h>
+ #include "RegisterExtensions.h"
+ 
++#ifdef NO_CAMERA_SERVER
++#include "CameraService.h"
++#include <hidl/HidlTransportSupport.h>
++#endif
++
+ #include <MediaPlayerService.h>
+ #include <ResourceManagerService.h>
+ 
+@@ -34,11 +39,19 @@ int main(int argc __unused, char **argv __unused)
+ {
+     signal(SIGPIPE, SIG_IGN);
+ 
++#ifdef NO_CAMERA_SERVER
++    // Set 5 threads for HIDL calls
++    hardware::configureRpcThreadpool(5, /*willjoin*/ false);
++#endif
++
+     sp<ProcessState> proc(ProcessState::self());
+     sp<IServiceManager> sm(defaultServiceManager());
+     ALOGI("ServiceManager: %p", sm.get());
+     MediaPlayerService::instantiate();
+     ResourceManagerService::instantiate();
++#ifdef NO_CAMERA_SERVER
++    CameraService::instantiate();
++#endif
+     registerExtensions();
+     ::android::hardware::configureRpcThreadpool(16, false);
+     ProcessState::self()->startThreadPool();
+diff --git a/services/camera/libcameraservice/Android.bp b/services/camera/libcameraservice/Android.bp
+index 0dc90dfddc..0df04820b1 100644
+--- a/services/camera/libcameraservice/Android.bp
++++ b/services/camera/libcameraservice/Android.bp
+@@ -126,6 +126,7 @@ cc_library {
+ 
+     defaults: [
+         "libcameraservice_deps",
++        "no_cameraserver_defaults",
+     ],
+     // Camera service source
+ 
+diff --git a/services/camera/libcameraservice/CameraService.cpp b/services/camera/libcameraservice/CameraService.cpp
+index a7ad20a09c..c95d009de4 100644
+--- a/services/camera/libcameraservice/CameraService.cpp
++++ b/services/camera/libcameraservice/CameraService.cpp
+@@ -162,7 +162,12 @@ const char *sFileName = "lastOpenSessionDumpFile";
+ static constexpr int32_t kSystemNativeClientScore = resource_policy::PERCEPTIBLE_APP_ADJ;
+ static constexpr int32_t kSystemNativeClientState =
+         ActivityManager::PROCESS_STATE_PERSISTENT_UI;
+-static const std::string kServiceName("cameraserver");
++#ifdef NO_CAMERA_SERVER
++    static const std::string kServiceName("media");
++#else
++    static const std::string kServiceName("cameraserver");
++#endif
++
+ 
+ const std::string CameraService::kOfflineDevice("offline-");
+ const std::string CameraService::kWatchAllClientsFlag("all");
+@@ -1071,7 +1076,9 @@ Status CameraService::getSessionCharacteristics(const std::string& unresolvedCam
+                 return STATUS_ERROR(CameraService::ERROR_INVALID_OPERATION, msg.c_str());
+             }
+     }
+-
++#ifdef NO_CAMERA_SERVER
++    return Status::ok();
++#endif
+     Status res = filterSensitiveMetadataIfNeeded(cameraId, outMetadata);
+     if (flags::analytics_24q3()) {
+         mCameraServiceProxyWrapper->logSessionCharacteristicsQuery(cameraId,
+@@ -1744,8 +1751,13 @@ Status CameraService::errorNotTrusted(int clientPid, int clientUid, const std::s
+             clientName.c_str(), clientPid, clientUid);
+ }
+ 
++#ifdef NO_CAMERA_SERVER
++Status CameraService::validateClientPermissionsLocked(const std::string& cameraId,
++        const std::string& /*clientName*/, int /*clientUid*/, int /*clientPid*/) const {
++#else
+ Status CameraService::validateClientPermissionsLocked(const std::string& cameraId,
+         const std::string& clientName, int clientUid, int clientPid) const {
++#endif
+     int callingPid = getCallingPid();
+     int callingUid = getCallingUid();
+ 
+@@ -1762,6 +1774,8 @@ Status CameraService::validateClientPermissionsLocked(const std::string& cameraI
+                 "found while trying to query device kind", cameraId.c_str());
+     }
+ 
++#ifndef NO_CAMERA_SERVER
++
+     // Get the device id that owns this camera.
+     auto [deviceId, _] = mVirtualDeviceCameraIdMapper.getDeviceIdAndMappedCameraIdPair(cameraId);
+ 
+@@ -1833,6 +1847,7 @@ Status CameraService::validateClientPermissionsLocked(const std::string& cameraI
+                     clientName.c_str(), callingPid, clientUid, cameraId.c_str());
+         }
+     }
++#endif
+ 
+     return Status::ok();
+ }
+-- 
+2.43.0
+

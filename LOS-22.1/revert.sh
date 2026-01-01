@@ -8,6 +8,7 @@ declare -A patches=(
     ["build/soong"]="android_build_soong"
     ["device/lineage/sepolicy"]="android_device_lineage_sepolicy"
     ["external/perfetto"]="android_external_perfetto"
+    ["frameworks/av"]="android_frameworks_av"
     ["frameworks/base"]="android_frameworks_base"
     ["frameworks/native"]="android_frameworks_native"
     ["hardware/lineage/interfaces"]="android_hardware_lineage_interfaces"

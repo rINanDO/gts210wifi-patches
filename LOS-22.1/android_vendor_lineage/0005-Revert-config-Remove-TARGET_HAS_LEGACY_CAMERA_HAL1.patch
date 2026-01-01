@@ -1,0 +1,96 @@
+From 0ee82549d2e349ba83411953ed8ea704b219fb4c Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Thu, 1 Jan 2026 11:54:57 +0100
+Subject: [PATCH 5/5] Revert "config: Remove TARGET_HAS_LEGACY_CAMERA_HAL1"
+
+This reverts commit 829f975cd8356a18b166f355ed9b3b9316660920.
+
+Change-Id: Ib5cd379d3e226f25225a4a6fd2bd2b972f058ca1
+---
+ build/soong/Android.bp     | 52 ++++++++++++++++++++++++++++++++++++++
+ config/BoardConfigSoong.mk |  2 ++
+ 2 files changed, 54 insertions(+)
+
+diff --git a/build/soong/Android.bp b/build/soong/Android.bp
+index c5a2bc60..101fc944 100644
+--- a/build/soong/Android.bp
++++ b/build/soong/Android.bp
+@@ -523,3 +523,55 @@ target_process_sdk_version_overrides {
+         },
+     },
+ }
++
++soong_config_module_type {
++    name: "no_cameraserver",
++    module_type: "cc_defaults",
++    config_namespace: "lineageGlobalVars",
++    bool_variables: ["has_legacy_camera_hal1"],
++    properties: [
++        "cppflags",
++    ],
++}
++
++no_cameraserver {
++    name: "no_cameraserver_defaults",
++    soong_config_variables: {
++        has_legacy_camera_hal1: {
++            cppflags: [
++                "-DNO_CAMERA_SERVER",
++                "-Wno-overloaded-virtual",
++            ],
++        },
++    },
++}
++
++soong_config_module_type {
++    name: "camera_in_mediaserver",
++    module_type: "cc_defaults",
++    config_namespace: "lineageGlobalVars",
++    bool_variables: ["has_legacy_camera_hal1"],
++    properties: [
++        "overrides",
++        "shared_libs",
++    ],
++}
++
++camera_in_mediaserver {
++    name: "camera_in_mediaserver_defaults",
++    defaults: [
++        "libcameraservice_deps",
++        "no_cameraserver_defaults"],
++    soong_config_variables: {
++        has_legacy_camera_hal1: {
++            overrides: ["cameraserver"],
++            shared_libs: [
++                "android.hardware.camera.common@1.0",
++                "android.hardware.camera.device@3.4",
++                "android.hardware.camera.provider@2.6",
++                "libcameraservice",
++                "libgui",
++            ],
++        },
++    },
++}
+diff --git a/config/BoardConfigSoong.mk b/config/BoardConfigSoong.mk
+index 8da6fd83..b7f2592a 100644
+--- a/config/BoardConfigSoong.mk
++++ b/config/BoardConfigSoong.mk
+@@ -34,6 +34,7 @@ SOONG_CONFIG_lineageGlobalVars += \
+     gralloc_handle_has_custom_content_md_reserved_size \
+     gralloc_handle_has_reserved_size \
+     gralloc_handle_has_ubwcp_format \
++    has_legacy_camera_hal1 \
+     has_memfd_backport \
+     target_health_charging_control_charging_enabled \
+     target_health_charging_control_charging_disabled \
+@@ -80,6 +81,7 @@ SOONG_CONFIG_lineageGlobalVars_camera_override_format_from_reserved := $(TARGET_
+ SOONG_CONFIG_lineageGlobalVars_gralloc_handle_has_custom_content_md_reserved_size := $(TARGET_GRALLOC_HANDLE_HAS_CUSTOM_CONTENT_MD_RESERVED_SIZE)
+ SOONG_CONFIG_lineageGlobalVars_gralloc_handle_has_reserved_size := $(TARGET_GRALLOC_HANDLE_HAS_RESERVED_SIZE)
+ SOONG_CONFIG_lineageGlobalVars_gralloc_handle_has_ubwcp_format := $(TARGET_GRALLOC_HANDLE_HAS_UBWCP_FORMAT)
++SOONG_CONFIG_lineageGlobalVars_has_legacy_camera_hal1 := $(TARGET_HAS_LEGACY_CAMERA_HAL1)
+ SOONG_CONFIG_lineageGlobalVars_has_memfd_backport := $(TARGET_HAS_MEMFD_BACKPORT)
+ SOONG_CONFIG_lineageGlobalVars_uses_egl_display_array := $(TARGET_USES_EGL_DISPLAY_ARRAY)
+ SOONG_CONFIG_lineageNvidiaVars_uses_nvidia_enhancements := $(NV_ANDROID_FRAMEWORK_ENHANCEMENTS)
+-- 
+2.43.0
+
