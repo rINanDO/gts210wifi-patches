@@ -11,6 +11,7 @@ declare -A patches=(
     ["frameworks/av"]="android_frameworks_av"
     ["frameworks/base"]="android_frameworks_base"
     ["frameworks/native"]="android_frameworks_native"
+    ["hardware/lineage/compat"]="android_hardware_lineage_compat"
     ["hardware/lineage/interfaces"]="android_hardware_lineage_interfaces"
     ["hardware/samsung"]="android_hardware_samsung"
     ["hardware/samsung_slsi/exynos"]="android_hardware_samsung_slsi_exynos"
