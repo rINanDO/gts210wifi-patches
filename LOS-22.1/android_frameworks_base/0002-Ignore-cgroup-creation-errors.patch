@@ -1,4 +1,4 @@
-From 39b137e5f67fe4a837170db40d7217b2e2641b3a Mon Sep 17 00:00:00 2001
+From ca87aa0d2d6691be171d39bb4bde50bb57b416e6 Mon Sep 17 00:00:00 2001
 From: Pierre-Hugues Husson <phh@phh.me>
 Date: Wed, 18 Oct 2023 16:53:40 -0400
 Subject: [PATCH 2/4] Ignore cgroup creation errors

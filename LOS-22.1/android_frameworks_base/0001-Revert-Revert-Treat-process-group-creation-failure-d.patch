@@ -1,4 +1,4 @@
-From cce0835f5f0060519d1c3f57f5b84bde01ee8277 Mon Sep 17 00:00:00 2001
+From 33d698328d1d959266ef52418b27daf994f7a27d Mon Sep 17 00:00:00 2001
 From: html6405 <peter.schelchshorn@mhs-solutions.at>
 Date: Wed, 27 Dec 2023 18:18:57 +0100
 Subject: [PATCH 1/4] Revert "Revert "Treat process group creation failure due

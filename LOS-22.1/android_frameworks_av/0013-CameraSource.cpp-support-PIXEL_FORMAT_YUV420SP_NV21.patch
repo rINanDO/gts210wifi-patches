@@ -1,0 +1,47 @@
+From 1977c953fdad74de37979486b94e8cdb0560a3ec Mon Sep 17 00:00:00 2001
+From: html6405 <peter.schelchshorn@mhs-solutions.at>
+Date: Wed, 23 Feb 2022 16:14:39 +0100
+Subject: [PATCH 13/16] CameraSource.cpp: support PIXEL_FORMAT_YUV420SP_NV21.
+
+Change-Id: I7371858daf962f13b60158e8bfb231c426be6a45
+---
+ media/libstagefright/CameraSource.cpp | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/media/libstagefright/CameraSource.cpp b/media/libstagefright/CameraSource.cpp
+index 4161185005..e30c697b61 100644
+--- a/media/libstagefright/CameraSource.cpp
++++ b/media/libstagefright/CameraSource.cpp
+@@ -46,6 +46,8 @@
+ 
+ namespace android {
+ 
++static const char PIXEL_FORMAT_YUV420SP_NV21[] = "nv21";
++
+ static const int64_t CAMERA_SOURCE_TIMEOUT_NS = 3000000000LL;
+ 
+ static int32_t getColorFormat(const char* colorFormat) {
+@@ -66,6 +68,11 @@ static int32_t getColorFormat(const char* colorFormat) {
+         return OMX_COLOR_FormatYUV420SemiPlanar;
+     }
+ 
++    if (!strcmp(colorFormat, PIXEL_FORMAT_YUV420SP_NV21)) {
++        static const int OMX_SEC_COLOR_FormatNV21Linear = 0x7F000011;
++        return OMX_SEC_COLOR_FormatNV21Linear;
++    }
++
+     if (!strcmp(colorFormat, CameraParameters::PIXEL_FORMAT_YUV422I)) {
+         return OMX_COLOR_FormatYCbYCr;
+     }
+@@ -89,7 +96,7 @@ static int32_t getColorFormat(const char* colorFormat) {
+     ALOGE("Uknown color format (%s), please add it to "
+          "CameraSource::getColorFormat", colorFormat);
+ 
+-    CHECK(!"Unknown color format");
++    //CHECK(!"Unknown color format");
+     return -1;
+ }
+ 
+-- 
+2.43.0
+

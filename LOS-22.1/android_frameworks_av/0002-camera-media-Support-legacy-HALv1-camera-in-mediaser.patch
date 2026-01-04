@@ -1,7 +1,8 @@
-From 0b384098b7054dcd882a9c76720d97471ac27bb4 Mon Sep 17 00:00:00 2001
+From 3cdab534f43ab15befabfbae6ac2f43609db42af Mon Sep 17 00:00:00 2001
 From: Simon Shields <keepcalm444@gmail.com>
 Date: Thu, 6 Oct 2016 20:25:32 +1100
-Subject: [PATCH 2/2] camera/media: Support legacy HALv1 camera in mediaserver
+Subject: [PATCH 02/16] camera/media: Support legacy HALv1 camera in
+ mediaserver
 
 Pre 7.0 camera HALv1 can not share its video buffers
 across different processes, which requires us to

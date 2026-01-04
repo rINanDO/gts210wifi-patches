@@ -1,4 +1,4 @@
-From 6b5a4e54158d87200431455db0d02c3565b63e8d Mon Sep 17 00:00:00 2001
+From 72fdc97579ed78af65bbb03d59c04b0a5854776d Mon Sep 17 00:00:00 2001
 From: Danny Baumann <dannybaumann@web.de>
 Date: Fri, 31 Aug 2018 13:29:12 +0200
 Subject: [PATCH 4/4] CameraServiceProxy: Loosen UID check conditionally

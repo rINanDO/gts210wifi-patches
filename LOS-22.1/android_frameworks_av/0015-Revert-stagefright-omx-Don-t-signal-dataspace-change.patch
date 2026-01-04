@@ -1,0 +1,45 @@
+From c14f0d7d759d792f72030d8c61e3f9e189e28531 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Sun, 4 Jan 2026 11:49:53 +0100
+Subject: [PATCH 15/16] Revert "stagefright: omx: Don't signal dataspace change
+ on legacy QCOM"
+
+This reverts commit 3fe17adc310033e76ad2b5fc9fdfd70947b1bb6d.
+---
+ media/module/bqhelper/Android.bp              | 1 -
+ media/module/bqhelper/GraphicBufferSource.cpp | 2 --
+ 2 files changed, 3 deletions(-)
+
+diff --git a/media/module/bqhelper/Android.bp b/media/module/bqhelper/Android.bp
+index 43c545fd55..f9b7deaf41 100644
+--- a/media/module/bqhelper/Android.bp
++++ b/media/module/bqhelper/Android.bp
+@@ -8,7 +8,6 @@ package {
+ 
+ cc_defaults {
+     name: "libstagefright_bufferqueue-defaults",
+-    defaults: ["stagefright_qcom_legacy_defaults"],
+     double_loadable: true,
+ 
+     srcs: [
+diff --git a/media/module/bqhelper/GraphicBufferSource.cpp b/media/module/bqhelper/GraphicBufferSource.cpp
+index d1e3f357bd..82ddbc0ff2 100644
+--- a/media/module/bqhelper/GraphicBufferSource.cpp
++++ b/media/module/bqhelper/GraphicBufferSource.cpp
+@@ -891,13 +891,11 @@ status_t GraphicBufferSource::submitBuffer_l(const VideoBuffer &item) {
+         return UNKNOWN_ERROR;
+     }
+ 
+-#ifndef QCOM_BSP_LEGACY
+     if ((android_dataspace)item.mDataspace != mLastDataspace) {
+         onDataspaceChanged_l(
+                 item.mDataspace,
+                 (android_pixel_format)item.mBuffer->getGraphicBuffer()->format);
+     }
+-#endif
+ 
+     std::shared_ptr<AcquiredBuffer> buffer = item.mBuffer;
+     // use a GraphicBuffer for now as component is using GraphicBuffers to hold references
+-- 
+2.43.0
+

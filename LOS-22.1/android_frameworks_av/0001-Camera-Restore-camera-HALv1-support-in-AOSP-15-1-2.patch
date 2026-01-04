@@ -1,7 +1,7 @@
-From 92782d5d6c56dc2c4e59a3448160eea69d9a591f Mon Sep 17 00:00:00 2001
+From c0bccf630483297c16bdc79e40943f21cb137b86 Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Wed, 31 Dec 2025 18:24:21 +0100
-Subject: [PATCH 1/2] Camera: Restore camera HALv1 support in AOSP 15 [1/2]
+Subject: [PATCH 01/16] Camera: Restore camera HALv1 support in AOSP 15 [1/2]
 
 One last time for our 32-bit old devices :)
 
