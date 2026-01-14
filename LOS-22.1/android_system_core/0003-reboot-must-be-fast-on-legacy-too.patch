@@ -1,7 +1,7 @@
-From 658c9171e69dab500df396494adf00de31bc468e Mon Sep 17 00:00:00 2001
+From 8b920569d95010a40224d8d8d6f6f5602d084ec0 Mon Sep 17 00:00:00 2001
 From: Yaroslav Zviezda <acroreiser@gmail.com>
 Date: Mon, 20 Feb 2023 20:38:39 +0300
-Subject: [PATCH 3/5] reboot must be fast on legacy too
+Subject: [PATCH 3/6] reboot must be fast on legacy too
 
 Change-Id: I591d36fe86e68f391a8e11773bd91368c946b477
 ---
@@ -9,10 +9,10 @@ Change-Id: I591d36fe86e68f391a8e11773bd91368c946b477
  1 file changed, 16 insertions(+), 45 deletions(-)
 
 diff --git a/init/reboot.cpp b/init/reboot.cpp
-index a9c1e3623..dc49c1399 100644
+index 6251dbd1d..ea94dd4fe 100644
 --- a/init/reboot.cpp
 +++ b/init/reboot.cpp
-@@ -423,38 +423,22 @@ static UmountStat TryUmountAndFsck(unsigned int cmd, bool run_fsck,
+@@ -412,38 +412,22 @@ static UmountStat TryUmountAndFsck(unsigned int cmd, bool run_fsck,
      if (run_fsck && !FindPartitionsToUmount(&block_devices, &emulated_devices, false)) {
          return UMOUNT_STAT_ERROR;
      }
@@ -66,7 +66,7 @@ index a9c1e3623..dc49c1399 100644
          LOG(INFO) << "Pause reboot monitor thread before fsck";
          sem_post(reboot_semaphore);
  
-@@ -467,7 +451,7 @@ static UmountStat TryUmountAndFsck(unsigned int cmd, bool run_fsck,
+@@ -456,7 +440,7 @@ static UmountStat TryUmountAndFsck(unsigned int cmd, bool run_fsck,
          LOG(INFO) << "Resume reboot monitor thread after fsck";
          sem_post(reboot_semaphore);
      }
@@ -75,7 +75,7 @@ index a9c1e3623..dc49c1399 100644
  }
  
  // zram is able to use backing device on top of a loopback device.
-@@ -729,17 +713,6 @@ static void DoReboot(unsigned int cmd, const std::string& reason, const std::str
+@@ -718,17 +702,6 @@ static void DoReboot(unsigned int cmd, const std::string& reason, const std::str
          }
      }
  
@@ -93,7 +93,7 @@ index a9c1e3623..dc49c1399 100644
      // 3. send volume abort_fuse and volume shutdown to vold
      Service* vold_service = ServiceList::GetInstance().FindService("vold");
      if (vold_service != nullptr && vold_service->IsRunning()) {
-@@ -751,8 +724,6 @@ static void DoReboot(unsigned int cmd, const std::string& reason, const std::str
+@@ -740,8 +713,6 @@ static void DoReboot(unsigned int cmd, const std::string& reason, const std::str
      } else {
          LOG(INFO) << "vold not running, skipping vold shutdown";
      }
@@ -103,5 +103,5 @@ index a9c1e3623..dc49c1399 100644
      {
          Timer sync_timer;
 -- 
-2.45.2
+2.43.0
 

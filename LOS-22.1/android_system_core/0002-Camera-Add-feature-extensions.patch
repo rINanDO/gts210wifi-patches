@@ -1,7 +1,7 @@
-From e16fa3187aa4ecd53a45d6c698216c52aea91de4 Mon Sep 17 00:00:00 2001
+From 30b9ae6f31e014f88b55fe257ef38cde275071f6 Mon Sep 17 00:00:00 2001
 From: Sauhard Pande <sauhardp@codeaurora.org>
 Date: Wed, 24 Jun 2015 22:38:25 -0700
-Subject: [PATCH 2/5] Camera: Add feature extensions
+Subject: [PATCH 2/6] Camera: Add feature extensions
 
 This change includes below commits:
 
@@ -106,5 +106,5 @@ index 2ca90c395..990edcf32 100644
   * The metadata of the frame data.
   */
 -- 
-2.45.2
+2.43.0
 
