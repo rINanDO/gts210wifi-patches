@@ -1,7 +1,7 @@
 From e4e70a3984059ca1b01775a73be68f92c320a97d Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Thu, 11 Dec 2025 21:32:44 +0100
-Subject: [PATCH 4/4] Hack: Disable treble for now
+Subject: [PATCH 4/5] Hack: Disable treble for now
 
 Change-Id: Id3b51a36d08ef8c86b3d2a82608f338b58600d4a
 ---
