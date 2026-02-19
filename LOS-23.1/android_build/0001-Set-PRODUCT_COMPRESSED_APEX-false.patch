@@ -1,7 +1,7 @@
-From 12692d25c9a18e1857c0de5c90791eeb24ec100f Mon Sep 17 00:00:00 2001
+From 111bfa1aeae5c895354c2c045efa893ec8b44fe4 Mon Sep 17 00:00:00 2001
 From: khalvat-M <mmba313@gmail.com>
 Date: Fri, 5 Apr 2024 21:31:31 +0330
-Subject: [PATCH 1/5] Set PRODUCT_COMPRESSED_APEX := false
+Subject: [PATCH 1/6] Set PRODUCT_COMPRESSED_APEX := false
 
 for some reason we can not disable it from device side
 

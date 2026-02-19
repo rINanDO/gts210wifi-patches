@@ -1,7 +1,7 @@
-From 29db32f7072170a70c93ef58a59593017ed94c92 Mon Sep 17 00:00:00 2001
+From 441b6c409d0ecd91f57258387a2576c247627c8c Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Wed, 16 Jul 2025 09:21:25 -0400
-Subject: [PATCH 2/5] Hack: Only warn for link_type_error
+Subject: [PATCH 2/6] Hack: Only warn for link_type_error
 
 Change-Id: Ic230c7534fc6e991811a05d32bf4e97dc343d1f5
 ---
