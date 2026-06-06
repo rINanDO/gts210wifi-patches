@@ -1,4 +1,4 @@
-From f83540c302c1082d8ea3d6f1d48c2b3e313f97d2 Mon Sep 17 00:00:00 2001
+From f56159385ecd99a76672fbdac013fbd4bc123586 Mon Sep 17 00:00:00 2001
 From: Nicholas Lim <nicknitewolf@lineageos.org>
 Date: Tue, 24 Sep 2019 19:59:46 +0800
 Subject: [PATCH] art: Conditionally remove version check for memfd_create()
@@ -12,27 +12,37 @@ This conditionally reverts commit 51f89d9.
 Change-Id: Ife2cebde713e14bd787f48628092650866e2ac09
 (cherry picked from commit dd1d9ba1851d96a8d4f55cd8e983fcee1519d953)
 ---
- libartbase/Android.bp    | 5 ++++-
+ libartbase/Android.bp    | 8 +++++++-
  libartbase/base/memfd.cc | 7 ++++++-
  libartbase/base/memfd.h  | 3 +--
- 3 files changed, 11 insertions(+), 4 deletions(-)
+ 3 files changed, 14 insertions(+), 4 deletions(-)
 
 diff --git a/libartbase/Android.bp b/libartbase/Android.bp
-index d78c2a833e..ad56463b33 100644
+index d78c2a833e..57cb860da0 100644
 --- a/libartbase/Android.bp
 +++ b/libartbase/Android.bp
-@@ -26,7 +26,10 @@ package {
+@@ -26,7 +26,9 @@ package {
  
  cc_defaults {
      name: "libartbase_defaults",
 -    defaults: ["art_defaults"],
 +    defaults: [
 +        "art_defaults",
-+        "has_memfd_backport_defaults",
 +    ],
      host_supported: true,
      srcs: [
          "arch/instruction_set.cc",
+@@ -59,6 +61,10 @@ cc_defaults {
+         "base/utils.cc",
+         "base/zip_archive.cc",
+     ],
++    cflags: select(soong_config_variable("art", "has_memfd_backport"), {
++        "true": ["-DHAS_MEMFD_BACKPORT"],
++        default: [],
++    }),
+     target: {
+         android: {
+             srcs: [
 diff --git a/libartbase/base/memfd.cc b/libartbase/base/memfd.cc
 index f965a08780..9659713d82 100644
 --- a/libartbase/base/memfd.cc

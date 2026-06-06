@@ -1,4 +1,4 @@
-From 6323ca74d820720a532bf22080452ab2aaf1c1a5 Mon Sep 17 00:00:00 2001
+From 5d9241908b12d3dde09ab82899dbb625e18a1964 Mon Sep 17 00:00:00 2001
 From: Wang Han <416810799@qq.com>
 Date: Sat, 26 Sep 2020 22:57:04 +0800
 Subject: [PATCH] perfetto: Conditionally remove version check for
@@ -9,27 +9,29 @@ Subject: [PATCH] perfetto: Conditionally remove version check for
 
 Change-Id: I26af49e3f2bd8846fcc6fc6af0d43ccad21ae223
 ---
- Android.bp                             | 3 +++
+ Android.bp                             | 5 ++++-
  src/tracing/ipc/memfd.cc               | 4 ++++
  src/tracing/ipc/posix_shared_memory.cc | 9 +++++----
- 3 files changed, 12 insertions(+), 4 deletions(-)
+ 3 files changed, 13 insertions(+), 5 deletions(-)
 
 diff --git a/Android.bp b/Android.bp
-index a991cc15a..e76131ea3 100644
+index 4888838a1c..2c2a8dc751 100644
 --- a/Android.bp
 +++ b/Android.bp
-@@ -1944,6 +1944,9 @@ cc_library_static {
- // GN: //gn:default_deps
- cc_defaults {
-     name: "perfetto_defaults",
-+    defaults: [
-+        "has_memfd_backport_defaults",
-+    ],
-     cflags: [
-         "-O2",
-         "-Wno-error=return-type",
+@@ -2173,7 +2173,10 @@ cc_defaults {
+         "-Wno-sign-promo",
+         "-Wno-unused-parameter",
+         "-fvisibility=hidden",
+-    ],
++    ] + select(soong_config_variable("art", "has_memfd_backport"), {
++        "true": ["-DHAS_MEMFD_BACKPORT"],
++        default: [],
++    }),
+     include_dirs: [
+         "external/perfetto",
+         "external/perfetto/include",
 diff --git a/src/tracing/ipc/memfd.cc b/src/tracing/ipc/memfd.cc
-index 64025bf41..7391b638b 100644
+index eb8c0b10d1..9728cf5fb0 100644
 --- a/src/tracing/ipc/memfd.cc
 +++ b/src/tracing/ipc/memfd.cc
 @@ -27,7 +27,9 @@
@@ -59,7 +61,7 @@ index 64025bf41..7391b638b 100644
      base::ScopedFile fd;
      fd.reset(static_cast<int>(syscall(__NR_memfd_create, "perfetto_shmem",
 diff --git a/src/tracing/ipc/posix_shared_memory.cc b/src/tracing/ipc/posix_shared_memory.cc
-index 40fa962e7..d3fb06ba3 100644
+index 40fa962e74..d3fb06ba38 100644
 --- a/src/tracing/ipc/posix_shared_memory.cc
 +++ b/src/tracing/ipc/posix_shared_memory.cc
 @@ -50,10 +50,7 @@ std::unique_ptr<PosixSharedMemory> PosixSharedMemory::Create(size_t size) {
@@ -93,5 +95,5 @@ index 40fa962e7..d3fb06ba3 100644
      int res = fcntl(*fd, F_GET_SEALS);
      if (res == -1 || (res & kFileSeals) != kFileSeals) {
 -- 
-2.45.2
+2.51.0
 
