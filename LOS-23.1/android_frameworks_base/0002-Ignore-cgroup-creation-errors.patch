@@ -1,7 +1,7 @@
-From 8627d5c1dcf53445015b97b0d4a0efa1614672b2 Mon Sep 17 00:00:00 2001
+From 4a48bbbcf0166753478973f6f80420c1735aed2b Mon Sep 17 00:00:00 2001
 From: Pierre-Hugues Husson <phh@phh.me>
 Date: Wed, 18 Oct 2023 16:53:40 -0400
-Subject: [PATCH 2/3] Ignore cgroup creation errors
+Subject: [PATCH 2/4] Ignore cgroup creation errors
 
 For old kernels who don't have those modern cgroups
 ---
