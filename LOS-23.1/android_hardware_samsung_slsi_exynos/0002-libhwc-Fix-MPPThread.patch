@@ -1,7 +1,7 @@
-From 78e906a358bb044396a9a2884ac0421e710d395e Mon Sep 17 00:00:00 2001
+From 323c9373665859f19af05343d58d993370afdaf7 Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Sun, 8 Jun 2025 12:45:25 -0400
-Subject: [PATCH 2/2] libhwc: Fix MPPThread
+Subject: [PATCH 2/3] libhwc: Fix MPPThread
 
 Change-Id: I8868998b55232d93112051933002d1938d911dcb
 ---
@@ -35,5 +35,5 @@ index 7335ab7..c82b354 100644
  
  ExynosMPP::~ExynosMPP()
 -- 
-2.45.2
+2.51.0
 

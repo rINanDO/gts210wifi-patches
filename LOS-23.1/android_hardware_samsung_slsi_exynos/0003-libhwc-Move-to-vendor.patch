@@ -1,0 +1,25 @@
+From 156ada82baea98cc15ba1970568a5cf563a848d3 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Wed, 17 Jun 2026 09:52:22 +0200
+Subject: [PATCH 3/3] libhwc: Move to vendor
+
+Change-Id: Id9439ab12310bfbd16da0f1298fa6f3f439dae54
+---
+ libhwc/Android.mk | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/libhwc/Android.mk b/libhwc/Android.mk
+index 543db81..a97bd64 100644
+--- a/libhwc/Android.mk
++++ b/libhwc/Android.mk
+@@ -121,6 +121,7 @@ LOCAL_SRC_FILES := ExynosHWC.cpp
+ 
+ LOCAL_MODULE := hwcomposer.$(TARGET_BOARD_PLATFORM)
+ LOCAL_MODULE_TAGS := optional
++LOCAL_PROPRIETARY_MODULE := true
+ 
+ include $(TOP)/hardware/samsung_slsi/exynos/BoardConfigCFlags.mk
+ include $(BUILD_SHARED_LIBRARY)
+-- 
+2.51.0
+
