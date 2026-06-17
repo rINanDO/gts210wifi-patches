@@ -1,7 +1,7 @@
 From 156ada82baea98cc15ba1970568a5cf563a848d3 Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Wed, 17 Jun 2026 09:52:22 +0200
-Subject: [PATCH 3/3] libhwc: Move to vendor
+Subject: [PATCH 3/4] libhwc: Move to vendor
 
 Change-Id: Id9439ab12310bfbd16da0f1298fa6f3f439dae54
 ---
