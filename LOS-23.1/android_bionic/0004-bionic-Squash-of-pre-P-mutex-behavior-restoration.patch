@@ -1,7 +1,7 @@
-From 4e33edff65feb728ea64e0563197d6fc0d09899b Mon Sep 17 00:00:00 2001
+From 2d85aa27216c62194265442c761fbf0fd4ceb151 Mon Sep 17 00:00:00 2001
 From: Ethan Chen <intervigil@gmail.com>
 Date: Tue, 25 Sep 2018 00:11:05 -0700
-Subject: [PATCH 6/8] bionic: Squash of pre-P mutex behavior restoration
+Subject: [PATCH 4/7] bionic: Squash of pre-P mutex behavior restoration
 
 This is a squash of the following commits:
 

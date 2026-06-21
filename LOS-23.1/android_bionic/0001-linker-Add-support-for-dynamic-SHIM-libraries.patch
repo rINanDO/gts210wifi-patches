@@ -1,7 +1,7 @@
-From 6a6de5aaaefc21553d16a43c7c6f6a1d497b237f Mon Sep 17 00:00:00 2001
+From 5c13ae3ff1d24796b2584e95ffd86e643b12cc7c Mon Sep 17 00:00:00 2001
 From: "Christopher R. Palmer" <crpalmer@gmail.com>
 Date: Sat, 8 Apr 2017 22:40:01 +0200
-Subject: [PATCH 1/8] linker: Add support for dynamic SHIM libraries
+Subject: [PATCH 1/7] linker: Add support for dynamic SHIM libraries
 
 Author: Christopher R. Palmer <crpalmer@gmail.com>
 Date:   Tue Nov 3 16:44:44 2015 -0500
@@ -246,27 +246,29 @@ Date:   Fri Jan 25 18:18:01 2019 +0900
 Change-Id: Ic3ad7095ddae7ea1039cb6a18603d5cde8a16152
 Signed-off-by: Wang Han <416810799@qq.com>
 ---
- linker/Android.bp      |  4 ++-
+ linker/Android.bp      |  6 ++--
  linker/linker.cpp      | 71 ++++++++++++++++++++++++++++++++++++++++++
  linker/linker.h        | 18 +++++++++++
  linker/linker_main.cpp | 13 +++++++-
- 4 files changed, 104 insertions(+), 2 deletions(-)
+ 4 files changed, 105 insertions(+), 3 deletions(-)
 
 diff --git a/linker/Android.bp b/linker/Android.bp
-index ea4e69965..cbaf6e7b3 100644
+index ea4e69965..aa1b31c01 100644
 --- a/linker/Android.bp
 +++ b/linker/Android.bp
-@@ -76,7 +76,9 @@ cc_object {
+@@ -76,8 +76,10 @@ cc_object {
  // Configuration for the linker binary and any of its static libraries.
  cc_defaults {
      name: "linker_defaults",
 -
-+    defaults: [
-+        "shim_libs_defaults",
-+    ],
-     cflags: linker_common_flags,
+-    cflags: linker_common_flags,
++    cflags: linker_common_flags
++        + select(soong_config_variable("bionic", "ld_shim_libs"), {
++           any @ flag_val: ["-DLD_SHIM_LIBS=" + flag_val],
++           default: []}),
      asflags: linker_common_flags,
  
+     product_variables: {
 diff --git a/linker/linker.cpp b/linker/linker.cpp
 index 5580a8350..d51c8f4b1 100644
 --- a/linker/linker.cpp
