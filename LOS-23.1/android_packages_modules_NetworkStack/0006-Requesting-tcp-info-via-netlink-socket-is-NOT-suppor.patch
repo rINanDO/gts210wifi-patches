@@ -1,7 +1,7 @@
-From 0b00cd215b7921b8258a73eb1c6ef65a81f30db2 Mon Sep 17 00:00:00 2001
+From c99b033ef55b476ed08fc2d656f68bd80b809716 Mon Sep 17 00:00:00 2001
 From: Yaroslav Zviezda <acroreiser@gmail.com>
 Date: Sun, 31 Mar 2024 21:32:02 +0300
-Subject: [PATCH 6/8] Requesting tcp info via netlink socket is NOT supported
+Subject: [PATCH 06/15] Requesting tcp info via netlink socket is NOT supported
 
 Change-Id: Iec515ea5e50f1bb0ad929e78661363f33dd5bc64
 ---

@@ -1,7 +1,7 @@
-From cde343339eb6991352784ed27c086307533ab3af Mon Sep 17 00:00:00 2001
+From 1dcfce2b3e1136e523390d8760a1bb6d64c3ceff Mon Sep 17 00:00:00 2001
 From: Yaroslav Zviezda <acroreiser@gmail.com>
 Date: Tue, 2 Apr 2024 23:49:13 +0300
-Subject: [PATCH 5/8] Revert "Remove isTcpInfoParsingSupported and Q test
+Subject: [PATCH 05/15] Revert "Remove isTcpInfoParsingSupported and Q test
  annotations"
 
 This reverts commit d2f699c4608939e2f5a7589f6385b56d27243dfe.

@@ -1,7 +1,7 @@
-From 58c89dc0a4ad6ccd089e0056db7a9adc9a6013a5 Mon Sep 17 00:00:00 2001
+From db71c76751ae024a110073f6346c6b11af9cf5ad Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Sun, 8 Jun 2025 12:46:58 -0400
-Subject: [PATCH] audio/ril: Fix audio and ril
+Subject: [PATCH 1/2] audio/ril: Fix audio and ril
 
 Change-Id: I65110d643b5bbda917f0ee4cd71b19abe4c5b698
 ---
