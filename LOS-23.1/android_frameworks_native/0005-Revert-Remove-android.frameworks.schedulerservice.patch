@@ -1,7 +1,7 @@
 From 27d1ace80591eaea07f1cb7bbc0a41af32d5b7f9 Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Tue, 10 Mar 2026 22:31:22 +0100
-Subject: [PATCH 5/5] Revert "Remove android.frameworks.schedulerservice"
+Subject: [PATCH 5/6] Revert "Remove android.frameworks.schedulerservice"
 
 This reverts commit 25a53ad19a0e6c2298109d77d7d3c37cce4a4a40.
 ---

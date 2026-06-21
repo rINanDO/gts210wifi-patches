@@ -1,7 +1,7 @@
 From 76231dfbc9e123ccb281c20d3c5fece2fca432ad Mon Sep 17 00:00:00 2001
 From: Yaroslav Zviezda <acroreiser@gmail.com>
 Date: Fri, 21 Oct 2022 19:31:55 +0300
-Subject: [PATCH 1/5] libbinder: make threadpool shrinking non-fatal
+Subject: [PATCH 1/6] libbinder: make threadpool shrinking non-fatal
 
 Change-Id: Ic5c5ecc4c38d5f625e4c26b7202315df7440e396
 ---

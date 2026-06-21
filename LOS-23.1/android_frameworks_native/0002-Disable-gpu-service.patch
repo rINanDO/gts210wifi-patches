@@ -1,7 +1,7 @@
 From 958b15fc26870743aaf3ddde0d263c4fc6fc83f1 Mon Sep 17 00:00:00 2001
 From: ivanmeler <i_ivan@windowslive.com>
 Date: Tue, 23 Aug 2022 21:26:45 +0000
-Subject: [PATCH 2/5] Disable gpu service
+Subject: [PATCH 2/6] Disable gpu service
 
 Just comment it out whole we cant use it
 ---
