@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+
+  <!-- DEVICES -->
+  <project name="rINanDO/android_device_samsung_gts2-common" path="device/samsung/gts2-common" remote="github" revision="lineage-23.1" />
+  <project name="rINanDO/android_device_samsung_gts210wifi" path="device/samsung/gts210wifi" remote="github" revision="lineage-23.1" />
+  <project name="rINanDO/android_device_samsung_slsi_sepolicy" path="device/samsung_slsi/sepolicy" remote="github" revision="lineage-23.1" />
+
+  <!-- KERNEL -->
+  <project name="rINanDO/android_kernel_samsung_universal5433" path="kernel/samsung/universal5433" remote="github" revision="lineage-23.1" />
+
+  <!-- VENDOR -->
+  <project name="rINanDO/proprietary_vendor_samsung" path="vendor/samsung" remote="github" revision="lineage-23.1" />
+
+ <!-- Samsung Hardware Repo -->
+  <project path="hardware/samsung" name="rinando/android_hardware_samsung" remote="github" revision="lineage-23.1"/>
+
+  <!-- HARDWARE -->
+  <project name="rINanDO/android_hardware_samsung_slsi_exynos" path="hardware/samsung_slsi/exynos" remote="github" revision="lineage-23.1" />
+  <project name="rINanDO/android_hardware_samsung_slsi_exynos5" path="hardware/samsung_slsi/exynos5" remote="github" revision="lineage-23.1" />
+  <project name="rINanDO/android_hardware_samsung_slsi_openmax" path="hardware/samsung_slsi/openmax" remote="github" revision="lineage-23.1" />
+  <project name="rINanDO/android_hardware_samsung_slsi_exynos5433" path="hardware/samsung_slsi/exynos5433" remote="github" revision="lineage-23.1" />
+
+</manifest>
