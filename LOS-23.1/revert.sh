@@ -25,6 +25,7 @@ declare -A patches=(
     ["prebuilts/build-tools"]="android_prebuilts_build-tools"
     ["system/bpf"]="android_system_bpf"
     ["system/core"]="android_system_core"
+    ["system/linkerconfig"]="android_system_linkerconfig"
     ["system/netd"]="android_system_netd"
     ["system/tools/mkbootimg"]="android_system_tools_mkbootimg"
     ["system/tools/hidl"]="android_system_tools_hidl"
