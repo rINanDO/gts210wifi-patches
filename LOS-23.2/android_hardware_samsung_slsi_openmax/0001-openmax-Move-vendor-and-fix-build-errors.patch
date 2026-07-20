@@ -1,0 +1,38 @@
+From 2a6b14b161afac3643bbf5e384a16111c172db80 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Thu, 18 Jun 2026 19:50:53 +0200
+Subject: [PATCH] openmax: Move vendor and fix build errors
+
+Change-Id: I38578749cb61210a78b46f8751bf93ff25e77c1c
+---
+ component/common/Android.mk | 1 +
+ core/Android.mk             | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/component/common/Android.mk b/component/common/Android.mk
+index c6e447a..aa381a9 100644
+--- a/component/common/Android.mk
++++ b/component/common/Android.mk
+@@ -52,6 +52,7 @@ LOCAL_SRC_FILES := \
+ 
+ LOCAL_PRELINK_MODULE := false
+ LOCAL_MODULE := libExynosOMX_Resourcemanager
++LOCAL_PROPRIETARY_MODULE := true
+ 
+ LOCAL_CFLAGS := \
+     -Wno-enum-conversion \
+diff --git a/core/Android.mk b/core/Android.mk
+index ffd2e83..b10f87a 100644
+--- a/core/Android.mk
++++ b/core/Android.mk
+@@ -9,6 +9,7 @@ LOCAL_SRC_FILES := \
+ 
+ LOCAL_PRELINK_MODULE := false
+ LOCAL_MODULE := libExynosOMX_Core
++LOCAL_PROPRIETARY_MODULE := true
+ 
+ LOCAL_CFLAGS := \
+     -Wno-enum-conversion \
+-- 
+2.51.0
+
