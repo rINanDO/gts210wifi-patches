@@ -1,7 +1,7 @@
-From 4cf8a30b26411dee370178bcc7aabd2eefa2198f Mon Sep 17 00:00:00 2001
+From e327f37b13c8c6843c731bec18cde9fc492f995d Mon Sep 17 00:00:00 2001
 From: Danny Baumann <dannybaumann@web.de>
 Date: Wed, 29 Aug 2018 11:21:52 +0200
-Subject: [PATCH 2/7] Implement per-process target SDK version override.
+Subject: [PATCH 3/7] Implement per-process target SDK version override.
 
 Change-Id: Id11b5d76708787d66afc94c9d3dc9fc7b3c6eb79
 Signed-off-by: Dominggoes Isakh <drjisakh@gmail.com>
@@ -11,7 +11,7 @@ Signed-off-by: Dominggoes Isakh <drjisakh@gmail.com>
  2 files changed, 16 insertions(+), 2 deletions(-)
 
 diff --git a/linker/Android.bp b/linker/Android.bp
-index aa1b31c01..221ae905b 100644
+index 0ce5038df..11b2cfb53 100644
 --- a/linker/Android.bp
 +++ b/linker/Android.bp
 @@ -79,7 +79,10 @@ cc_defaults {
@@ -27,10 +27,10 @@ index aa1b31c01..221ae905b 100644
  
      product_variables: {
 diff --git a/linker/linker.cpp b/linker/linker.cpp
-index d51c8f4b1..ac68f8d0c 100644
+index 671e5f2fe..40023ca9a 100644
 --- a/linker/linker.cpp
 +++ b/linker/linker.cpp
-@@ -3804,7 +3804,18 @@ std::vector<android_namespace_t*> init_default_namespaces(const char* executable
+@@ -3824,7 +3824,18 @@ std::vector<android_namespace_t*> init_default_namespaces(const char* executable
      }
    }
  
@@ -51,5 +51,5 @@ index d51c8f4b1..ac68f8d0c 100644
    std::vector<android_namespace_t*> created_namespaces;
    created_namespaces.reserve(namespaces.size());
 -- 
-2.51.0
+2.54.0
 

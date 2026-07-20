@@ -1,7 +1,7 @@
-From e415837fb6284fc4190939f1658520bf2eeb6576 Mon Sep 17 00:00:00 2001
+From 2fc4e90c228040ac4f1c4dea4cd6d0e1d9c16b00 Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Tue, 10 Dec 2019 22:34:55 +0100
-Subject: [PATCH 3/7] linker: Apply TARGET_PROCESS_SDK_VERSION_OVERRIDE on
+Subject: [PATCH 4/7] linker: Apply TARGET_PROCESS_SDK_VERSION_OVERRIDE on
  dlopen
 
 Change-Id: I2d93f81315fcb67cc3fd102f45d9db8f84e2ff12
@@ -11,10 +11,10 @@ Signed-off-by: Dominggoes Isakh <drjisakh@gmail.com>
  1 file changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/linker/linker.cpp b/linker/linker.cpp
-index ac68f8d0c..261ff2835 100644
+index 40023ca9a..703cc5b52 100644
 --- a/linker/linker.cpp
 +++ b/linker/linker.cpp
-@@ -3456,6 +3456,17 @@ bool soinfo::link_image(const SymbolLookupList& lookup_list, soinfo* local_group
+@@ -3457,6 +3457,17 @@ bool soinfo::link_image(const SymbolLookupList& lookup_list, soinfo* local_group
  
  #if !defined(__LP64__)
    if (has_text_relocations) {
@@ -32,7 +32,7 @@ index ac68f8d0c..261ff2835 100644
      if (DL_ERROR_AFTER(23, "\"%s\" has text relocations", get_realpath())) {
        return false;
      }
-@@ -3813,7 +3824,7 @@ std::vector<android_namespace_t*> init_default_namespaces(const char* executable
+@@ -3833,7 +3844,7 @@ std::vector<android_namespace_t*> init_default_namespaces(const char* executable
        break;
      }
    }
@@ -42,5 +42,5 @@ index ac68f8d0c..261ff2835 100644
    set_application_target_sdk_version(target_sdk);
  
 -- 
-2.51.0
+2.54.0
 
