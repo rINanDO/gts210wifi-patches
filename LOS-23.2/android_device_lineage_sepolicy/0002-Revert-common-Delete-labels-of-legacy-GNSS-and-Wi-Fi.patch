@@ -1,7 +1,7 @@
-From ffc8b50880e638c20a00fbcca88620d1b3552937 Mon Sep 17 00:00:00 2001
+From d111f17abea5831671125a6ba4a1ec6cd73a9a6e Mon Sep 17 00:00:00 2001
 From: khalvat-M <mmba313@gmail.com>
 Date: Tue, 21 May 2024 18:41:34 +0330
-Subject: [PATCH 3/4] Revert "common: Delete labels of legacy GNSS and Wi-Fi
+Subject: [PATCH 2/3] Revert "common: Delete labels of legacy GNSS and Wi-Fi
  service HALs"
 
 This reverts commit 0afbffaae94b7a745ed488223dadf40dd2adc7b9.
@@ -24,5 +24,5 @@ index 2746446..ee09314 100644
 +# Wi-Fi HAL
 +/(vendor|system/vendor)/bin/hw/android\.hardware\.wifi@1\.0-service\.legacy u:object_r:hal_wifi_default_exec:s0
 -- 
-2.51.0
+2.54.0
 

@@ -1,7 +1,7 @@
 From 3483482f4b3ec5862f042fac8c9752c6fbcf7724 Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Sun, 15 Feb 2026 16:51:47 +0100
-Subject: [PATCH 1/7] arc4random: Don't use MADV_WIPEONFORK and die
+Subject: [PATCH 2/8] arc4random: Don't use MADV_WIPEONFORK and die
 
 Change-Id: If251f5ee8f0320e18d172c9eeee842f1bbb16a4e
 ---

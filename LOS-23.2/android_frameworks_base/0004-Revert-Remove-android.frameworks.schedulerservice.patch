@@ -1,7 +1,7 @@
-From 63fe49317423099ef9abefae5c09e0585debc379 Mon Sep 17 00:00:00 2001
+From d29c44229339e91420052e7da0047fa860129f4e Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Fri, 13 Mar 2026 19:20:27 +0100
-Subject: [PATCH 5/8] Revert "Remove android.frameworks.schedulerservice"
+Subject: [PATCH 4/5] Revert "Remove android.frameworks.schedulerservice"
 
 This reverts commit 7c38da99d8c08622221cfd0bb1622cf04fea597d.
 ---
@@ -10,10 +10,10 @@ This reverts commit 7c38da99d8c08622221cfd0bb1622cf04fea597d.
  2 files changed, 20 insertions(+), 1 deletion(-)
 
 diff --git a/services/core/jni/Android.bp b/services/core/jni/Android.bp
-index 99e4ea59c4ac..e8eb284937dc 100644
+index 109abd5330be..5fd1043d3656 100644
 --- a/services/core/jni/Android.bp
 +++ b/services/core/jni/Android.bp
-@@ -151,6 +151,7 @@ cc_defaults {
+@@ -153,6 +153,7 @@ cc_defaults {
          "libstatssocket",
          "libstatslog_inputflinger",
          "libstatslog_surfaceflinger",
@@ -21,7 +21,7 @@ index 99e4ea59c4ac..e8eb284937dc 100644
          "libsensorservice",
          "libsensorservicehidl",
          "libsensorserviceaidl",
-@@ -199,6 +200,7 @@ cc_defaults {
+@@ -201,6 +202,7 @@ cc_defaults {
          "android.hardware.tv.input-V3-ndk",
          "android.hardware.vibrator-V3-ndk",
          "android.hidl.token@1.0-utils",
@@ -67,5 +67,5 @@ index f03477131bb8..be18f6419e15 100644
  
  static void android_server_SystemServer_initZygoteChildHeapProfiling(JNIEnv* /* env */,
 -- 
-2.51.0
+2.54.0
 

@@ -1,7 +1,7 @@
 From e327f37b13c8c6843c731bec18cde9fc492f995d Mon Sep 17 00:00:00 2001
 From: Danny Baumann <dannybaumann@web.de>
 Date: Wed, 29 Aug 2018 11:21:52 +0200
-Subject: [PATCH 3/7] Implement per-process target SDK version override.
+Subject: [PATCH 4/8] Implement per-process target SDK version override.
 
 Change-Id: Id11b5d76708787d66afc94c9d3dc9fc7b3c6eb79
 Signed-off-by: Dominggoes Isakh <drjisakh@gmail.com>

@@ -1,7 +1,7 @@
-From a6577732c1f788b0f022894dcf3c6e4cfa12381e Mon Sep 17 00:00:00 2001
+From 6d27b777f62614609902784de142fb03e3a25406 Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Sun, 25 Jan 2026 12:44:07 +0100
-Subject: [PATCH 3/8] Bitmap: Keep using ashmem instead of memfd for legacy
+Subject: [PATCH 3/5] Bitmap: Keep using ashmem instead of memfd for legacy
  devices
 
 This has been introduced by
@@ -43,10 +43,10 @@ Change-Id: Ie55906e6433eacc22c7de387eb9099bdfec1bfd7
  1 file changed, 12 insertions(+), 40 deletions(-)
 
 diff --git a/libs/hwui/jni/Bitmap.cpp b/libs/hwui/jni/Bitmap.cpp
-index 03ffddfa9160..3aaf5e3c02e9 100644
+index 1d4576156d51..29862d0fea4c 100644
 --- a/libs/hwui/jni/Bitmap.cpp
 +++ b/libs/hwui/jni/Bitmap.cpp
-@@ -775,50 +775,22 @@ static binder_status_t writeBlob(AParcel* parcel, uint64_t bitmapId, const SkBit
+@@ -782,50 +782,22 @@ static binder_status_t writeBlob(AParcel* parcel, uint64_t bitmapId, const SkBit
          // Create new ashmem region with read/write priv
          auto ashmemId = Bitmap::getAshmemId("writeblob", bitmapId,
                                              bitmap.width(), bitmap.height(), size);
@@ -110,5 +110,5 @@ index 03ffddfa9160..3aaf5e3c02e9 100644
  
          // Workaround b/149851140 in AParcel_writeParcelFileDescriptor
 -- 
-2.51.0
+2.54.0
 

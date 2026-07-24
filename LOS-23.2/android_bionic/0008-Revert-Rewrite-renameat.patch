@@ -1,7 +1,7 @@
 From 664100d3da75b8989d1f55c0523e939ca2aafa20 Mon Sep 17 00:00:00 2001
 From: html6405 <peter.schelchshorn@mhs-solutions.at>
 Date: Mon, 25 Dec 2023 20:49:17 +0100
-Subject: [PATCH 7/7] Revert "Rewrite renameat()."
+Subject: [PATCH 8/8] Revert "Rewrite renameat()."
 
 We still want to support kernels without renameat2
 

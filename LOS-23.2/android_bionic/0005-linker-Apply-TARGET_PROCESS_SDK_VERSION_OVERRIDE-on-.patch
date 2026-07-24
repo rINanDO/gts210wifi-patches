@@ -1,7 +1,7 @@
 From 2fc4e90c228040ac4f1c4dea4cd6d0e1d9c16b00 Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Tue, 10 Dec 2019 22:34:55 +0100
-Subject: [PATCH 4/7] linker: Apply TARGET_PROCESS_SDK_VERSION_OVERRIDE on
+Subject: [PATCH 5/8] linker: Apply TARGET_PROCESS_SDK_VERSION_OVERRIDE on
  dlopen
 
 Change-Id: I2d93f81315fcb67cc3fd102f45d9db8f84e2ff12
