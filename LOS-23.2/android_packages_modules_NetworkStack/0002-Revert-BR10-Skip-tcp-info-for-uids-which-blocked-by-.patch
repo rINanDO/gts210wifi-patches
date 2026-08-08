@@ -1,7 +1,7 @@
-From f35c638d109377c1c39e7bf9fe2df33d4fc5a9a9 Mon Sep 17 00:00:00 2001
+From 82b11ddfd051f51ed846194e7047c74b05a760b2 Mon Sep 17 00:00:00 2001
 From: Yaroslav Zviezda <acroreiser@gmail.com>
 Date: Tue, 2 Apr 2024 23:47:30 +0300
-Subject: [PATCH 2/8] Revert "[BR10] Skip tcp info for uids which blocked by
+Subject: [PATCH 02/15] Revert "[BR10] Skip tcp info for uids which blocked by
  data saver"
 
 This reverts commit 294b54adfc193b4c2381b6bfbdd8a66f52d9cb0b.
@@ -191,5 +191,5 @@ index 7ee7045b4..99e315d42 100644
      public void testDataStall_setOpportunisticMode() {
          setDataStallEvaluationType(DATA_STALL_EVALUATION_TYPE_TCP);
 -- 
-2.51.0
+2.54.0
 

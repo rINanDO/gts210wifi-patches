@@ -1,7 +1,7 @@
-From 65d43b3a410095d77d1c12078e18bbd503cca0ba Mon Sep 17 00:00:00 2001
+From 6bc6b5b1accba740ea90605baaec41fc39a60a94 Mon Sep 17 00:00:00 2001
 From: Yaroslav Zviezda <acroreiser@gmail.com>
 Date: Tue, 2 Apr 2024 23:57:39 +0300
-Subject: [PATCH 7/8] Revert "[BR13] dump Device Configs to dumpsys"
+Subject: [PATCH 07/15] Revert "[BR13] dump Device Configs to dumpsys"
 
 This reverts commit 3a666f3bc7df47de78b05906a206fb4b2ac9d078.
 ---
@@ -43,5 +43,5 @@ index 71cacfdbb..533fbe17c 100644
              mLog.dump(fd, pw, args);
  
 -- 
-2.51.0
+2.54.0
 
