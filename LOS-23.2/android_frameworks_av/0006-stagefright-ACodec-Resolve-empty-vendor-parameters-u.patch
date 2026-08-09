@@ -1,4 +1,4 @@
-From 7b05dc2cdd3b77cd70e46fc132509989c142b1b3 Mon Sep 17 00:00:00 2001
+From ecf978245117819bc70bb6ecbdac6989c94f95a9 Mon Sep 17 00:00:00 2001
 From: Adrian DC <radian.dc@gmail.com>
 Date: Sun, 31 Dec 2017 13:12:05 +0100
 Subject: [PATCH 06/15] stagefright: ACodec: Resolve empty vendor parameters
@@ -19,10 +19,10 @@ Signed-off-by: Adrian DC <radian.dc@gmail.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/media/libstagefright/ACodec.cpp b/media/libstagefright/ACodec.cpp
-index bacf7581ab..5883db9eec 100644
+index 282212343f..b588d76403 100644
 --- a/media/libstagefright/ACodec.cpp
 +++ b/media/libstagefright/ACodec.cpp
-@@ -8382,6 +8382,7 @@ status_t ACodec::setVendorParameters(const sp<AMessage> &params) {
+@@ -8389,6 +8389,7 @@ status_t ACodec::setVendorParameters(const sp<AMessage> &params) {
      // don't bother component if we don't have vendor extensions as they may not have implemented
      // the android vendor extension support, which will lead to unnecessary OMX failure logs.
      if (vendorKeys.empty()) {
@@ -31,5 +31,5 @@ index bacf7581ab..5883db9eec 100644
      }
  
 -- 
-2.51.0
+2.54.0
 

@@ -1,4 +1,4 @@
-From de2b5a8c085218024f45ae922a9817705718460b Mon Sep 17 00:00:00 2001
+From 651bf85a0c72e02a0b2d28f5f285388af9e16308 Mon Sep 17 00:00:00 2001
 From: Bruno Martins <bgcngm@gmail.com>
 Date: Sat, 23 Sep 2017 18:29:21 +0100
 Subject: [PATCH 08/15] camera: include: Don't override possible overlayed
@@ -28,5 +28,5 @@ index f691cd6ea0..5fae079376 100644
  namespace android {
  
 -- 
-2.51.0
+2.54.0
 

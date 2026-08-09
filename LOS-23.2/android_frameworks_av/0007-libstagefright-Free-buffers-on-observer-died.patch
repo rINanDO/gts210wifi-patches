@@ -1,4 +1,4 @@
-From bad1d07ba77c1f636f291de8ada700c6b6810a0e Mon Sep 17 00:00:00 2001
+From 8f94da913b70c9224465c2c18c03750588e055d0 Mon Sep 17 00:00:00 2001
 From: Manikanta Kanamarlapudi <kmanikan@codeaurora.org>
 Date: Wed, 30 Aug 2017 12:33:59 +0530
 Subject: [PATCH 07/15] libstagefright: Free buffers on observer died
@@ -28,5 +28,5 @@ index 458ac9c9e4..620ed7e458 100644
  
      mDispatcher.clear();
 -- 
-2.51.0
+2.54.0
 

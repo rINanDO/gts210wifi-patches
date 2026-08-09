@@ -1,4 +1,4 @@
-From 78048998fcaf98ddbc5deafeb8e027a5362e0b20 Mon Sep 17 00:00:00 2001
+From 43987b9f43b1eb2159229df17f240e2db62a4090 Mon Sep 17 00:00:00 2001
 From: Ethan Chen <intervigil@gmail.com>
 Date: Sun, 3 Jan 2016 14:09:23 -0800
 Subject: [PATCH 04/15] libstagefright: Support YVU420SemiPlanar camera format
@@ -9,10 +9,10 @@ Change-Id: I631ba6267b3769d9da498329a39ac89c609be6d8
  1 file changed, 4 insertions(+)
 
 diff --git a/media/libstagefright/CameraSource.cpp b/media/libstagefright/CameraSource.cpp
-index b8e8b28fe0..15419e5e4c 100644
+index f0ef6e5d64..3b4471966e 100644
 --- a/media/libstagefright/CameraSource.cpp
 +++ b/media/libstagefright/CameraSource.cpp
-@@ -83,6 +83,10 @@ static int32_t getColorFormat(const char* colorFormat) {
+@@ -84,6 +84,10 @@ static int32_t getColorFormat(const char* colorFormat) {
          return OMX_COLOR_FormatAndroidOpaque;
      }
  
@@ -24,5 +24,5 @@ index b8e8b28fe0..15419e5e4c 100644
           "CameraSource::getColorFormat", colorFormat);
  
 -- 
-2.51.0
+2.54.0
 

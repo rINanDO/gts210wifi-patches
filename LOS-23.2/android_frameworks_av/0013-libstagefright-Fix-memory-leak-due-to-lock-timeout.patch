@@ -1,4 +1,4 @@
-From a91c61f0d074aeabc25e1b1ba6c00333ecab236b Mon Sep 17 00:00:00 2001
+From 512172a7a5a8069a9261790009abc025a7986558 Mon Sep 17 00:00:00 2001
 From: Priyanka Gujjula <pgujjula@codeaurora.org>
 Date: Mon, 25 Mar 2019 21:11:18 +0530
 Subject: [PATCH 13/15] libstagefright: Fix memory leak due to lock timeout
@@ -35,5 +35,5 @@ index 620ed7e458..1b1918fcae 100644
  
      mDispatcher.clear();
 -- 
-2.51.0
+2.54.0
 

@@ -1,4 +1,4 @@
-From 1affb9a83a6068c1ce8321e6b6cbd0ed7099bbb8 Mon Sep 17 00:00:00 2001
+From 6724f348adfdbc03bde36f7811a19b6a0b1e278a Mon Sep 17 00:00:00 2001
 From: Susmitha Gummalla <vgummall@codeaurora.org>
 Date: Tue, 29 Apr 2014 12:18:30 -0700
 Subject: [PATCH 11/15] Camera: Add support for preview frame fd
@@ -45,5 +45,5 @@ index bef2ea0acd..be82ff4ec6 100644
              return NO_ERROR;
          } break;
 -- 
-2.51.0
+2.54.0
 

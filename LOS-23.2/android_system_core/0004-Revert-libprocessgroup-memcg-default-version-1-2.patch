@@ -1,7 +1,7 @@
-From 0e539ae6c1cac1f94a8da53e6a1f58369451629a Mon Sep 17 00:00:00 2001
+From 67e29de6ed98f31873eb2171562f4baac914ebd5 Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Wed, 3 Dec 2025 12:33:52 +0100
-Subject: [PATCH 4/5] Revert "libprocessgroup: memcg default version 1 -> 2"
+Subject: [PATCH 4/6] Revert "libprocessgroup: memcg default version 1 -> 2"
 
 This reverts commit 5fa48a84b53aa60d76ba85dd449d470128b48742.
 
@@ -44,5 +44,5 @@ index 4eb18c4b97..542130e790 100644
      ]
    }
 -- 
-2.51.0
+2.54.0
 

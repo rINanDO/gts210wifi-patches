@@ -1,4 +1,4 @@
-From 2af2f44c6674934d949607229c474f5bf6515feb Mon Sep 17 00:00:00 2001
+From 323b4af12ad9172fa897c408668b57efc809d3b1 Mon Sep 17 00:00:00 2001
 From: Simon Shields <keepcalm444@gmail.com>
 Date: Thu, 6 Oct 2016 20:25:32 +1100
 Subject: [PATCH 02/15] camera/media: Support legacy HALv1 camera in
@@ -118,10 +118,10 @@ index 8a62f3011d..ac34c2849d 100644
  
      bool aidl = ::android::IsCodec2AidlHalSelected();
 diff --git a/services/camera/libcameraservice/Android.bp b/services/camera/libcameraservice/Android.bp
-index 9ff095d1e3..3d9d34713b 100644
+index 263d0bfb32..b622fccdf3 100644
 --- a/services/camera/libcameraservice/Android.bp
 +++ b/services/camera/libcameraservice/Android.bp
-@@ -127,9 +127,7 @@ cc_defaults {
+@@ -129,9 +129,7 @@ cc_defaults {
  cc_library {
      name: "libcameraservice",
  
@@ -132,7 +132,7 @@ index 9ff095d1e3..3d9d34713b 100644
      // Camera service source
  
      srcs: [
-@@ -242,6 +240,11 @@ cc_library {
+@@ -244,6 +242,11 @@ cc_library {
          "-Werror",
          "-Wno-ignored-qualifiers",
      ],
@@ -145,10 +145,10 @@ index 9ff095d1e3..3d9d34713b 100644
  
  cc_library_static {
 diff --git a/services/camera/libcameraservice/CameraService.cpp b/services/camera/libcameraservice/CameraService.cpp
-index c1c7e8c9f1..2759b62dcc 100644
+index 183313a8ba..8c9781024b 100644
 --- a/services/camera/libcameraservice/CameraService.cpp
 +++ b/services/camera/libcameraservice/CameraService.cpp
-@@ -167,7 +167,11 @@ const char *sFileName = "lastOpenSessionDumpFile";
+@@ -177,7 +177,11 @@ const char *sFileName = "lastOpenSessionDumpFile";
  static constexpr int32_t kSystemNativeClientScore = resource_policy::PERCEPTIBLE_APP_ADJ;
  static constexpr int32_t kSystemNativeClientState =
          ActivityManager::PROCESS_STATE_PERSISTENT_UI;
@@ -161,7 +161,7 @@ index c1c7e8c9f1..2759b62dcc 100644
  
  const std::string CameraService::kOfflineDevice("offline-");
  const std::string CameraService::kWatchAllClientsFlag("all");
-@@ -1081,6 +1085,9 @@ Status CameraService::getSessionCharacteristics(const std::string& unresolvedCam
+@@ -1110,6 +1114,9 @@ Status CameraService::getSessionCharacteristics(const std::string& unresolvedCam
              }
      }
  
@@ -171,7 +171,7 @@ index c1c7e8c9f1..2759b62dcc 100644
      res = filterSensitiveMetadataIfNeeded(cameraId, outMetadata);
      if (flags::analytics_24q3()) {
          mCameraServiceProxyWrapper->logSessionCharacteristicsQuery(cameraId,
-@@ -1741,15 +1748,23 @@ Status CameraService::validateConnectLocked(const std::string& cameraId,
+@@ -1799,15 +1806,23 @@ Status CameraService::validateConnectLocked(const std::string& cameraId,
      return Status::ok();
  }
  
@@ -195,7 +195,7 @@ index c1c7e8c9f1..2759b62dcc 100644
  
      if (shouldRejectSystemCameraConnection(cameraId)) {
          ALOGW("Attempting to connect to system-only camera id %s, connection rejected",
-@@ -1772,6 +1787,7 @@ Status CameraService::validateClientPermissionsLocked(
+@@ -1830,6 +1845,7 @@ Status CameraService::validateClientPermissionsLocked(
                  "camera ID \"%s\"", cameraId.c_str());
      }
  
@@ -203,7 +203,7 @@ index c1c7e8c9f1..2759b62dcc 100644
      // Get the device id that owns this camera.
      auto [deviceId, _] = mVirtualDeviceCameraIdMapper.getDeviceIdAndMappedCameraIdPair(cameraId);
      AttributionSourceState clientAttributionWithDeviceId = clientAttribution;
-@@ -1845,7 +1861,7 @@ Status CameraService::validateClientPermissionsLocked(
+@@ -1903,7 +1919,7 @@ Status CameraService::validateClientPermissionsLocked(
                      clientName.c_str(), callingPid, clientUid, cameraId.c_str());
          }
      }
@@ -213,5 +213,5 @@ index c1c7e8c9f1..2759b62dcc 100644
  }
  
 -- 
-2.51.0
+2.54.0
 

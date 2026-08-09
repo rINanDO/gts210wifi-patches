@@ -1,4 +1,4 @@
-From 5ba46968c9807eb56f3ac11dbf816ceecab41123 Mon Sep 17 00:00:00 2001
+From 66d5cdbaa3c0c3ed408714b01df0fbc0c3c22e18 Mon Sep 17 00:00:00 2001
 From: Steve Kondik <steve@cyngn.com>
 Date: Tue, 15 Dec 2015 05:44:18 -0500
 Subject: [PATCH 05/15] nuplayer: Avoid crash when codec fails to load
@@ -11,10 +11,10 @@ Change-Id: I3267a0c13165d74a2ea90333b42f000b51ace98b
  1 file changed, 3 deletions(-)
 
 diff --git a/media/libmediaplayerservice/nuplayer/NuPlayer.cpp b/media/libmediaplayerservice/nuplayer/NuPlayer.cpp
-index 451cc48d5c..7e0666c169 100644
+index 65de591bf0..dcd79a9d1f 100644
 --- a/media/libmediaplayerservice/nuplayer/NuPlayer.cpp
 +++ b/media/libmediaplayerservice/nuplayer/NuPlayer.cpp
-@@ -2414,9 +2414,6 @@ void NuPlayer::performDecoderFlush(FlushCommand audio, FlushCommand video) {
+@@ -2410,9 +2410,6 @@ void NuPlayer::performDecoderFlush(FlushCommand audio, FlushCommand video) {
  void NuPlayer::performReset() {
      ALOGV("performReset");
  
@@ -25,5 +25,5 @@ index 451cc48d5c..7e0666c169 100644
      updateRebufferingTimer(true /* stopping */, true /* exiting */);
  
 -- 
-2.51.0
+2.54.0
 

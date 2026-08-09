@@ -1,4 +1,4 @@
-From 35f059245af7b6f07906ad315b9ca73e91d8d520 Mon Sep 17 00:00:00 2001
+From 248670e2188f392574d706a50e4f9e402a26d28e Mon Sep 17 00:00:00 2001
 From: Milos Ratkovic <milosr@gmail.com>
 Date: Tue, 17 Apr 2018 01:17:09 +0200
 Subject: [PATCH 09/15] Camera: check metadata type before releasing frame
@@ -40,5 +40,5 @@ index 86370e1152..0048f1e981 100644
              mHidlDevice->releaseRecordingFrame(heapId, bufferIndex);
          }
 -- 
-2.51.0
+2.54.0
 

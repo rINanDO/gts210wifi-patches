@@ -1,4 +1,4 @@
-From 810020370419180f4df831e2f128a6e4f71370ad Mon Sep 17 00:00:00 2001
+From d6e82ef8d6427535fb88d0084f55f958ad2e10e4 Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Sat, 4 Jul 2026 22:22:30 +0200
 Subject: [PATCH 15/15] CameraService: Add supportsCameraApi method to check
@@ -12,10 +12,10 @@ Change-Id: I74b186245bfdff20e754c091758b4216bfbf7cad
  3 files changed, 83 insertions(+)
 
 diff --git a/camera/aidl/android/hardware/ICameraService.aidl b/camera/aidl/android/hardware/ICameraService.aidl
-index bb60913a9a..63938d0563 100644
+index 7a4b9f8585..7071a6f505 100644
 --- a/camera/aidl/android/hardware/ICameraService.aidl
 +++ b/camera/aidl/android/hardware/ICameraService.aidl
-@@ -159,6 +159,23 @@ interface ICameraService
+@@ -140,6 +140,23 @@ interface ICameraService
              in AttributionSourceState clientAttribution,
              int devicePolicy);
  
@@ -40,10 +40,10 @@ index bb60913a9a..63938d0563 100644
       * Open a camera device through the new camera API.
       * Only supported for device HAL versions >= 3.2.
 diff --git a/services/camera/libcameraservice/CameraService.cpp b/services/camera/libcameraservice/CameraService.cpp
-index 2759b62dcc..0b60e85e98 100644
+index 8c9781024b..3df040c815 100644
 --- a/services/camera/libcameraservice/CameraService.cpp
 +++ b/services/camera/libcameraservice/CameraService.cpp
-@@ -2342,6 +2342,68 @@ bool CameraService::shouldRejectSystemCameraConnection(const std::string& camera
+@@ -2411,6 +2411,68 @@ bool CameraService::shouldRejectSystemCameraConnection(const std::string& camera
      return false;
  }
  
@@ -82,7 +82,7 @@ index 2759b62dcc..0b60e85e98 100644
 +
 +    int portraitRotation;
 +    int deviceVersion = getDeviceVersion(cameraId,
-+            hardware::ICameraService::ROTATION_OVERRIDE_NONE, &portraitRotation).first;
++            CameraCompatibilityInfo(), &portraitRotation).first;
 +
 +    switch (deviceVersion) {
 +        case CAMERA_DEVICE_API_VERSION_1_0:
@@ -113,10 +113,10 @@ index 2759b62dcc..0b60e85e98 100644
          const sp<hardware::camera2::ICameraDeviceCallbacks>& cameraCb,
          const std::string& unresolvedCameraId,
 diff --git a/services/camera/libcameraservice/CameraService.h b/services/camera/libcameraservice/CameraService.h
-index 7f627f9faa..debecc240e 100644
+index f7f6694160..5df59127a5 100644
 --- a/services/camera/libcameraservice/CameraService.h
 +++ b/services/camera/libcameraservice/CameraService.h
-@@ -184,6 +184,10 @@ public:
+@@ -186,6 +186,10 @@ public:
              /*out*/
              sp<hardware::ICamera>* device);
  
@@ -128,5 +128,5 @@ index 7f627f9faa..debecc240e 100644
              const sp<hardware::camera2::ICameraDeviceCallbacks>& cameraCb,
              const std::string& cameraId, int scoreOffset, int targetSdkVersion,
 -- 
-2.51.0
+2.54.0
 

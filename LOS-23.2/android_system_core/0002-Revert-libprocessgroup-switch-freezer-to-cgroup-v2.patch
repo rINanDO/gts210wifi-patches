@@ -1,7 +1,7 @@
-From c0736a60910325955625aa227a4af433365bde71 Mon Sep 17 00:00:00 2001
+From b4f673ae4406681ec1c2634c1ad1e01c655b52ef Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Sat, 31 Jan 2026 21:29:08 +0100
-Subject: [PATCH 2/5] Revert "libprocessgroup: switch freezer to cgroup v2"
+Subject: [PATCH 2/6] Revert "libprocessgroup: switch freezer to cgroup v2"
 
 This reverts commit 510f89ec0ed82b07638f0e08f7b70d4c232f49c0.
 
@@ -114,7 +114,7 @@ index 1d23d9cc43..fd974f2ec5 100644
        "Name": "CompactFull",
        "Actions": [
 diff --git a/rootdir/init.rc b/rootdir/init.rc
-index 70db67421f..f3c9b0dbc4 100644
+index 92dcdd0131..60186b2d15 100644
 --- a/rootdir/init.rc
 +++ b/rootdir/init.rc
 @@ -443,9 +443,19 @@ on init
@@ -139,5 +139,5 @@ index 70db67421f..f3c9b0dbc4 100644
      mount bpf bpf /sys/fs/bpf nodev noexec nosuid
  
 -- 
-2.51.0
+2.54.0
 

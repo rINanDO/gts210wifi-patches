@@ -1,7 +1,7 @@
-From adea731a66a41c7f515e56e5efaa8be0eee15272 Mon Sep 17 00:00:00 2001
+From ab693342796417e740d475ca01e92dcba5e9eb2b Mon Sep 17 00:00:00 2001
 From: Pierre-Hugues Husson <phh@phh.me>
 Date: Wed, 26 Oct 2022 17:59:11 -0400
-Subject: [PATCH 3/5] Fix support for devices without cgroupv2 support
+Subject: [PATCH 3/6] Fix support for devices without cgroupv2 support
 
 This is technically a revert of 1bd1746447.
 The warning inside the commit doesn't really apply to us, because the
@@ -32,5 +32,5 @@ index dbae8a7714..2d2b12e80b 100644
  
          // When the blkio controller is mounted in the v1 hierarchy, NormalIoPriority is
 -- 
-2.51.0
+2.54.0
 

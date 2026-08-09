@@ -1,4 +1,4 @@
-From bad0eb76bdf2d03155fd7306dd480c2e9c8fdb6f Mon Sep 17 00:00:00 2001
+From ddcae606065854b16e91b622754600f7720b058d Mon Sep 17 00:00:00 2001
 From: Shuzhen Wang <shuzhenw@codeaurora.org>
 Date: Wed, 8 Jul 2015 15:47:46 -0700
 Subject: [PATCH 03/15] Camera: Add extensions to CameraClient
@@ -33,7 +33,7 @@ Change-Id: Ie930d20c962593e40a0767f9cf7d4385df8e2561
  2 files changed, 33 insertions(+), 2 deletions(-)
 
 diff --git a/services/camera/libcameraservice/api1/CameraClient.cpp b/services/camera/libcameraservice/api1/CameraClient.cpp
-index 2fc4edcbaf..53e6a5ebae 100644
+index d5a61f83e8..a1c348eb92 100644
 --- a/services/camera/libcameraservice/api1/CameraClient.cpp
 +++ b/services/camera/libcameraservice/api1/CameraClient.cpp
 @@ -63,6 +63,8 @@ CameraClient::CameraClient(const sp<CameraService>& cameraService,
@@ -45,7 +45,7 @@ index 2fc4edcbaf..53e6a5ebae 100644
      LOG1("CameraClient::CameraClient X (pid %d, id %d)", callingPid, api1CameraId);
  }
  
-@@ -687,6 +689,10 @@ status_t CameraClient::takePicture(int msgType) {
+@@ -688,6 +690,10 @@ status_t CameraClient::takePicture(int msgType) {
                             CAMERA_MSG_COMPRESSED_IMAGE);
  
      enableMsgType(picMsgType);
@@ -56,7 +56,7 @@ index 2fc4edcbaf..53e6a5ebae 100644
  
      return mHardware->takePicture();
  }
-@@ -770,6 +776,20 @@ status_t CameraClient::sendCommand(int32_t cmd, int32_t arg1, int32_t arg2) {
+@@ -771,6 +777,20 @@ status_t CameraClient::sendCommand(int32_t cmd, int32_t arg1, int32_t arg2) {
      } else if (cmd == CAMERA_CMD_PING) {
          // If mHardware is 0, checkPidAndHardware will return error.
          return OK;
@@ -77,7 +77,7 @@ index 2fc4edcbaf..53e6a5ebae 100644
      }
  
      return mHardware->sendCommand(cmd, arg1, arg2);
-@@ -969,7 +989,9 @@ void CameraClient::handleShutter(void) {
+@@ -970,7 +990,9 @@ void CameraClient::handleShutter(void) {
          c->notifyCallback(CAMERA_MSG_SHUTTER, 0, 0);
          if (!lockIfMessageWanted(CAMERA_MSG_SHUTTER)) return;
      }
@@ -88,7 +88,7 @@ index 2fc4edcbaf..53e6a5ebae 100644
  
      // Shutters only happen in response to takePicture, so mark device as
      // idle now, until preview is restarted
-@@ -1057,7 +1079,13 @@ void CameraClient::handleRawPicture(const sp<IMemory>& mem) {
+@@ -1058,7 +1080,13 @@ void CameraClient::handleRawPicture(const sp<IMemory>& mem) {
  
  // picture callback - compressed picture ready
  void CameraClient::handleCompressedPicture(const sp<IMemory>& mem) {
@@ -104,7 +104,7 @@ index 2fc4edcbaf..53e6a5ebae 100644
      sp<hardware::ICameraClient> c = mRemoteCallback;
      mLock.unlock();
 diff --git a/services/camera/libcameraservice/api1/CameraClient.h b/services/camera/libcameraservice/api1/CameraClient.h
-index 380894dbe6..88f8f67af8 100644
+index 36a7d1cd87..32cba9ea95 100644
 --- a/services/camera/libcameraservice/api1/CameraClient.h
 +++ b/services/camera/libcameraservice/api1/CameraClient.h
 @@ -210,6 +210,9 @@ private:
@@ -118,5 +118,5 @@ index 380894dbe6..88f8f67af8 100644
  
  }
 -- 
-2.51.0
+2.54.0
 

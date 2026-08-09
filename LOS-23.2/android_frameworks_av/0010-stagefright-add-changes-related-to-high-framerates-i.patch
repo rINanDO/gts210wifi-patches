@@ -1,4 +1,4 @@
-From 854c689438a6d8d1b8f67deb60bf7bb84f43ce40 Mon Sep 17 00:00:00 2001
+From c47bd0a3955f214c322def1580027bcf7dd867f1 Mon Sep 17 00:00:00 2001
 From: Paras Nagda <pnagda@codeaurora.org>
 Date: Fri, 4 May 2018 16:13:15 +0530
 Subject: [PATCH 10/15] stagefright: add changes related to high-framerates in
@@ -38,10 +38,10 @@ Signed-off-by: Volodymyr Zhdanov <wight554@gmail.com>
  3 files changed, 23 insertions(+), 3 deletions(-)
 
 diff --git a/media/libmediaplayerservice/StagefrightRecorder.cpp b/media/libmediaplayerservice/StagefrightRecorder.cpp
-index 81cbf07a59..8fbe208fa4 100644
+index 2aba3261e7..12472c402b 100644
 --- a/media/libmediaplayerservice/StagefrightRecorder.cpp
 +++ b/media/libmediaplayerservice/StagefrightRecorder.cpp
-@@ -1929,7 +1929,7 @@ status_t StagefrightRecorder::setupCameraSource(
+@@ -1941,7 +1941,7 @@ status_t StagefrightRecorder::setupCameraSource(
      pid_t pid = VALUE_OR_RETURN_STATUS(aidl2legacy_int32_t_pid_t(mAttributionSource.pid));
      String16 clientName = VALUE_OR_RETURN_STATUS(
          aidl2legacy_string_view_String16(mAttributionSource.packageName.value_or("")));
@@ -50,7 +50,7 @@ index 81cbf07a59..8fbe208fa4 100644
          if (!(mCaptureFps > 0.)) {
              ALOGE("Invalid mCaptureFps value: %lf", mCaptureFps);
              return BAD_VALUE;
-@@ -2091,6 +2091,7 @@ status_t StagefrightRecorder::setupVideoEncoder(
+@@ -2111,6 +2111,7 @@ status_t StagefrightRecorder::setupVideoEncoder(
              preferBFrames = false;
              tsLayers = 2; // use at least two layers as resulting video will likely be sped up
          } else if (mCaptureFps > maxPlaybackFps) { // slow-mo
@@ -59,7 +59,7 @@ index 81cbf07a59..8fbe208fa4 100644
              preferBFrames = false;
          }
 diff --git a/media/libstagefright/CameraSource.cpp b/media/libstagefright/CameraSource.cpp
-index 15419e5e4c..8f1819bbc3 100644
+index 3b4471966e..ddcce6cc79 100644
 --- a/media/libstagefright/CameraSource.cpp
 +++ b/media/libstagefright/CameraSource.cpp
 @@ -258,6 +258,12 @@ status_t CameraSource::isCameraColorFormatSupported(
@@ -129,5 +129,5 @@ index b1a005b59d..4b03371ca5 100644
      }
      return false;
 -- 
-2.51.0
+2.54.0
 
