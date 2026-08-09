@@ -1,7 +1,7 @@
-From aff446cc9badde98e665f42c484fffc57c6add5f Mon Sep 17 00:00:00 2001
+From fc085d474a062a60d3bf80e907427144d96a21a0 Mon Sep 17 00:00:00 2001
 From: Dominggoes Isakh <drjisakh@gmail.com>
 Date: Thu, 25 Dec 2025 10:19:55 +0100
-Subject: [PATCH 6/6] Revert "Avoid string allocations when checking for
+Subject: [PATCH 6/7] Revert "Avoid string allocations when checking for
  permissions"
 
 This reverts commit 01b92c7891d59dc14b6690514ac932547aa4a054.
@@ -78,5 +78,5 @@ index b6588a2a82..a90f30c621 100644
  } // namespace android
 \ No newline at end of file
 -- 
-2.51.0
+2.54.0
 
