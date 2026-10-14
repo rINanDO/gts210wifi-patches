@@ -4,6 +4,7 @@
 declare -A patches=(
     ["art"]="android_art"
     ["bionic"]="android_bionic"
+    ["bootable/recovery"]="android_bootable_recovery"
     ["build/make"]="android_build"
     ["build/soong"]="android_build_soong"
     ["device/lineage/sepolicy"]="android_device_lineage_sepolicy"
@@ -25,6 +26,8 @@ declare -A patches=(
     ["system/netd"]="android_system_netd"
     ["system/tools/mkbootimg"]="android_system_tools_mkbootimg"
     ["system/tools/hidl"]="android_system_tools_hidl"
+    ["system/vold"]="android_system_vold"
+    ["vendor/lineage"]="android_vendor_lineage"
 )
 
 # Base path for the patches
