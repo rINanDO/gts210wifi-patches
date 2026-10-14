@@ -1,0 +1,122 @@
+From 9843a506386bf473a4a98c752fed0d9553484c81 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Thu, 8 Oct 2026 14:37:33 +0200
+Subject: [PATCH 17/18] libcameraservice: Fix API1 build breaks from newer
+ AudioRestriction/HAL1 base
+
+Several porting gaps surfaced once the build reached this far:
+
+- CameraClient::setAudioRestriction/getGlobalAudioRestriction still used
+  the old plain int/int32_t signatures from an older ICamera.h, while the
+  interface they override (and the sibling Camera2Client) now use the
+  AIDL-backed ICameraDeviceUser::AudioRestriction enum. The parameter-type
+  mismatch silently created a non-overriding overload instead of a hard
+  error, leaving the pure virtual unimplemented and making CameraClient
+  abstract (the actual compile error, at its instantiation site in
+  CameraService::connectLegacy).
+- That connectLegacy() also had two genuinely dead locals (clientUid/
+  clientPid) left over after connectHelper() was changed to take
+  clientAttribution directly; -Werror=unused-variable now catches them.
+- CameraClient::disconnect() still called the 3-argument
+  CameraServiceProxyWrapper::logClose(), which gained an errorState
+  parameter; pass 0, matching CameraClient's existing "no device-error
+  tracking" behavior (it already always passed deviceError=false).
+- HidlProviderInfo.h's HidlDeviceInfo1 (HAL1 provider device info) never
+  implemented DeviceInfo's warmUp(), unlike its HidlDeviceInfo3 sibling
+  right below it, leaving it abstract too. Add the same
+  "not implemented" stub.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Change-Id: Ie85c04662e9b81435fb84323d7fe06ab36aa897a
+---
+ services/camera/libcameraservice/CameraService.cpp     |  3 ---
+ services/camera/libcameraservice/api1/CameraClient.cpp | 10 +++++-----
+ services/camera/libcameraservice/api1/CameraClient.h   |  6 ++++--
+ .../libcameraservice/common/hidl/HidlProviderInfo.h    |  2 ++
+ 4 files changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/services/camera/libcameraservice/CameraService.cpp b/services/camera/libcameraservice/CameraService.cpp
+index facc2fdb11..f85cb26d08 100644
+--- a/services/camera/libcameraservice/CameraService.cpp
++++ b/services/camera/libcameraservice/CameraService.cpp
+@@ -2358,9 +2358,6 @@ Status CameraService::connectLegacy(
+     bool isNonSystemNdk = clientPackageNameMaybe.size() == 0;
+     logConnectionAttempt(clientAttribution.pid, clientPackageNameMaybe, cameraIdStr, API_1);
+ 
+-    int clientUid = clientAttribution.uid;
+-    int clientPid = clientAttribution.pid;
+-
+     // connectLegacy retains the legacy AIDL rotationOverride int; the modern client-facing
+     // API1/API2 paths use CameraCompatibilityInfo instead, so translate to a default (no
+     // override) instance here since this HAL1 path doesn't consume rotate-and-crop compat.
+diff --git a/services/camera/libcameraservice/api1/CameraClient.cpp b/services/camera/libcameraservice/api1/CameraClient.cpp
+index a1c348eb92..6bb8aed4ad 100644
+--- a/services/camera/libcameraservice/api1/CameraClient.cpp
++++ b/services/camera/libcameraservice/api1/CameraClient.cpp
+@@ -291,7 +291,7 @@ binder::Status CameraClient::disconnect() {
+ 
+     LOG1("disconnect X (pid %d)", callingPid);
+     int32_t closeLatencyMs = ns2ms(systemTime() - startTime);
+-    mCameraServiceProxyWrapper->logClose(mCameraIdStr, closeLatencyMs, false);
++    mCameraServiceProxyWrapper->logClose(mCameraIdStr, closeLatencyMs, false, /*errorState*/0);
+     return res;
+ }
+ 
+@@ -1225,9 +1225,9 @@ status_t CameraClient::setVideoTarget(const sp<IGraphicBufferProducer>& bufferPr
+     return INVALID_OPERATION;
+ }
+ 
+-status_t CameraClient::setAudioRestriction(int mode) {
++status_t CameraClient::setAudioRestriction(hardware::camera2::ICameraDeviceUser::AudioRestriction mode) {
+     if (!isValidAudioRestriction(mode)) {
+-        ALOGE("%s: invalid audio restriction mode %d", __FUNCTION__, mode);
++        ALOGE("%s: invalid audio restriction mode %d", __FUNCTION__, static_cast<int32_t>(mode));
+         return BAD_VALUE;
+     }
+ 
+@@ -1238,10 +1238,10 @@ status_t CameraClient::setAudioRestriction(int mode) {
+     return BasicClient::setAudioRestriction(mode);
+ }
+ 
+-int32_t CameraClient::getGlobalAudioRestriction() {
++hardware::camera2::ICameraDeviceUser::AudioRestriction CameraClient::getGlobalAudioRestriction() {
+     Mutex::Autolock lock(mLock);
+     if (checkPidAndHardware() != NO_ERROR) {
+-        return INVALID_OPERATION;
++        return hardware::camera2::ICameraDeviceUser::AudioRestriction::NONE;
+     }
+     return BasicClient::getServiceAudioRestriction();
+ }
+diff --git a/services/camera/libcameraservice/api1/CameraClient.h b/services/camera/libcameraservice/api1/CameraClient.h
+index 32cba9ea95..d1140d0f81 100644
+--- a/services/camera/libcameraservice/api1/CameraClient.h
++++ b/services/camera/libcameraservice/api1/CameraClient.h
+@@ -59,8 +59,10 @@ public:
+     virtual String8         getParameters() const;
+     virtual status_t        sendCommand(int32_t cmd, int32_t arg1, int32_t arg2);
+     virtual status_t        setVideoTarget(const sp<IGraphicBufferProducer>& bufferProducer);
+-    virtual status_t        setAudioRestriction(int mode);
+-    virtual int32_t         getGlobalAudioRestriction();
++    virtual status_t        setAudioRestriction(
++                                    hardware::camera2::ICameraDeviceUser::AudioRestriction mode);
++    virtual hardware::camera2::ICameraDeviceUser::AudioRestriction
++                            getGlobalAudioRestriction();
+ 
+     virtual status_t        setRotateAndCropOverride(uint8_t override, bool fromHal = false);
+     virtual status_t        setAutoframingOverride(uint8_t autoframingMode);
+diff --git a/services/camera/libcameraservice/common/hidl/HidlProviderInfo.h b/services/camera/libcameraservice/common/hidl/HidlProviderInfo.h
+index 858c855c8a..a91b1fb897 100644
+--- a/services/camera/libcameraservice/common/hidl/HidlProviderInfo.h
++++ b/services/camera/libcameraservice/common/hidl/HidlProviderInfo.h
+@@ -102,6 +102,8 @@ struct HidlProviderInfo : public CameraProviderManager::ProviderInfo,
+         virtual status_t turnOnTorchWithStrengthLevel(int32_t torchStrength) override;
+         virtual status_t getTorchStrengthLevel(int32_t *torchStrength) override;
+ 
++        virtual status_t warmUp() override {return OK;};// Not implemented
++
+         virtual status_t dumpState(int fd) override;
+ 
+         virtual status_t isSessionConfigurationSupported(
+-- 
+2.51.0
+

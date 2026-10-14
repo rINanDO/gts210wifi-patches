@@ -1,0 +1,35 @@
+From f6eed75a3176a86ec8a5b2883c718ff551263435 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Wed, 7 Oct 2026 15:10:34 +0200
+Subject: [PATCH 16/18] CameraSource: fix CreateFromCamera surface parameter
+ type
+
+The camera HALv1 restoration reintroduced CreateFromCamera's
+out-of-line definition using the pre-Flags.h sp<IGraphicBufferProducer>
+type, but the header now declares it as sp<SurfaceType>, which resolves
+to sp<Surface> when WB_LIBCAMERASERVICE_WITH_DEPENDENCIES is set. This
+mismatch broke both the declaration/definition match and the
+constructor call passing the producer where a Surface* was expected.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Change-Id: I2d4cb46d5c6db0d76d096f987ebc16db50ed851f
+---
+ media/libstagefright/CameraSource.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/media/libstagefright/CameraSource.cpp b/media/libstagefright/CameraSource.cpp
+index 56c3f9af1a..baac4a38d9 100644
+--- a/media/libstagefright/CameraSource.cpp
++++ b/media/libstagefright/CameraSource.cpp
+@@ -205,7 +205,7 @@ CameraSource *CameraSource::CreateFromCamera(
+     pid_t clientPid,
+     Size videoSize,
+     int32_t frameRate,
+-    const sp<IGraphicBufferProducer>& surface,
++    const sp<SurfaceType>& surface,
+     bool storeMetaDataInVideoBuffers) {
+ 
+     CameraSource *source = new CameraSource(camera, proxy, cameraId,
+-- 
+2.51.0
+

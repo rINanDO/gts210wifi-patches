@@ -1,0 +1,363 @@
+From 39e1e2564e2a5e4d726a8d67895f9aaba6b6ee7a Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Wed, 7 Oct 2026 17:22:37 +0200
+Subject: [PATCH 12/17] Update current.txt for restored camera2.legacy public
+ API
+
+The camera HALv1 restoration adds back android.hardware.camera2.legacy
+classes and members as public API, which the stub-validation check
+compares against the recorded current.txt snapshot. Regenerate it via
+the build's own sanctioned 'm api-stubs-docs-non-updatable-update-current-api'
+target rather than hand-editing the snapshot.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Change-Id: If31c9ddbfd3de0edeab103f88cc888f8e063fdea
+---
+ core/api/current.txt | 331 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 331 insertions(+)
+
+diff --git a/core/api/current.txt b/core/api/current.txt
+index 572012ca4643..669a988d21a3 100644
+--- a/core/api/current.txt
++++ b/core/api/current.txt
+@@ -21424,6 +21424,337 @@ package android.hardware.camera2 {
+ 
+ }
+ 
++package android.hardware.camera2.legacy {
++
++  public class BurstHolder {
++    ctor public BurstHolder(int, boolean, android.hardware.camera2.CaptureRequest[], java.util.Collection<Long>);
++    method public int getNumberOfRequests();
++    method public int getRequestId();
++    method public boolean isRepeating();
++    method public java.util.List<android.hardware.camera2.legacy.RequestHolder> produceRequestHolders(long);
++  }
++
++  public class CameraDeviceState {
++    ctor public CameraDeviceState();
++    method public void setCameraDeviceCallbacks(android.os.Handler, android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener);
++    method public boolean setCaptureResult(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.impl.CameraMetadataNative);
++    method public boolean setCaptureResult(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.impl.CameraMetadataNative, int, Object);
++    method public boolean setCaptureStart(android.hardware.camera2.legacy.RequestHolder, long, int);
++    method public boolean setConfiguring();
++    method public void setError(int);
++    method public boolean setIdle();
++    method public void setRepeatingRequestError(long, int);
++    method public void setRequestQueueEmpty();
++    field public static final int NO_CAPTURE_ERROR = -1; // 0xffffffff
++  }
++
++  public static interface CameraDeviceState.CameraDeviceStateListener {
++    method public void onBusy();
++    method public void onCaptureResult(android.hardware.camera2.impl.CameraMetadataNative, android.hardware.camera2.legacy.RequestHolder);
++    method public void onCaptureStarted(android.hardware.camera2.legacy.RequestHolder, long);
++    method public void onConfiguring();
++    method public void onError(int, Object, android.hardware.camera2.legacy.RequestHolder);
++    method public void onIdle();
++    method public void onRepeatingRequestError(long, int);
++    method public void onRequestQueueEmpty();
++  }
++
++  public class CameraDeviceUserShim implements android.os.IInterface {
++    ctor protected CameraDeviceUserShim(int, android.hardware.camera2.legacy.LegacyCameraDevice, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.legacy.CameraDeviceUserShim.CameraLooper, android.hardware.camera2.legacy.CameraDeviceUserShim.CameraCallbackThread);
++    method public android.os.IBinder asBinder();
++    method public void beginConfigure();
++    method public long cancelRequest(int);
++    method public android.hardware.camera2.utils.OutputAndInputStreamIds configureStreams(android.hardware.camera2.utils.SessionConfigurationAndStreamIds);
++    method public static android.hardware.camera2.legacy.CameraDeviceUserShim connectBinderShim(android.hardware.camera2.ICameraDeviceCallbacks, int, android.util.Size);
++    method public android.hardware.camera2.impl.CameraMetadataNative createDefaultRequest(int);
++    method public int createInputStream(int, int, int, boolean);
++    method public int createStream(android.hardware.camera2.params.OutputConfiguration);
++    method public void deleteStream(int);
++    method public void disconnect();
++    method public int[] endConfigure(int, android.hardware.camera2.impl.CameraMetadataNative, long);
++    method public void finalizeOutputConfigurations(int, android.hardware.camera2.params.OutputConfiguration);
++    method public long flush();
++    method public android.hardware.camera2.impl.CameraMetadataNative getCameraInfo();
++    method public MQDescriptor<Byte, Byte> getCaptureResultMetadataQueue();
++    method public int getGlobalAudioRestriction();
++    method public android.view.Surface getInputSurface();
++    method public boolean isPrimaryClient();
++    method public boolean isSessionConfigurationSupported(android.hardware.camera2.params.SessionConfiguration);
++    method public void prepare(int);
++    method public void prepare2(int, int);
++    method public void setCameraAudioRestriction(int);
++    method public android.hardware.camera2.utils.SubmitInfo startStreaming(int[], int[]);
++    method public android.hardware.camera2.utils.SubmitInfo submitRequest(android.hardware.camera2.CaptureRequest, boolean);
++    method public android.hardware.camera2.utils.SubmitInfo submitRequestList(android.hardware.camera2.CaptureRequest[], boolean);
++    method public android.hardware.camera2.ICameraOfflineSession switchToOffline(android.hardware.camera2.ICameraDeviceCallbacks, int[]);
++    method public void tearDown(int);
++    method public void updateOutputConfiguration(int, android.hardware.camera2.params.OutputConfiguration);
++    method public void updateOutputConfigurations(int[], android.hardware.camera2.params.OutputConfiguration[]);
++    method public void waitUntilIdle() throws android.os.RemoteException;
++    field public static final int CONSTRAINED_HIGH_SPEED_MODE = 1; // 0x1
++    field public static final int NORMAL_MODE = 0; // 0x0
++    field public static final int NO_IN_FLIGHT_REPEATING_FRAMES = -1; // 0xffffffff
++    field public static final int SHARED_MODE = 2; // 0x2
++    field public static final int TEMPLATE_MANUAL = 6; // 0x6
++    field public static final int TEMPLATE_PREVIEW = 1; // 0x1
++    field public static final int TEMPLATE_RECORD = 3; // 0x3
++    field public static final int TEMPLATE_STILL_CAPTURE = 2; // 0x2
++    field public static final int TEMPLATE_VIDEO_SNAPSHOT = 4; // 0x4
++    field public static final int TEMPLATE_ZERO_SHUTTER_LAG = 5; // 0x5
++    field public static final int VENDOR_MODE_START = 32768; // 0x8000
++  }
++
++  public class CaptureCollector {
++    ctor public CaptureCollector(int, android.hardware.camera2.legacy.CameraDeviceState);
++    method public void failAll();
++    method public void failNextJpeg();
++    method public void failNextPreview();
++    method public boolean hasPendingPreviewCaptures();
++    method public android.hardware.camera2.legacy.RequestHolder jpegCaptured(long);
++    method public android.util.Pair<android.hardware.camera2.legacy.RequestHolder, Long> jpegProduced();
++    method public android.util.Pair<android.hardware.camera2.legacy.RequestHolder, Long> previewCaptured(long);
++    method public android.hardware.camera2.legacy.RequestHolder previewProduced();
++    method public boolean queueRequest(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.legacy.LegacyRequest, long, java.util.concurrent.TimeUnit) throws InterruptedException;
++    method public boolean waitForEmpty(long, java.util.concurrent.TimeUnit) throws InterruptedException;
++    method public boolean waitForPreviewsEmpty(long, java.util.concurrent.TimeUnit) throws InterruptedException;
++    method public boolean waitForRequestCompleted(android.hardware.camera2.legacy.RequestHolder, long, java.util.concurrent.TimeUnit, android.util.MutableLong) throws InterruptedException;
++  }
++
++  public class GLThreadManager {
++    ctor public GLThreadManager(int, int, android.hardware.camera2.legacy.CameraDeviceState);
++    method public void allowNewFrames();
++    method public android.graphics.SurfaceTexture getCurrentSurfaceTexture();
++    method public void ignoreNewFrames();
++    method public void queueNewFrame();
++    method public void quit();
++    method public void setConfigurationAndWait(java.util.Collection<android.util.Pair<android.view.Surface, android.util.Size>>, android.hardware.camera2.legacy.CaptureCollector);
++    method public void start();
++    method public void waitUntilIdle();
++    method public void waitUntilStarted();
++  }
++
++  public class LegacyCameraDevice implements AutoCloseable {
++    ctor public LegacyCameraDevice(int, android.hardware.Camera, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.ICameraDeviceCallbacks);
++    method public long cancelRequest(int);
++    method public void close();
++    method public int configureOutputs(android.util.SparseArray<android.view.Surface>);
++    method public static int detectSurfaceDataspace(android.view.Surface) throws android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException;
++    method public static int detectSurfaceType(android.view.Surface) throws android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException;
++    method public static int detectSurfaceUsageFlags(android.view.Surface);
++    method public long flush();
++    method public int getAudioRestriction();
++    method public static long getSurfaceId(android.view.Surface) throws android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException;
++    method public static android.util.Size getSurfaceSize(android.view.Surface) throws android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException;
++    method public boolean isClosed();
++    method public static boolean isFlexibleConsumer(android.view.Surface);
++    method public static boolean isPreviewConsumer(android.view.Surface);
++    method public static boolean isVideoEncoderConsumer(android.view.Surface);
++    method public void setAudioRestriction(int);
++    method public android.hardware.camera2.utils.SubmitInfo submitRequest(android.hardware.camera2.CaptureRequest, boolean);
++    method public android.hardware.camera2.utils.SubmitInfo submitRequestList(android.hardware.camera2.CaptureRequest[], boolean);
++    method public void waitUntilIdle();
++    field public static final int MAX_DIMEN_FOR_ROUNDING = 1920; // 0x780
++    field public static final int NATIVE_WINDOW_SCALING_MODE_SCALE_TO_WINDOW = 1; // 0x1
++  }
++
++  public class LegacyExceptionUtils {
++    method public static int throwOnError(int) throws android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException;
++    method public static void throwOnServiceError(int);
++    field public static final int ALREADY_EXISTS;
++    field public static final int BAD_VALUE;
++    field public static final int DEAD_OBJECT;
++    field public static final int INVALID_OPERATION;
++    field public static final int NO_ERROR = 0; // 0x0
++    field public static final int PERMISSION_DENIED;
++    field public static final int TIMED_OUT;
++  }
++
++  public static class LegacyExceptionUtils.BufferQueueAbandonedException extends android.util.AndroidException {
++    ctor public LegacyExceptionUtils.BufferQueueAbandonedException();
++    ctor public LegacyExceptionUtils.BufferQueueAbandonedException(Exception);
++    ctor public LegacyExceptionUtils.BufferQueueAbandonedException(String);
++    ctor public LegacyExceptionUtils.BufferQueueAbandonedException(String, Throwable);
++  }
++
++  public class LegacyFaceDetectMapper {
++    ctor public LegacyFaceDetectMapper(android.hardware.Camera, android.hardware.camera2.CameraCharacteristics);
++    method public void mapResultFaces(android.hardware.camera2.impl.CameraMetadataNative, android.hardware.camera2.legacy.LegacyRequest);
++    method public void processFaceDetectMode(android.hardware.camera2.CaptureRequest, android.hardware.Camera.Parameters);
++  }
++
++  public class LegacyFocusStateMapper {
++    ctor public LegacyFocusStateMapper(android.hardware.Camera);
++    method public void mapResultTriggers(android.hardware.camera2.impl.CameraMetadataNative);
++    method public void processRequestTriggers(android.hardware.camera2.CaptureRequest, android.hardware.Camera.Parameters);
++  }
++
++  public class LegacyMetadataMapper {
++    ctor public LegacyMetadataMapper();
++    method public static void convertRequestMetadata(android.hardware.camera2.legacy.LegacyRequest);
++    method public static android.hardware.camera2.CameraCharacteristics createCharacteristics(android.hardware.Camera.Parameters, android.hardware.Camera.CameraInfo, int, android.util.Size);
++    method public static android.hardware.camera2.CameraCharacteristics createCharacteristics(String, android.hardware.CameraInfo, int, android.util.Size);
++    method public static android.hardware.camera2.impl.CameraMetadataNative createRequestTemplate(android.hardware.camera2.CameraCharacteristics, int);
++    field public static final int HAL_PIXEL_FORMAT_BGRA_8888 = 5; // 0x5
++    field public static final int HAL_PIXEL_FORMAT_BLOB = 33; // 0x21
++    field public static final int HAL_PIXEL_FORMAT_IMPLEMENTATION_DEFINED = 34; // 0x22
++    field public static final int HAL_PIXEL_FORMAT_RGBA_8888 = 1; // 0x1
++  }
++
++  public class LegacyRequest {
++    ctor public LegacyRequest(android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.CaptureRequest, android.util.Size, android.hardware.Camera.Parameters);
++    method public void setParameters(android.hardware.Camera.Parameters);
++    field public final android.hardware.camera2.CaptureRequest captureRequest;
++    field public final android.hardware.camera2.CameraCharacteristics characteristics;
++    field public final android.hardware.Camera.Parameters parameters;
++    field public final android.util.Size previewSize;
++  }
++
++  public class LegacyRequestMapper {
++    ctor public LegacyRequestMapper();
++    method public static void convertRequestMetadata(android.hardware.camera2.legacy.LegacyRequest);
++  }
++
++  public class LegacyResultMapper {
++    ctor public LegacyResultMapper();
++    method public android.hardware.camera2.impl.CameraMetadataNative cachedConvertResultMetadata(android.hardware.camera2.legacy.LegacyRequest, long);
++  }
++
++  public class ParameterUtils {
++    method public static boolean containsSize(java.util.List<android.hardware.Camera.Size>, int, int);
++    method public static android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle convertCameraAreaToActiveArrayRectangle(android.graphics.Rect, android.hardware.camera2.legacy.ParameterUtils.ZoomData, android.hardware.Camera.Area);
++    method public static android.hardware.camera2.params.Face convertFaceFromLegacy(android.hardware.Camera.Face, android.graphics.Rect, android.hardware.camera2.legacy.ParameterUtils.ZoomData);
++    method public static android.hardware.camera2.legacy.ParameterUtils.MeteringData convertMeteringRectangleToLegacy(android.graphics.Rect, android.hardware.camera2.params.MeteringRectangle, android.hardware.camera2.legacy.ParameterUtils.ZoomData);
++    method public static android.hardware.camera2.legacy.ParameterUtils.ZoomData convertScalerCropRegion(android.graphics.Rect, android.graphics.Rect, android.util.Size, android.hardware.Camera.Parameters);
++    method public static android.util.Size convertSize(android.hardware.Camera.Size);
++    method public static java.util.List<android.util.Size> convertSizeList(java.util.List<android.hardware.Camera.Size>);
++    method public static android.util.Size[] convertSizeListToArray(java.util.List<android.hardware.Camera.Size>);
++    method public static android.hardware.camera2.legacy.ParameterUtils.ZoomData convertToLegacyZoom(android.graphics.Rect, android.graphics.Rect, Float, android.util.Size, android.hardware.Camera.Parameters);
++    method public static android.hardware.camera2.legacy.ParameterUtils.ZoomData convertZoomRatio(android.graphics.Rect, float, android.util.Size, android.hardware.Camera.Parameters);
++    method public static java.util.List<android.graphics.Rect> getAvailablePreviewZoomCropRectangles(android.hardware.Camera.Parameters, android.graphics.Rect, android.util.Size);
++    method public static java.util.List<android.graphics.Rect> getAvailableZoomCropRectangles(android.hardware.Camera.Parameters, android.graphics.Rect);
++    method public static int getClosestAvailableZoomCrop(android.hardware.Camera.Parameters, android.graphics.Rect, android.util.Size, android.graphics.Rect, android.graphics.Rect, android.graphics.Rect);
++    method public static android.util.Size getLargestSupportedJpegSizeByArea(android.hardware.Camera.Parameters);
++    method public static float getMaxZoomRatio(android.hardware.Camera.Parameters);
++    method public static String stringFromArea(android.hardware.Camera.Area);
++    method public static String stringFromAreaList(java.util.List<android.hardware.Camera.Area>);
++    field public static final android.hardware.Camera.Area CAMERA_AREA_DEFAULT;
++    field public static final android.graphics.Rect NORMALIZED_RECTANGLE_DEFAULT;
++    field public static final int NORMALIZED_RECTANGLE_MAX = 1000; // 0x3e8
++    field public static final int NORMALIZED_RECTANGLE_MIN = -1000; // 0xfffffc18
++    field public static final android.graphics.Rect RECTANGLE_EMPTY;
++  }
++
++  public static class ParameterUtils.MeteringData {
++    ctor public ParameterUtils.MeteringData(android.hardware.Camera.Area, android.graphics.Rect, android.graphics.Rect);
++    field public final android.hardware.Camera.Area meteringArea;
++    field public final android.graphics.Rect previewMetering;
++    field public final android.graphics.Rect reportedMetering;
++  }
++
++  public static class ParameterUtils.WeightedRectangle {
++    ctor public ParameterUtils.WeightedRectangle(android.graphics.Rect, int);
++    method public android.hardware.camera2.params.Face toFace();
++    method public android.hardware.camera2.params.Face toFace(int, android.graphics.Point, android.graphics.Point, android.graphics.Point);
++    method public android.hardware.camera2.params.MeteringRectangle toMetering();
++    field public final android.graphics.Rect rect;
++    field public final int weight;
++  }
++
++  public static class ParameterUtils.ZoomData {
++    ctor public ParameterUtils.ZoomData(int, android.graphics.Rect, android.graphics.Rect, float);
++    field public final android.graphics.Rect previewCrop;
++    field public final android.graphics.Rect reportedCrop;
++    field public final float reportedZoomRatio;
++    field public final int zoomIndex;
++  }
++
++  public class RequestHandlerThread extends android.os.HandlerThread {
++    ctor public RequestHandlerThread(String, android.os.Handler.Callback);
++    method public android.os.Handler getHandler();
++    method public boolean hasAnyMessages(int[]);
++    method public void removeMessages(int[]);
++    method public android.os.Handler waitAndGetHandler();
++    method public void waitUntilIdle();
++    method public void waitUntilStarted();
++    field public static final int MSG_POKE_IDLE_HANDLER = -1; // 0xffffffff
++  }
++
++  public class RequestHolder {
++    method public void failRequest();
++    method public long getFrameNumber();
++    method public java.util.Collection<android.view.Surface> getHolderTargets();
++    method public android.hardware.camera2.CaptureRequest getRequest();
++    method public int getRequestId();
++    method public int getSubsequeceId();
++    method public boolean hasJpegTargets();
++    method public boolean hasPreviewTargets();
++    method public boolean isOutputAbandoned();
++    method public boolean isRepeating();
++    method public boolean jpegType(android.view.Surface) throws android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException;
++    method public int numJpegTargets();
++    method public int numPreviewTargets();
++    method public boolean requestFailed();
++    method public void setOutputAbandoned();
++  }
++
++  public static final class RequestHolder.Builder {
++    ctor public RequestHolder.Builder(int, int, android.hardware.camera2.CaptureRequest, boolean, java.util.Collection<Long>);
++    method public android.hardware.camera2.legacy.RequestHolder build(long);
++  }
++
++  public class RequestQueue {
++    ctor public RequestQueue(java.util.List<Long>);
++    method public android.hardware.camera2.legacy.RequestQueue.RequestQueueEntry getNext();
++    method public long stopRepeating();
++    method public long stopRepeating(int);
++    method public android.hardware.camera2.utils.SubmitInfo submit(android.hardware.camera2.CaptureRequest[], boolean);
++    field public static final long INVALID_FRAME = -1L; // 0xffffffffffffffffL
++  }
++
++  public final class RequestQueue.RequestQueueEntry {
++    ctor public RequestQueue.RequestQueueEntry(android.hardware.camera2.legacy.BurstHolder, Long, boolean);
++    method public android.hardware.camera2.legacy.BurstHolder getBurstHolder();
++    method public Long getFrameNumber();
++    method public boolean isQueueEmpty();
++  }
++
++  public class RequestThreadManager {
++    ctor public RequestThreadManager(int, android.hardware.Camera, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.legacy.CameraDeviceState);
++    method public long cancelRepeating(int);
++    method public void configure(java.util.Collection<android.util.Pair<android.view.Surface, android.util.Size>>);
++    method public long flush();
++    method public int getAudioRestriction();
++    method public void quit();
++    method public void setAudioRestriction(int);
++    method public void start();
++    method public android.hardware.camera2.utils.SubmitInfo submitCaptureRequests(android.hardware.camera2.CaptureRequest[], boolean);
++  }
++
++  public static class RequestThreadManager.FpsCounter {
++    ctor public RequestThreadManager.FpsCounter(String);
++    method public double checkFps();
++    method public void countAndLog();
++    method public void countFrame();
++    method public void staggeredLog();
++  }
++
++  public class SizeAreaComparator implements java.util.Comparator<android.hardware.Camera.Size> {
++    ctor public SizeAreaComparator();
++    method public int compare(android.hardware.Camera.Size, android.hardware.Camera.Size);
++    method public static android.hardware.Camera.Size findLargestByArea(java.util.List<android.hardware.Camera.Size>);
++  }
++
++  public class SurfaceTextureRenderer {
++    ctor public SurfaceTextureRenderer(int);
++    method public void cleanupEGLContext();
++    method public void configureSurfaces(java.util.Collection<android.util.Pair<android.view.Surface, android.util.Size>>);
++    method public void drawIntoSurfaces(android.hardware.camera2.legacy.CaptureCollector);
++    method public void flush();
++    method public android.graphics.SurfaceTexture getSurfaceTexture();
++  }
++
++}
++
+ package android.hardware.camera2.params {
+ 
+   public final class BlackLevelPattern {
+-- 
+2.51.0
+

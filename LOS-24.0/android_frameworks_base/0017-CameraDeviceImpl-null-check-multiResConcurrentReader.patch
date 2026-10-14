@@ -1,0 +1,52 @@
+From 05da99d472f86611a96151ef515664b70ba765d1 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Mon, 12 Oct 2026 18:02:32 +0200
+Subject: [PATCH 17/17] CameraDeviceImpl: null-check
+ multiResConcurrentReadersInfo
+
+Second capture-session crash this round, right after the configureStreams
+fix let preview actually start:
+
+  E AndroidRuntime: FATAL EXCEPTION: CameraDeviceExecutor
+  java.lang.NullPointerException: Attempt to get length of null array
+      at CameraDeviceImpl$CameraDeviceCallbacks.sendOnMultiResolutionOutputStarted(CameraDeviceImpl.java:2808)
+
+sendOnMultiResolutionOutputStarted() only bails out when
+Flags.multiResolutionConcurrentReaders() is disabled, then
+unconditionally for-eaches over the multiResConcurrentReadersInfo
+array. That flag defaults to enabled, but
+CaptureResultExtras.multiResConcurrentReadersStartInfo has no default
+value and the legacy (Camera1-backed) capture path that builds
+CaptureResultExtras for this device's HAL never populates it, so it's
+null on every single capture on this device - there's no way for a
+legacy-shimmed camera to have a MultiResolutionImageReader in the
+first place. Add a null check next to the existing flag check and bail
+out the same way.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Change-Id: I11e2abce4f11f2c3a77ed826a1068d0a678e0267
+---
+ .../android/hardware/camera2/impl/CameraDeviceImpl.java    | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/core/java/android/hardware/camera2/impl/CameraDeviceImpl.java b/core/java/android/hardware/camera2/impl/CameraDeviceImpl.java
+index c0640359c848..13f53802b8c7 100644
+--- a/core/java/android/hardware/camera2/impl/CameraDeviceImpl.java
++++ b/core/java/android/hardware/camera2/impl/CameraDeviceImpl.java
+@@ -2803,6 +2803,13 @@ public class CameraDeviceImpl extends CameraDevice
+             if (!Flags.multiResolutionConcurrentReaders()) {
+                 return;
+             }
++            // The legacy (Camera1-backed) capture path builds its own CaptureResultExtras
++            // without ever populating this new field, so it stays null there even though the
++            // flag defaults to enabled; there's nothing to report for a device that can't have
++            // MultiResolutionImageReaders in the first place.
++            if (multiResConcurrentReadersInfo == null) {
++                return;
++            }
+             // Iterate through all MultiResolutionImageReaders' concurrent start info, and send
+             // callbacks.
+             for (MultiResConcurrentReadersStartInfo info : multiResConcurrentReadersInfo) {
+-- 
+2.51.0
+

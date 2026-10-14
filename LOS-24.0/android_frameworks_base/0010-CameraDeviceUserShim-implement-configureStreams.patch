@@ -1,0 +1,48 @@
+From fbadd6da1ba79282121ba9158d578cce2513e1b7 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Wed, 7 Oct 2026 15:48:40 +0200
+Subject: [PATCH 10/17] CameraDeviceUserShim: implement configureStreams
+
+ICameraDeviceUser gained a consolidated configureStreams() call that
+combines the old beginConfigure()/endConfigure() sequence into one,
+which the legacy camera HALv1 shim doesn't implement. Reject it the
+same way startStreaming() rejects other camera2-only operations this
+legacy path doesn't model.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Change-Id: I785a1daabba03873b6134c2eb47b32041fadc378
+---
+ .../hardware/camera2/legacy/CameraDeviceUserShim.java  | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/core/java/android/hardware/camera2/legacy/CameraDeviceUserShim.java b/core/java/android/hardware/camera2/legacy/CameraDeviceUserShim.java
+index ce900afb91c0..0d6b84733390 100644
+--- a/core/java/android/hardware/camera2/legacy/CameraDeviceUserShim.java
++++ b/core/java/android/hardware/camera2/legacy/CameraDeviceUserShim.java
+@@ -31,6 +31,8 @@ import android.hardware.camera2.impl.CaptureResultExtras;
+ import android.hardware.camera2.impl.PhysicalCaptureResultInfo;
+ import android.hardware.camera2.params.OutputConfiguration;
+ import android.hardware.camera2.params.SessionConfiguration;
++import android.hardware.camera2.utils.OutputAndInputStreamIds;
++import android.hardware.camera2.utils.SessionConfigurationAndStreamIds;
+ import android.hardware.camera2.utils.SubmitInfo;
+ import android.hardware.common.fmq.MQDescriptor;
+ import android.os.ConditionVariable;
+@@ -603,6 +605,14 @@ public class CameraDeviceUserShim implements ICameraDeviceUser {
+         return new int[0]; // Offline mode is not supported
+     }
+ 
++    @Override
++    public OutputAndInputStreamIds configureStreams(
++            SessionConfigurationAndStreamIds sessionConfigurationAndStreamIds) {
++        String err = "The consolidated configureStreams call is not supported on legacy devices";
++        Log.e(TAG, err);
++        throw new ServiceSpecificException(ICameraService.ERROR_INVALID_OPERATION, err);
++    }
++
+     @Override
+     public void deleteStream(int streamId) {
+         if (DEBUG) {
+-- 
+2.51.0
+

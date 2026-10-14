@@ -1,0 +1,38 @@
+From 70b810c6a8165a45f2a284f1647cf7cdf07fe772 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Wed, 7 Oct 2026 15:42:27 +0200
+Subject: [PATCH 09/17] CameraDeviceUserShim: stub the batched
+ updateOutputConfigurations
+
+ICameraDeviceUser gained a batched updateOutputConfigurations(int[],
+OutputConfiguration[]) method alongside the existing single-stream
+updateOutputConfiguration(int, OutputConfiguration), which the legacy
+camera HALv1 shim restored by the camera patches doesn't implement.
+Add a no-op stub matching the existing one, since neither is
+implemented for legacy HALv1 devices.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Change-Id: I982f9c3452b55dc2a202bc9d09ac38a89217d4c9
+---
+ .../hardware/camera2/legacy/CameraDeviceUserShim.java        | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/core/java/android/hardware/camera2/legacy/CameraDeviceUserShim.java b/core/java/android/hardware/camera2/legacy/CameraDeviceUserShim.java
+index 89469522c61e..ce900afb91c0 100644
+--- a/core/java/android/hardware/camera2/legacy/CameraDeviceUserShim.java
++++ b/core/java/android/hardware/camera2/legacy/CameraDeviceUserShim.java
+@@ -718,6 +718,11 @@ public class CameraDeviceUserShim implements ICameraDeviceUser {
+         // TODO: b/63912484 implement updateOutputConfiguration.
+     }
+ 
++    @Override
++    public void updateOutputConfigurations(int[] streamIds, OutputConfiguration[] configs) {
++        // TODO: b/63912484 implement updateOutputConfigurations.
++    }
++
+     @Override
+     public void waitUntilIdle() throws RemoteException {
+         if (DEBUG) {
+-- 
+2.51.0
+

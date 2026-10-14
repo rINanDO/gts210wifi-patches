@@ -1,0 +1,1554 @@
+From 188bfbea7cf2ccdd5b9caf102defb4fee09affb3 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Wed, 7 Oct 2026 17:14:57 +0200
+Subject: [PATCH 11/17] Update API lint baseline for restored camera2.legacy
+ classes
+
+The camera HALv1 restoration reintroduces android.hardware.camera2.legacy
+classes that predate several current API lint requirements
+(@FlaggedApi on new API, nullability annotations, array-vs-Collection
+parameter style, acronym casing). These are internal legacy
+compatibility shims, not new public API, so baseline them the same way
+the build's own error message instructs rather than annotating 600+
+pre-existing methods.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Change-Id: I507274980f6a26526210dd2b54fa1da614f84cd4
+---
+ core/api/lint-baseline.txt | 1452 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 1452 insertions(+)
+
+diff --git a/core/api/lint-baseline.txt b/core/api/lint-baseline.txt
+index 04149ca5356e..9e0a8c99527e 100644
+--- a/core/api/lint-baseline.txt
++++ b/core/api/lint-baseline.txt
+@@ -1,4 +1,32 @@
+ // Baseline format: 1.0
++AcronymName: android.hardware.camera2.legacy.GLThreadManager:
++    Acronyms should not be capitalized in class names: was `GLThreadManager`, should this be `GlThreadManager`?
++AcronymName: android.hardware.camera2.legacy.SurfaceTextureRenderer#cleanupEGLContext():
++    Acronyms should not be capitalized in method names: was `cleanupEGLContext`, should this be `cleanupEglContext`?
++
++
++ArrayReturn: android.hardware.camera2.legacy.BurstHolder#BurstHolder(int, boolean, android.hardware.camera2.CaptureRequest[], java.util.Collection<java.lang.Long>) parameter #2:
++    Method parameter should be Collection<android.hardware.camera2.CaptureRequest> (or subclass) instead of raw array; was `android.hardware.camera2.CaptureRequest[]`
++ArrayReturn: android.hardware.camera2.legacy.CameraDeviceUserShim#submitRequestList(android.hardware.camera2.CaptureRequest[], boolean) parameter #0:
++    Method parameter should be Collection<android.hardware.camera2.CaptureRequest> (or subclass) instead of raw array; was `android.hardware.camera2.CaptureRequest[]`
++ArrayReturn: android.hardware.camera2.legacy.CameraDeviceUserShim#updateOutputConfigurations(int[], android.hardware.camera2.params.OutputConfiguration[]) parameter #1:
++    Method parameter should be Collection<android.hardware.camera2.params.OutputConfiguration> (or subclass) instead of raw array; was `android.hardware.camera2.params.OutputConfiguration[]`
++ArrayReturn: android.hardware.camera2.legacy.LegacyCameraDevice#submitRequestList(android.hardware.camera2.CaptureRequest[], boolean) parameter #0:
++    Method parameter should be Collection<android.hardware.camera2.CaptureRequest> (or subclass) instead of raw array; was `android.hardware.camera2.CaptureRequest[]`
++ArrayReturn: android.hardware.camera2.legacy.ParameterUtils#convertSizeListToArray(java.util.List<android.hardware.Camera.Size>):
++    Method should return Collection<android.util.Size> (or subclass) instead of raw array; was `android.util.Size[]`
++ArrayReturn: android.hardware.camera2.legacy.RequestQueue#submit(android.hardware.camera2.CaptureRequest[], boolean) parameter #0:
++    Method parameter should be Collection<android.hardware.camera2.CaptureRequest> (or subclass) instead of raw array; was `android.hardware.camera2.CaptureRequest[]`
++ArrayReturn: android.hardware.camera2.legacy.RequestThreadManager#submitCaptureRequests(android.hardware.camera2.CaptureRequest[], boolean) parameter #0:
++    Method parameter should be Collection<android.hardware.camera2.CaptureRequest> (or subclass) instead of raw array; was `android.hardware.camera2.CaptureRequest[]`
++
++
++AutoBoxing: android.hardware.camera2.legacy.ParameterUtils#convertToLegacyZoom(android.graphics.Rect, android.graphics.Rect, Float, android.util.Size, android.hardware.Camera.Parameters) parameter #2:
++    Must avoid boxed primitives (`java.lang.Float`)
++AutoBoxing: android.hardware.camera2.legacy.RequestQueue.RequestQueueEntry#RequestQueueEntry(android.hardware.camera2.legacy.BurstHolder, Long, boolean) parameter #1:
++    Must avoid boxed primitives (`java.lang.Long`)
++AutoBoxing: android.hardware.camera2.legacy.RequestQueue.RequestQueueEntry#getFrameNumber():
++    Must avoid boxed primitives (`java.lang.Long`)
+ 
+ 
+ BroadcastBehavior: android.app.AlarmManager#ACTION_NEXT_ALARM_CLOCK_CHANGED:
+@@ -247,6 +275,20 @@ BroadcastBehavior: android.telephony.euicc.EuiccManager#ACTION_NOTIFY_CARRIER_SE
+     Field 'ACTION_NOTIFY_CARRIER_SETUP_INCOMPLETE' is missing @BroadcastBehavior
+ 
+ 
++CompileTimeConstant: android.hardware.camera2.legacy.LegacyExceptionUtils#ALREADY_EXISTS:
++    All constants must be defined at compile time: android.hardware.camera2.legacy.LegacyExceptionUtils#ALREADY_EXISTS
++CompileTimeConstant: android.hardware.camera2.legacy.LegacyExceptionUtils#BAD_VALUE:
++    All constants must be defined at compile time: android.hardware.camera2.legacy.LegacyExceptionUtils#BAD_VALUE
++CompileTimeConstant: android.hardware.camera2.legacy.LegacyExceptionUtils#DEAD_OBJECT:
++    All constants must be defined at compile time: android.hardware.camera2.legacy.LegacyExceptionUtils#DEAD_OBJECT
++CompileTimeConstant: android.hardware.camera2.legacy.LegacyExceptionUtils#INVALID_OPERATION:
++    All constants must be defined at compile time: android.hardware.camera2.legacy.LegacyExceptionUtils#INVALID_OPERATION
++CompileTimeConstant: android.hardware.camera2.legacy.LegacyExceptionUtils#PERMISSION_DENIED:
++    All constants must be defined at compile time: android.hardware.camera2.legacy.LegacyExceptionUtils#PERMISSION_DENIED
++CompileTimeConstant: android.hardware.camera2.legacy.LegacyExceptionUtils#TIMED_OUT:
++    All constants must be defined at compile time: android.hardware.camera2.legacy.LegacyExceptionUtils#TIMED_OUT
++
++
+ DeprecationMismatch: android.accounts.AccountManager#newChooseAccountIntent(android.accounts.Account, java.util.ArrayList<android.accounts.Account>, String[], boolean, String, String, String[], android.os.Bundle):
+     Method android.accounts.AccountManager.newChooseAccountIntent(android.accounts.Account, java.util.ArrayList<android.accounts.Account>, String[], boolean, String, String, String[], android.os.Bundle): @Deprecated annotation (present) and @deprecated doc tag (not present) do not match
+ DeprecationMismatch: android.app.Activity#enterPictureInPictureMode():
+@@ -387,6 +429,64 @@ DeprecationMismatch: javax.microedition.khronos.egl.EGL10#eglCreatePixmapSurface
+     Method javax.microedition.khronos.egl.EGL10.eglCreatePixmapSurface(javax.microedition.khronos.egl.EGLDisplay, javax.microedition.khronos.egl.EGLConfig, Object, int[]): @Deprecated annotation (present) and @deprecated doc tag (not present) do not match
+ 
+ 
++EqualsAndHashCode: android.companion.AssociationRequest#equals(Object):
++    Must override both equals and hashCode; missing one in android.companion.AssociationRequest
++EqualsAndHashCode: android.content.IntentFilter.AuthorityEntry#equals(Object):
++    Must override both equals and hashCode; missing one in android.content.IntentFilter.AuthorityEntry
++EqualsAndHashCode: android.content.PeriodicSync#equals(Object):
++    Must override both equals and hashCode; missing one in android.content.PeriodicSync
++EqualsAndHashCode: android.graphics.Region#equals(Object):
++    Must override both equals and hashCode; missing one in android.graphics.Region
++EqualsAndHashCode: android.media.MediaCas.Session#equals(Object):
++    Must override both equals and hashCode; missing one in android.media.MediaCas.Session
++EqualsAndHashCode: android.media.MediaDescription#equals(Object):
++    Must override both equals and hashCode; missing one in android.media.MediaDescription
++EqualsAndHashCode: android.media.MediaTimestamp#equals(Object):
++    Must override both equals and hashCode; missing one in android.media.MediaTimestamp
++EqualsAndHashCode: android.media.MicrophoneInfo.Coordinate3F#equals(Object):
++    Must override both equals and hashCode; missing one in android.media.MicrophoneInfo.Coordinate3F
++EqualsAndHashCode: android.media.session.MediaSession.QueueItem#equals(Object):
++    Must override both equals and hashCode; missing one in android.media.session.MediaSession.QueueItem
++EqualsAndHashCode: android.opengl.EGLConfig#equals(Object):
++    Must override both equals and hashCode; missing one in android.opengl.EGLConfig
++EqualsAndHashCode: android.opengl.EGLContext#equals(Object):
++    Must override both equals and hashCode; missing one in android.opengl.EGLContext
++EqualsAndHashCode: android.opengl.EGLDisplay#equals(Object):
++    Must override both equals and hashCode; missing one in android.opengl.EGLDisplay
++EqualsAndHashCode: android.opengl.EGLImage#equals(Object):
++    Must override both equals and hashCode; missing one in android.opengl.EGLImage
++EqualsAndHashCode: android.opengl.EGLObjectHandle#hashCode():
++    Must override both equals and hashCode; missing one in android.opengl.EGLObjectHandle
++EqualsAndHashCode: android.opengl.EGLSurface#equals(Object):
++    Must override both equals and hashCode; missing one in android.opengl.EGLSurface
++EqualsAndHashCode: android.opengl.EGLSync#equals(Object):
++    Must override both equals and hashCode; missing one in android.opengl.EGLSync
++EqualsAndHashCode: android.os.strictmode.Violation#hashCode():
++    Must override both equals and hashCode; missing one in android.os.strictmode.Violation
++EqualsAndHashCode: android.service.notification.NotificationListenerService.Ranking#equals(Object):
++    Must override both equals and hashCode; missing one in android.service.notification.NotificationListenerService.Ranking
++EqualsAndHashCode: android.service.notification.NotificationListenerService.RankingMap#equals(Object):
++    Must override both equals and hashCode; missing one in android.service.notification.NotificationListenerService.RankingMap
++EqualsAndHashCode: android.view.KeyCharacterMap#equals(Object):
++    Must override both equals and hashCode; missing one in android.view.KeyCharacterMap
++EqualsAndHashCode: android.view.PointerIcon#equals(Object):
++    Must override both equals and hashCode; missing one in android.view.PointerIcon
++EqualsAndHashCode: android.window.BackEvent#equals(Object):
++    Must override both equals and hashCode; missing one in android.window.BackEvent
++
++
++ExecutorRegistration: android.hardware.camera2.legacy.CameraDeviceState#setCameraDeviceCallbacks(android.os.Handler, android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener):
++    Registration methods should have overload that accepts delivery Executor: `setCameraDeviceCallbacks`
++ExecutorRegistration: android.hardware.camera2.legacy.CameraDeviceUserShim#connectBinderShim(android.hardware.camera2.ICameraDeviceCallbacks, int, android.util.Size):
++    Registration methods should have overload that accepts delivery Executor: `connectBinderShim`
++ExecutorRegistration: android.hardware.camera2.legacy.CameraDeviceUserShim#switchToOffline(android.hardware.camera2.ICameraDeviceCallbacks, int[]):
++    Registration methods should have overload that accepts delivery Executor: `switchToOffline`
++ExecutorRegistration: android.hardware.camera2.legacy.LegacyCameraDevice#LegacyCameraDevice(int, android.hardware.Camera, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.ICameraDeviceCallbacks):
++    Registration methods should have overload that accepts delivery Executor: `LegacyCameraDevice`
++ExecutorRegistration: android.hardware.camera2.legacy.RequestHandlerThread#RequestHandlerThread(String, android.os.Handler.Callback):
++    Registration methods should have overload that accepts delivery Executor: `RequestHandlerThread`
++
++
+ FlaggedApiLiteral: android.Manifest.permission#BIND_APP_FUNCTION_SERVICE:
+     @FlaggedApi contains a string literal, but should reference the field generated by aconfig (android.app.appfunctions.flags.Flags.FLAG_ENABLE_APP_FUNCTION_MANAGER).
+ FlaggedApiLiteral: android.Manifest.permission#BIND_TV_AD_SERVICE:
+@@ -421,6 +521,66 @@ FlaggedApiLiteral: android.accessibilityservice.AccessibilityService#OVERLAY_RES
+     @FlaggedApi contains a string literal, but should reference the field generated by aconfig (android.view.accessibility.Flags.FLAG_A11Y_OVERLAY_CALLBACKS).
+ 
+ 
++GenericException: android.hardware.camera2.legacy.LegacyCameraDevice#finalize():
++    Methods must not throw generic exceptions (`java.lang.Throwable`)
++
++
++HiddenTypeParameter: android.hardware.camera2.legacy.CameraDeviceState#setCaptureResult(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.impl.CameraMetadataNative) parameter #1:
++    Parameter result references hidden type android.hardware.camera2.impl.CameraMetadataNative.
++HiddenTypeParameter: android.hardware.camera2.legacy.CameraDeviceState#setCaptureResult(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.impl.CameraMetadataNative, int, Object) parameter #1:
++    Parameter result references hidden type android.hardware.camera2.impl.CameraMetadataNative.
++HiddenTypeParameter: android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener#onCaptureResult(android.hardware.camera2.impl.CameraMetadataNative, android.hardware.camera2.legacy.RequestHolder) parameter #0:
++    Parameter result references hidden type android.hardware.camera2.impl.CameraMetadataNative.
++HiddenTypeParameter: android.hardware.camera2.legacy.CameraDeviceUserShim#CameraDeviceUserShim(int, android.hardware.camera2.legacy.LegacyCameraDevice, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.legacy.CameraDeviceUserShim.CameraLooper, android.hardware.camera2.legacy.CameraDeviceUserShim.CameraCallbackThread) parameter #3:
++    Parameter cameraInit references hidden type android.hardware.camera2.legacy.CameraDeviceUserShim.CameraLooper.
++HiddenTypeParameter: android.hardware.camera2.legacy.CameraDeviceUserShim#CameraDeviceUserShim(int, android.hardware.camera2.legacy.LegacyCameraDevice, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.legacy.CameraDeviceUserShim.CameraLooper, android.hardware.camera2.legacy.CameraDeviceUserShim.CameraCallbackThread) parameter #4:
++    Parameter cameraCallbacks references hidden type android.hardware.camera2.legacy.CameraDeviceUserShim.CameraCallbackThread.
++HiddenTypeParameter: android.hardware.camera2.legacy.CameraDeviceUserShim#configureStreams(android.hardware.camera2.utils.SessionConfigurationAndStreamIds):
++    Method android.hardware.camera2.legacy.CameraDeviceUserShim.configureStreams(android.hardware.camera2.utils.SessionConfigurationAndStreamIds) references hidden type android.hardware.camera2.utils.OutputAndInputStreamIds.
++HiddenTypeParameter: android.hardware.camera2.legacy.CameraDeviceUserShim#configureStreams(android.hardware.camera2.utils.SessionConfigurationAndStreamIds) parameter #0:
++    Parameter sessionConfigurationAndStreamIds references hidden type android.hardware.camera2.utils.SessionConfigurationAndStreamIds.
++HiddenTypeParameter: android.hardware.camera2.legacy.CameraDeviceUserShim#connectBinderShim(android.hardware.camera2.ICameraDeviceCallbacks, int, android.util.Size) parameter #0:
++    Parameter callbacks references hidden type android.hardware.camera2.ICameraDeviceCallbacks.
++HiddenTypeParameter: android.hardware.camera2.legacy.CameraDeviceUserShim#createDefaultRequest(int):
++    Method android.hardware.camera2.legacy.CameraDeviceUserShim.createDefaultRequest(int) references hidden type android.hardware.camera2.impl.CameraMetadataNative.
++HiddenTypeParameter: android.hardware.camera2.legacy.CameraDeviceUserShim#endConfigure(int, android.hardware.camera2.impl.CameraMetadataNative, long) parameter #1:
++    Parameter sessionParams references hidden type android.hardware.camera2.impl.CameraMetadataNative.
++HiddenTypeParameter: android.hardware.camera2.legacy.CameraDeviceUserShim#getCameraInfo():
++    Method android.hardware.camera2.legacy.CameraDeviceUserShim.getCameraInfo() references hidden type android.hardware.camera2.impl.CameraMetadataNative.
++HiddenTypeParameter: android.hardware.camera2.legacy.CameraDeviceUserShim#startStreaming(int[], int[]):
++    Method android.hardware.camera2.legacy.CameraDeviceUserShim.startStreaming(int[], int[]) references hidden type android.hardware.camera2.utils.SubmitInfo.
++HiddenTypeParameter: android.hardware.camera2.legacy.CameraDeviceUserShim#submitRequest(android.hardware.camera2.CaptureRequest, boolean):
++    Method android.hardware.camera2.legacy.CameraDeviceUserShim.submitRequest(android.hardware.camera2.CaptureRequest, boolean) references hidden type android.hardware.camera2.utils.SubmitInfo.
++HiddenTypeParameter: android.hardware.camera2.legacy.CameraDeviceUserShim#submitRequestList(android.hardware.camera2.CaptureRequest[], boolean):
++    Method android.hardware.camera2.legacy.CameraDeviceUserShim.submitRequestList(android.hardware.camera2.CaptureRequest[], boolean) references hidden type android.hardware.camera2.utils.SubmitInfo.
++HiddenTypeParameter: android.hardware.camera2.legacy.CameraDeviceUserShim#switchToOffline(android.hardware.camera2.ICameraDeviceCallbacks, int[]):
++    Method android.hardware.camera2.legacy.CameraDeviceUserShim.switchToOffline(android.hardware.camera2.ICameraDeviceCallbacks, int[]) references hidden type android.hardware.camera2.ICameraOfflineSession.
++HiddenTypeParameter: android.hardware.camera2.legacy.CameraDeviceUserShim#switchToOffline(android.hardware.camera2.ICameraDeviceCallbacks, int[]) parameter #0:
++    Parameter cbs references hidden type android.hardware.camera2.ICameraDeviceCallbacks.
++HiddenTypeParameter: android.hardware.camera2.legacy.CameraDeviceUserShim.CameraCallbackThread#onResultReceived(android.hardware.camera2.CameraMetadataInfo, android.hardware.camera2.impl.CaptureResultExtras, android.hardware.camera2.impl.PhysicalCaptureResultInfo[]):
++    Parameter uses type parameter of unavailable type android.hardware.camera2.impl.PhysicalCaptureResultInfo[] in android.hardware.camera2.legacy.CameraDeviceUserShim.CameraCallbackThread.onResultReceived()
++HiddenTypeParameter: android.hardware.camera2.legacy.LegacyCameraDevice#LegacyCameraDevice(int, android.hardware.Camera, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.ICameraDeviceCallbacks) parameter #3:
++    Parameter callbacks references hidden type android.hardware.camera2.ICameraDeviceCallbacks.
++HiddenTypeParameter: android.hardware.camera2.legacy.LegacyCameraDevice#submitRequest(android.hardware.camera2.CaptureRequest, boolean):
++    Method android.hardware.camera2.legacy.LegacyCameraDevice.submitRequest(android.hardware.camera2.CaptureRequest, boolean) references hidden type android.hardware.camera2.utils.SubmitInfo.
++HiddenTypeParameter: android.hardware.camera2.legacy.LegacyCameraDevice#submitRequestList(android.hardware.camera2.CaptureRequest[], boolean):
++    Method android.hardware.camera2.legacy.LegacyCameraDevice.submitRequestList(android.hardware.camera2.CaptureRequest[], boolean) references hidden type android.hardware.camera2.utils.SubmitInfo.
++HiddenTypeParameter: android.hardware.camera2.legacy.LegacyFaceDetectMapper#mapResultFaces(android.hardware.camera2.impl.CameraMetadataNative, android.hardware.camera2.legacy.LegacyRequest) parameter #0:
++    Parameter result references hidden type android.hardware.camera2.impl.CameraMetadataNative.
++HiddenTypeParameter: android.hardware.camera2.legacy.LegacyFocusStateMapper#mapResultTriggers(android.hardware.camera2.impl.CameraMetadataNative) parameter #0:
++    Parameter result references hidden type android.hardware.camera2.impl.CameraMetadataNative.
++HiddenTypeParameter: android.hardware.camera2.legacy.LegacyMetadataMapper#createCharacteristics(String, android.hardware.CameraInfo, int, android.util.Size) parameter #1:
++    Parameter info references hidden type android.hardware.CameraInfo.
++HiddenTypeParameter: android.hardware.camera2.legacy.LegacyMetadataMapper#createRequestTemplate(android.hardware.camera2.CameraCharacteristics, int):
++    Method android.hardware.camera2.legacy.LegacyMetadataMapper.createRequestTemplate(android.hardware.camera2.CameraCharacteristics, int) references hidden type android.hardware.camera2.impl.CameraMetadataNative.
++HiddenTypeParameter: android.hardware.camera2.legacy.LegacyResultMapper#cachedConvertResultMetadata(android.hardware.camera2.legacy.LegacyRequest, long):
++    Method android.hardware.camera2.legacy.LegacyResultMapper.cachedConvertResultMetadata(android.hardware.camera2.legacy.LegacyRequest, long) references hidden type android.hardware.camera2.impl.CameraMetadataNative.
++HiddenTypeParameter: android.hardware.camera2.legacy.RequestQueue#submit(android.hardware.camera2.CaptureRequest[], boolean):
++    Method android.hardware.camera2.legacy.RequestQueue.submit(android.hardware.camera2.CaptureRequest[], boolean) references hidden type android.hardware.camera2.utils.SubmitInfo.
++HiddenTypeParameter: android.hardware.camera2.legacy.RequestThreadManager#submitCaptureRequests(android.hardware.camera2.CaptureRequest[], boolean):
++    Method android.hardware.camera2.legacy.RequestThreadManager.submitCaptureRequests(android.hardware.camera2.CaptureRequest[], boolean) references hidden type android.hardware.camera2.utils.SubmitInfo.
++
++
+ InvalidNullabilityOverride: android.app.Notification.TvExtender#extend(android.app.Notification.Builder) parameter #0:
+     Invalid nullability on parameter `builder` in method `extend`. Parameters of overrides cannot be NonNull if the super parameter is unannotated.
+ InvalidNullabilityOverride: android.media.midi.MidiUmpDeviceService#onBind(android.content.Intent) parameter #0:
+@@ -433,10 +593,34 @@ KotlinOperator: android.graphics.Matrix44#set(int, int, float):
+     Method can be invoked with an indexing operator from Kotlin: `set` (this is usually desirable; just make sure it makes sense for this type of object)
+ 
+ 
++ListenerLast: android.hardware.camera2.legacy.CameraDeviceUserShim#connectBinderShim(android.hardware.camera2.ICameraDeviceCallbacks, int, android.util.Size) parameter #1:
++    Listeners should always be at end of argument list (method `connectBinderShim`)
++ListenerLast: android.hardware.camera2.legacy.CameraDeviceUserShim#connectBinderShim(android.hardware.camera2.ICameraDeviceCallbacks, int, android.util.Size) parameter #2:
++    Listeners should always be at end of argument list (method `connectBinderShim`)
++ListenerLast: android.hardware.camera2.legacy.CameraDeviceUserShim#switchToOffline(android.hardware.camera2.ICameraDeviceCallbacks, int[]) parameter #1:
++    Listeners should always be at end of argument list (method `switchToOffline`)
++
++
++MalformedDocReference: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/telephony/java/android/telephony/CarrierConfigManager.java:
++    Malformed reference `PhoneAccount.LOW_BATTERY_ALERT_DISABLED`, missing '#', should be 'PhoneAccount#LOW_BATTERY_ALERT_DISABLED
++
++
++ManagerConstructor: android.hardware.camera2.legacy.GLThreadManager#GLThreadManager(int, int, android.hardware.camera2.legacy.CameraDeviceState):
++    Managers must always be obtained from Context; no direct constructors
++ManagerConstructor: android.hardware.camera2.legacy.RequestThreadManager#RequestThreadManager(int, android.hardware.Camera, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.legacy.CameraDeviceState):
++    Managers must always be obtained from Context; no direct constructors
++
++
+ ManagerLookup: android.telephony.SubscriptionManager#createForAllUserProfiles():
+     Managers must always be obtained from Context (`createForAllUserProfiles`)
+ 
+ 
++MinMaxConstant: android.hardware.camera2.legacy.LegacyCameraDevice#MAX_DIMEN_FOR_ROUNDING:
++    If min/max could change in future, make them dynamic methods: android.hardware.camera2.legacy.LegacyCameraDevice#MAX_DIMEN_FOR_ROUNDING
++
++
++MissingGetterMatchingBuilder: android.app.Notification.Builder#setCompactContent(android.app.Notification.CompactContent):
++    android.app.Notification does not declare a `getCompactContent()` method matching method android.app.Notification.Builder.setCompactContent(android.app.Notification.CompactContent)
+ MissingGetterMatchingBuilder: android.app.Notification.Builder#setRequestPromotedOngoing(boolean):
+     android.app.Notification does not declare a `isRequestPromotedOngoing()` method matching method android.app.Notification.Builder.setRequestPromotedOngoing(boolean)
+ MissingGetterMatchingBuilder: android.content.AttributionSource.Builder#setNextAttributionSource(android.content.AttributionSource):
+@@ -445,6 +629,530 @@ MissingGetterMatchingBuilder: android.os.RemoteCallbackList.Builder#setInterface
+     android.os.RemoteCallbackList does not declare a `getInterfaceDiedCallback()` method matching method android.os.RemoteCallbackList.Builder.setInterfaceDiedCallback(android.os.RemoteCallbackList.Builder.InterfaceDiedCallback<E>)
+ 
+ 
++MissingNullability: android.hardware.camera2.legacy.BurstHolder#BurstHolder(int, boolean, android.hardware.camera2.CaptureRequest[], java.util.Collection<java.lang.Long>) parameter #2:
++    Missing nullability on parameter `requests` in method `BurstHolder`
++MissingNullability: android.hardware.camera2.legacy.BurstHolder#BurstHolder(int, boolean, android.hardware.camera2.CaptureRequest[], java.util.Collection<java.lang.Long>) parameter #3:
++    Missing nullability on parameter `jpegSurfaceIds` in method `BurstHolder`
++MissingNullability: android.hardware.camera2.legacy.BurstHolder#produceRequestHolders(long):
++    Missing nullability on method `produceRequestHolders` return
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceState#setCameraDeviceCallbacks(android.os.Handler, android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener) parameter #0:
++    Missing nullability on parameter `handler` in method `setCameraDeviceCallbacks`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceState#setCameraDeviceCallbacks(android.os.Handler, android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener) parameter #1:
++    Missing nullability on parameter `listener` in method `setCameraDeviceCallbacks`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceState#setCaptureResult(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.impl.CameraMetadataNative) parameter #0:
++    Missing nullability on parameter `request` in method `setCaptureResult`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceState#setCaptureResult(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.impl.CameraMetadataNative) parameter #1:
++    Missing nullability on parameter `result` in method `setCaptureResult`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceState#setCaptureResult(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.impl.CameraMetadataNative, int, Object) parameter #0:
++    Missing nullability on parameter `request` in method `setCaptureResult`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceState#setCaptureResult(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.impl.CameraMetadataNative, int, Object) parameter #1:
++    Missing nullability on parameter `result` in method `setCaptureResult`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceState#setCaptureResult(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.impl.CameraMetadataNative, int, Object) parameter #3:
++    Missing nullability on parameter `captureErrorArg` in method `setCaptureResult`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceState#setCaptureStart(android.hardware.camera2.legacy.RequestHolder, long, int) parameter #0:
++    Missing nullability on parameter `request` in method `setCaptureStart`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener#onCaptureResult(android.hardware.camera2.impl.CameraMetadataNative, android.hardware.camera2.legacy.RequestHolder) parameter #0:
++    Missing nullability on parameter `result` in method `onCaptureResult`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener#onCaptureResult(android.hardware.camera2.impl.CameraMetadataNative, android.hardware.camera2.legacy.RequestHolder) parameter #1:
++    Missing nullability on parameter `holder` in method `onCaptureResult`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener#onCaptureStarted(android.hardware.camera2.legacy.RequestHolder, long) parameter #0:
++    Missing nullability on parameter `holder` in method `onCaptureStarted`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener#onError(int, Object, android.hardware.camera2.legacy.RequestHolder) parameter #1:
++    Missing nullability on parameter `errorArg` in method `onError`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener#onError(int, Object, android.hardware.camera2.legacy.RequestHolder) parameter #2:
++    Missing nullability on parameter `holder` in method `onError`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#CameraDeviceUserShim(int, android.hardware.camera2.legacy.LegacyCameraDevice, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.legacy.CameraDeviceUserShim.CameraLooper, android.hardware.camera2.legacy.CameraDeviceUserShim.CameraCallbackThread) parameter #1:
++    Missing nullability on parameter `legacyCamera` in method `CameraDeviceUserShim`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#CameraDeviceUserShim(int, android.hardware.camera2.legacy.LegacyCameraDevice, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.legacy.CameraDeviceUserShim.CameraLooper, android.hardware.camera2.legacy.CameraDeviceUserShim.CameraCallbackThread) parameter #2:
++    Missing nullability on parameter `characteristics` in method `CameraDeviceUserShim`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#CameraDeviceUserShim(int, android.hardware.camera2.legacy.LegacyCameraDevice, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.legacy.CameraDeviceUserShim.CameraLooper, android.hardware.camera2.legacy.CameraDeviceUserShim.CameraCallbackThread) parameter #3:
++    Missing nullability on parameter `cameraInit` in method `CameraDeviceUserShim`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#CameraDeviceUserShim(int, android.hardware.camera2.legacy.LegacyCameraDevice, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.legacy.CameraDeviceUserShim.CameraLooper, android.hardware.camera2.legacy.CameraDeviceUserShim.CameraCallbackThread) parameter #4:
++    Missing nullability on parameter `cameraCallbacks` in method `CameraDeviceUserShim`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#asBinder():
++    Missing nullability on method `asBinder` return
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#configureStreams(android.hardware.camera2.utils.SessionConfigurationAndStreamIds):
++    Missing nullability on method `configureStreams` return
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#configureStreams(android.hardware.camera2.utils.SessionConfigurationAndStreamIds) parameter #0:
++    Missing nullability on parameter `sessionConfigurationAndStreamIds` in method `configureStreams`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#connectBinderShim(android.hardware.camera2.ICameraDeviceCallbacks, int, android.util.Size):
++    Missing nullability on method `connectBinderShim` return
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#connectBinderShim(android.hardware.camera2.ICameraDeviceCallbacks, int, android.util.Size) parameter #0:
++    Missing nullability on parameter `callbacks` in method `connectBinderShim`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#connectBinderShim(android.hardware.camera2.ICameraDeviceCallbacks, int, android.util.Size) parameter #2:
++    Missing nullability on parameter `displaySize` in method `connectBinderShim`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#createDefaultRequest(int):
++    Missing nullability on method `createDefaultRequest` return
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#createStream(android.hardware.camera2.params.OutputConfiguration) parameter #0:
++    Missing nullability on parameter `outputConfiguration` in method `createStream`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#endConfigure(int, android.hardware.camera2.impl.CameraMetadataNative, long):
++    Missing nullability on method `endConfigure` return
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#endConfigure(int, android.hardware.camera2.impl.CameraMetadataNative, long) parameter #1:
++    Missing nullability on parameter `sessionParams` in method `endConfigure`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#finalizeOutputConfigurations(int, android.hardware.camera2.params.OutputConfiguration) parameter #1:
++    Missing nullability on parameter `config` in method `finalizeOutputConfigurations`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#getCameraInfo():
++    Missing nullability on method `getCameraInfo` return
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#getCaptureResultMetadataQueue():
++    Missing nullability on method `getCaptureResultMetadataQueue` return
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#getInputSurface():
++    Missing nullability on method `getInputSurface` return
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#isSessionConfigurationSupported(android.hardware.camera2.params.SessionConfiguration) parameter #0:
++    Missing nullability on parameter `sessionConfig` in method `isSessionConfigurationSupported`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#startStreaming(int[], int[]):
++    Missing nullability on method `startStreaming` return
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#startStreaming(int[], int[]) parameter #0:
++    Missing nullability on parameter `streamIdxArray` in method `startStreaming`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#startStreaming(int[], int[]) parameter #1:
++    Missing nullability on parameter `surfaceIdxArray` in method `startStreaming`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#submitRequest(android.hardware.camera2.CaptureRequest, boolean):
++    Missing nullability on method `submitRequest` return
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#submitRequest(android.hardware.camera2.CaptureRequest, boolean) parameter #0:
++    Missing nullability on parameter `request` in method `submitRequest`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#submitRequestList(android.hardware.camera2.CaptureRequest[], boolean):
++    Missing nullability on method `submitRequestList` return
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#submitRequestList(android.hardware.camera2.CaptureRequest[], boolean) parameter #0:
++    Missing nullability on parameter `request` in method `submitRequestList`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#switchToOffline(android.hardware.camera2.ICameraDeviceCallbacks, int[]):
++    Missing nullability on method `switchToOffline` return
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#switchToOffline(android.hardware.camera2.ICameraDeviceCallbacks, int[]) parameter #0:
++    Missing nullability on parameter `cbs` in method `switchToOffline`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#switchToOffline(android.hardware.camera2.ICameraDeviceCallbacks, int[]) parameter #1:
++    Missing nullability on parameter `offlineOutputIds` in method `switchToOffline`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#updateOutputConfiguration(int, android.hardware.camera2.params.OutputConfiguration) parameter #1:
++    Missing nullability on parameter `config` in method `updateOutputConfiguration`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#updateOutputConfigurations(int[], android.hardware.camera2.params.OutputConfiguration[]) parameter #0:
++    Missing nullability on parameter `streamIds` in method `updateOutputConfigurations`
++MissingNullability: android.hardware.camera2.legacy.CameraDeviceUserShim#updateOutputConfigurations(int[], android.hardware.camera2.params.OutputConfiguration[]) parameter #1:
++    Missing nullability on parameter `configs` in method `updateOutputConfigurations`
++MissingNullability: android.hardware.camera2.legacy.CaptureCollector#CaptureCollector(int, android.hardware.camera2.legacy.CameraDeviceState) parameter #1:
++    Missing nullability on parameter `deviceState` in method `CaptureCollector`
++MissingNullability: android.hardware.camera2.legacy.CaptureCollector#jpegCaptured(long):
++    Missing nullability on method `jpegCaptured` return
++MissingNullability: android.hardware.camera2.legacy.CaptureCollector#jpegProduced():
++    Missing nullability on method `jpegProduced` return
++MissingNullability: android.hardware.camera2.legacy.CaptureCollector#previewCaptured(long):
++    Missing nullability on method `previewCaptured` return
++MissingNullability: android.hardware.camera2.legacy.CaptureCollector#previewProduced():
++    Missing nullability on method `previewProduced` return
++MissingNullability: android.hardware.camera2.legacy.CaptureCollector#queueRequest(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.legacy.LegacyRequest, long, java.util.concurrent.TimeUnit) parameter #0:
++    Missing nullability on parameter `holder` in method `queueRequest`
++MissingNullability: android.hardware.camera2.legacy.CaptureCollector#queueRequest(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.legacy.LegacyRequest, long, java.util.concurrent.TimeUnit) parameter #1:
++    Missing nullability on parameter `legacy` in method `queueRequest`
++MissingNullability: android.hardware.camera2.legacy.CaptureCollector#queueRequest(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.legacy.LegacyRequest, long, java.util.concurrent.TimeUnit) parameter #3:
++    Missing nullability on parameter `unit` in method `queueRequest`
++MissingNullability: android.hardware.camera2.legacy.CaptureCollector#waitForEmpty(long, java.util.concurrent.TimeUnit) parameter #1:
++    Missing nullability on parameter `unit` in method `waitForEmpty`
++MissingNullability: android.hardware.camera2.legacy.CaptureCollector#waitForPreviewsEmpty(long, java.util.concurrent.TimeUnit) parameter #1:
++    Missing nullability on parameter `unit` in method `waitForPreviewsEmpty`
++MissingNullability: android.hardware.camera2.legacy.CaptureCollector#waitForRequestCompleted(android.hardware.camera2.legacy.RequestHolder, long, java.util.concurrent.TimeUnit, android.util.MutableLong) parameter #0:
++    Missing nullability on parameter `holder` in method `waitForRequestCompleted`
++MissingNullability: android.hardware.camera2.legacy.CaptureCollector#waitForRequestCompleted(android.hardware.camera2.legacy.RequestHolder, long, java.util.concurrent.TimeUnit, android.util.MutableLong) parameter #2:
++    Missing nullability on parameter `unit` in method `waitForRequestCompleted`
++MissingNullability: android.hardware.camera2.legacy.CaptureCollector#waitForRequestCompleted(android.hardware.camera2.legacy.RequestHolder, long, java.util.concurrent.TimeUnit, android.util.MutableLong) parameter #3:
++    Missing nullability on parameter `timestamp` in method `waitForRequestCompleted`
++MissingNullability: android.hardware.camera2.legacy.GLThreadManager#GLThreadManager(int, int, android.hardware.camera2.legacy.CameraDeviceState) parameter #2:
++    Missing nullability on parameter `state` in method `GLThreadManager`
++MissingNullability: android.hardware.camera2.legacy.GLThreadManager#getCurrentSurfaceTexture():
++    Missing nullability on method `getCurrentSurfaceTexture` return
++MissingNullability: android.hardware.camera2.legacy.GLThreadManager#setConfigurationAndWait(java.util.Collection<android.util.Pair<android.view.Surface,android.util.Size>>, android.hardware.camera2.legacy.CaptureCollector) parameter #0:
++    Missing nullability on parameter `surfaces` in method `setConfigurationAndWait`
++MissingNullability: android.hardware.camera2.legacy.GLThreadManager#setConfigurationAndWait(java.util.Collection<android.util.Pair<android.view.Surface,android.util.Size>>, android.hardware.camera2.legacy.CaptureCollector) parameter #1:
++    Missing nullability on parameter `collector` in method `setConfigurationAndWait`
++MissingNullability: android.hardware.camera2.legacy.LegacyCameraDevice#LegacyCameraDevice(int, android.hardware.Camera, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.ICameraDeviceCallbacks) parameter #1:
++    Missing nullability on parameter `camera` in method `LegacyCameraDevice`
++MissingNullability: android.hardware.camera2.legacy.LegacyCameraDevice#LegacyCameraDevice(int, android.hardware.Camera, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.ICameraDeviceCallbacks) parameter #2:
++    Missing nullability on parameter `characteristics` in method `LegacyCameraDevice`
++MissingNullability: android.hardware.camera2.legacy.LegacyCameraDevice#LegacyCameraDevice(int, android.hardware.Camera, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.ICameraDeviceCallbacks) parameter #3:
++    Missing nullability on parameter `callbacks` in method `LegacyCameraDevice`
++MissingNullability: android.hardware.camera2.legacy.LegacyCameraDevice#configureOutputs(android.util.SparseArray<android.view.Surface>) parameter #0:
++    Missing nullability on parameter `outputs` in method `configureOutputs`
++MissingNullability: android.hardware.camera2.legacy.LegacyCameraDevice#detectSurfaceDataspace(android.view.Surface) parameter #0:
++    Missing nullability on parameter `surface` in method `detectSurfaceDataspace`
++MissingNullability: android.hardware.camera2.legacy.LegacyCameraDevice#detectSurfaceType(android.view.Surface) parameter #0:
++    Missing nullability on parameter `surface` in method `detectSurfaceType`
++MissingNullability: android.hardware.camera2.legacy.LegacyCameraDevice#detectSurfaceUsageFlags(android.view.Surface) parameter #0:
++    Missing nullability on parameter `surface` in method `detectSurfaceUsageFlags`
++MissingNullability: android.hardware.camera2.legacy.LegacyCameraDevice#getSurfaceId(android.view.Surface) parameter #0:
++    Missing nullability on parameter `surface` in method `getSurfaceId`
++MissingNullability: android.hardware.camera2.legacy.LegacyCameraDevice#getSurfaceSize(android.view.Surface):
++    Missing nullability on method `getSurfaceSize` return
++MissingNullability: android.hardware.camera2.legacy.LegacyCameraDevice#getSurfaceSize(android.view.Surface) parameter #0:
++    Missing nullability on parameter `surface` in method `getSurfaceSize`
++MissingNullability: android.hardware.camera2.legacy.LegacyCameraDevice#isFlexibleConsumer(android.view.Surface) parameter #0:
++    Missing nullability on parameter `output` in method `isFlexibleConsumer`
++MissingNullability: android.hardware.camera2.legacy.LegacyCameraDevice#isPreviewConsumer(android.view.Surface) parameter #0:
++    Missing nullability on parameter `output` in method `isPreviewConsumer`
++MissingNullability: android.hardware.camera2.legacy.LegacyCameraDevice#isVideoEncoderConsumer(android.view.Surface) parameter #0:
++    Missing nullability on parameter `output` in method `isVideoEncoderConsumer`
++MissingNullability: android.hardware.camera2.legacy.LegacyCameraDevice#submitRequest(android.hardware.camera2.CaptureRequest, boolean):
++    Missing nullability on method `submitRequest` return
++MissingNullability: android.hardware.camera2.legacy.LegacyCameraDevice#submitRequest(android.hardware.camera2.CaptureRequest, boolean) parameter #0:
++    Missing nullability on parameter `request` in method `submitRequest`
++MissingNullability: android.hardware.camera2.legacy.LegacyCameraDevice#submitRequestList(android.hardware.camera2.CaptureRequest[], boolean):
++    Missing nullability on method `submitRequestList` return
++MissingNullability: android.hardware.camera2.legacy.LegacyCameraDevice#submitRequestList(android.hardware.camera2.CaptureRequest[], boolean) parameter #0:
++    Missing nullability on parameter `requestList` in method `submitRequestList`
++MissingNullability: android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException#BufferQueueAbandonedException(Exception) parameter #0:
++    Missing nullability on parameter `cause` in method `BufferQueueAbandonedException`
++MissingNullability: android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException#BufferQueueAbandonedException(String) parameter #0:
++    Missing nullability on parameter `name` in method `BufferQueueAbandonedException`
++MissingNullability: android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException#BufferQueueAbandonedException(String, Throwable) parameter #0:
++    Missing nullability on parameter `name` in method `BufferQueueAbandonedException`
++MissingNullability: android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException#BufferQueueAbandonedException(String, Throwable) parameter #1:
++    Missing nullability on parameter `cause` in method `BufferQueueAbandonedException`
++MissingNullability: android.hardware.camera2.legacy.LegacyFaceDetectMapper#LegacyFaceDetectMapper(android.hardware.Camera, android.hardware.camera2.CameraCharacteristics) parameter #0:
++    Missing nullability on parameter `camera` in method `LegacyFaceDetectMapper`
++MissingNullability: android.hardware.camera2.legacy.LegacyFaceDetectMapper#LegacyFaceDetectMapper(android.hardware.Camera, android.hardware.camera2.CameraCharacteristics) parameter #1:
++    Missing nullability on parameter `characteristics` in method `LegacyFaceDetectMapper`
++MissingNullability: android.hardware.camera2.legacy.LegacyFaceDetectMapper#mapResultFaces(android.hardware.camera2.impl.CameraMetadataNative, android.hardware.camera2.legacy.LegacyRequest) parameter #0:
++    Missing nullability on parameter `result` in method `mapResultFaces`
++MissingNullability: android.hardware.camera2.legacy.LegacyFaceDetectMapper#mapResultFaces(android.hardware.camera2.impl.CameraMetadataNative, android.hardware.camera2.legacy.LegacyRequest) parameter #1:
++    Missing nullability on parameter `legacyRequest` in method `mapResultFaces`
++MissingNullability: android.hardware.camera2.legacy.LegacyFaceDetectMapper#processFaceDetectMode(android.hardware.camera2.CaptureRequest, android.hardware.Camera.Parameters) parameter #0:
++    Missing nullability on parameter `captureRequest` in method `processFaceDetectMode`
++MissingNullability: android.hardware.camera2.legacy.LegacyFaceDetectMapper#processFaceDetectMode(android.hardware.camera2.CaptureRequest, android.hardware.Camera.Parameters) parameter #1:
++    Missing nullability on parameter `parameters` in method `processFaceDetectMode`
++MissingNullability: android.hardware.camera2.legacy.LegacyFocusStateMapper#LegacyFocusStateMapper(android.hardware.Camera) parameter #0:
++    Missing nullability on parameter `camera` in method `LegacyFocusStateMapper`
++MissingNullability: android.hardware.camera2.legacy.LegacyFocusStateMapper#mapResultTriggers(android.hardware.camera2.impl.CameraMetadataNative) parameter #0:
++    Missing nullability on parameter `result` in method `mapResultTriggers`
++MissingNullability: android.hardware.camera2.legacy.LegacyFocusStateMapper#processRequestTriggers(android.hardware.camera2.CaptureRequest, android.hardware.Camera.Parameters) parameter #0:
++    Missing nullability on parameter `captureRequest` in method `processRequestTriggers`
++MissingNullability: android.hardware.camera2.legacy.LegacyFocusStateMapper#processRequestTriggers(android.hardware.camera2.CaptureRequest, android.hardware.Camera.Parameters) parameter #1:
++    Missing nullability on parameter `parameters` in method `processRequestTriggers`
++MissingNullability: android.hardware.camera2.legacy.LegacyMetadataMapper#convertRequestMetadata(android.hardware.camera2.legacy.LegacyRequest) parameter #0:
++    Missing nullability on parameter `request` in method `convertRequestMetadata`
++MissingNullability: android.hardware.camera2.legacy.LegacyMetadataMapper#createCharacteristics(String, android.hardware.CameraInfo, int, android.util.Size):
++    Missing nullability on method `createCharacteristics` return
++MissingNullability: android.hardware.camera2.legacy.LegacyMetadataMapper#createCharacteristics(String, android.hardware.CameraInfo, int, android.util.Size) parameter #0:
++    Missing nullability on parameter `parameters` in method `createCharacteristics`
++MissingNullability: android.hardware.camera2.legacy.LegacyMetadataMapper#createCharacteristics(String, android.hardware.CameraInfo, int, android.util.Size) parameter #1:
++    Missing nullability on parameter `info` in method `createCharacteristics`
++MissingNullability: android.hardware.camera2.legacy.LegacyMetadataMapper#createCharacteristics(String, android.hardware.CameraInfo, int, android.util.Size) parameter #3:
++    Missing nullability on parameter `displaySize` in method `createCharacteristics`
++MissingNullability: android.hardware.camera2.legacy.LegacyMetadataMapper#createCharacteristics(android.hardware.Camera.Parameters, android.hardware.Camera.CameraInfo, int, android.util.Size):
++    Missing nullability on method `createCharacteristics` return
++MissingNullability: android.hardware.camera2.legacy.LegacyMetadataMapper#createCharacteristics(android.hardware.Camera.Parameters, android.hardware.Camera.CameraInfo, int, android.util.Size) parameter #0:
++    Missing nullability on parameter `parameters` in method `createCharacteristics`
++MissingNullability: android.hardware.camera2.legacy.LegacyMetadataMapper#createCharacteristics(android.hardware.Camera.Parameters, android.hardware.Camera.CameraInfo, int, android.util.Size) parameter #1:
++    Missing nullability on parameter `info` in method `createCharacteristics`
++MissingNullability: android.hardware.camera2.legacy.LegacyMetadataMapper#createCharacteristics(android.hardware.Camera.Parameters, android.hardware.Camera.CameraInfo, int, android.util.Size) parameter #3:
++    Missing nullability on parameter `displaySize` in method `createCharacteristics`
++MissingNullability: android.hardware.camera2.legacy.LegacyMetadataMapper#createRequestTemplate(android.hardware.camera2.CameraCharacteristics, int):
++    Missing nullability on method `createRequestTemplate` return
++MissingNullability: android.hardware.camera2.legacy.LegacyMetadataMapper#createRequestTemplate(android.hardware.camera2.CameraCharacteristics, int) parameter #0:
++    Missing nullability on parameter `c` in method `createRequestTemplate`
++MissingNullability: android.hardware.camera2.legacy.LegacyRequest#LegacyRequest(android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.CaptureRequest, android.util.Size, android.hardware.Camera.Parameters) parameter #0:
++    Missing nullability on parameter `characteristics` in method `LegacyRequest`
++MissingNullability: android.hardware.camera2.legacy.LegacyRequest#LegacyRequest(android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.CaptureRequest, android.util.Size, android.hardware.Camera.Parameters) parameter #1:
++    Missing nullability on parameter `captureRequest` in method `LegacyRequest`
++MissingNullability: android.hardware.camera2.legacy.LegacyRequest#LegacyRequest(android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.CaptureRequest, android.util.Size, android.hardware.Camera.Parameters) parameter #2:
++    Missing nullability on parameter `previewSize` in method `LegacyRequest`
++MissingNullability: android.hardware.camera2.legacy.LegacyRequest#LegacyRequest(android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.CaptureRequest, android.util.Size, android.hardware.Camera.Parameters) parameter #3:
++    Missing nullability on parameter `parameters` in method `LegacyRequest`
++MissingNullability: android.hardware.camera2.legacy.LegacyRequest#captureRequest:
++    Missing nullability on field `captureRequest` in class `class android.hardware.camera2.legacy.LegacyRequest`
++MissingNullability: android.hardware.camera2.legacy.LegacyRequest#characteristics:
++    Missing nullability on field `characteristics` in class `class android.hardware.camera2.legacy.LegacyRequest`
++MissingNullability: android.hardware.camera2.legacy.LegacyRequest#parameters:
++    Missing nullability on field `parameters` in class `class android.hardware.camera2.legacy.LegacyRequest`
++MissingNullability: android.hardware.camera2.legacy.LegacyRequest#previewSize:
++    Missing nullability on field `previewSize` in class `class android.hardware.camera2.legacy.LegacyRequest`
++MissingNullability: android.hardware.camera2.legacy.LegacyRequest#setParameters(android.hardware.Camera.Parameters) parameter #0:
++    Missing nullability on parameter `parameters` in method `setParameters`
++MissingNullability: android.hardware.camera2.legacy.LegacyRequestMapper#convertRequestMetadata(android.hardware.camera2.legacy.LegacyRequest) parameter #0:
++    Missing nullability on parameter `legacyRequest` in method `convertRequestMetadata`
++MissingNullability: android.hardware.camera2.legacy.LegacyResultMapper#cachedConvertResultMetadata(android.hardware.camera2.legacy.LegacyRequest, long):
++    Missing nullability on method `cachedConvertResultMetadata` return
++MissingNullability: android.hardware.camera2.legacy.LegacyResultMapper#cachedConvertResultMetadata(android.hardware.camera2.legacy.LegacyRequest, long) parameter #0:
++    Missing nullability on parameter `legacyRequest` in method `cachedConvertResultMetadata`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#CAMERA_AREA_DEFAULT:
++    Missing nullability on field `CAMERA_AREA_DEFAULT` in class `class android.hardware.camera2.legacy.ParameterUtils`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#NORMALIZED_RECTANGLE_DEFAULT:
++    Missing nullability on field `NORMALIZED_RECTANGLE_DEFAULT` in class `class android.hardware.camera2.legacy.ParameterUtils`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#RECTANGLE_EMPTY:
++    Missing nullability on field `RECTANGLE_EMPTY` in class `class android.hardware.camera2.legacy.ParameterUtils`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#containsSize(java.util.List<android.hardware.Camera.Size>, int, int) parameter #0:
++    Missing nullability on parameter `sizeList` in method `containsSize`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertCameraAreaToActiveArrayRectangle(android.graphics.Rect, android.hardware.camera2.legacy.ParameterUtils.ZoomData, android.hardware.Camera.Area):
++    Missing nullability on method `convertCameraAreaToActiveArrayRectangle` return
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertCameraAreaToActiveArrayRectangle(android.graphics.Rect, android.hardware.camera2.legacy.ParameterUtils.ZoomData, android.hardware.Camera.Area) parameter #0:
++    Missing nullability on parameter `activeArray` in method `convertCameraAreaToActiveArrayRectangle`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertCameraAreaToActiveArrayRectangle(android.graphics.Rect, android.hardware.camera2.legacy.ParameterUtils.ZoomData, android.hardware.Camera.Area) parameter #1:
++    Missing nullability on parameter `zoomData` in method `convertCameraAreaToActiveArrayRectangle`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertCameraAreaToActiveArrayRectangle(android.graphics.Rect, android.hardware.camera2.legacy.ParameterUtils.ZoomData, android.hardware.Camera.Area) parameter #2:
++    Missing nullability on parameter `area` in method `convertCameraAreaToActiveArrayRectangle`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertFaceFromLegacy(android.hardware.Camera.Face, android.graphics.Rect, android.hardware.camera2.legacy.ParameterUtils.ZoomData):
++    Missing nullability on method `convertFaceFromLegacy` return
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertFaceFromLegacy(android.hardware.Camera.Face, android.graphics.Rect, android.hardware.camera2.legacy.ParameterUtils.ZoomData) parameter #0:
++    Missing nullability on parameter `face` in method `convertFaceFromLegacy`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertFaceFromLegacy(android.hardware.Camera.Face, android.graphics.Rect, android.hardware.camera2.legacy.ParameterUtils.ZoomData) parameter #1:
++    Missing nullability on parameter `activeArray` in method `convertFaceFromLegacy`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertFaceFromLegacy(android.hardware.Camera.Face, android.graphics.Rect, android.hardware.camera2.legacy.ParameterUtils.ZoomData) parameter #2:
++    Missing nullability on parameter `zoomData` in method `convertFaceFromLegacy`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertMeteringRectangleToLegacy(android.graphics.Rect, android.hardware.camera2.params.MeteringRectangle, android.hardware.camera2.legacy.ParameterUtils.ZoomData):
++    Missing nullability on method `convertMeteringRectangleToLegacy` return
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertMeteringRectangleToLegacy(android.graphics.Rect, android.hardware.camera2.params.MeteringRectangle, android.hardware.camera2.legacy.ParameterUtils.ZoomData) parameter #0:
++    Missing nullability on parameter `activeArray` in method `convertMeteringRectangleToLegacy`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertMeteringRectangleToLegacy(android.graphics.Rect, android.hardware.camera2.params.MeteringRectangle, android.hardware.camera2.legacy.ParameterUtils.ZoomData) parameter #1:
++    Missing nullability on parameter `meteringRect` in method `convertMeteringRectangleToLegacy`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertMeteringRectangleToLegacy(android.graphics.Rect, android.hardware.camera2.params.MeteringRectangle, android.hardware.camera2.legacy.ParameterUtils.ZoomData) parameter #2:
++    Missing nullability on parameter `zoomData` in method `convertMeteringRectangleToLegacy`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertScalerCropRegion(android.graphics.Rect, android.graphics.Rect, android.util.Size, android.hardware.Camera.Parameters):
++    Missing nullability on method `convertScalerCropRegion` return
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertScalerCropRegion(android.graphics.Rect, android.graphics.Rect, android.util.Size, android.hardware.Camera.Parameters) parameter #0:
++    Missing nullability on parameter `activeArraySize` in method `convertScalerCropRegion`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertScalerCropRegion(android.graphics.Rect, android.graphics.Rect, android.util.Size, android.hardware.Camera.Parameters) parameter #1:
++    Missing nullability on parameter `cropRegion` in method `convertScalerCropRegion`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertScalerCropRegion(android.graphics.Rect, android.graphics.Rect, android.util.Size, android.hardware.Camera.Parameters) parameter #2:
++    Missing nullability on parameter `previewSize` in method `convertScalerCropRegion`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertScalerCropRegion(android.graphics.Rect, android.graphics.Rect, android.util.Size, android.hardware.Camera.Parameters) parameter #3:
++    Missing nullability on parameter `params` in method `convertScalerCropRegion`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertSize(android.hardware.Camera.Size):
++    Missing nullability on method `convertSize` return
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertSize(android.hardware.Camera.Size) parameter #0:
++    Missing nullability on parameter `size` in method `convertSize`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertSizeList(java.util.List<android.hardware.Camera.Size>):
++    Missing nullability on method `convertSizeList` return
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertSizeList(java.util.List<android.hardware.Camera.Size>) parameter #0:
++    Missing nullability on parameter `sizeList` in method `convertSizeList`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertSizeListToArray(java.util.List<android.hardware.Camera.Size>):
++    Missing nullability on method `convertSizeListToArray` return
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertSizeListToArray(java.util.List<android.hardware.Camera.Size>) parameter #0:
++    Missing nullability on parameter `sizeList` in method `convertSizeListToArray`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertToLegacyZoom(android.graphics.Rect, android.graphics.Rect, Float, android.util.Size, android.hardware.Camera.Parameters):
++    Missing nullability on method `convertToLegacyZoom` return
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertToLegacyZoom(android.graphics.Rect, android.graphics.Rect, Float, android.util.Size, android.hardware.Camera.Parameters) parameter #0:
++    Missing nullability on parameter `activeArraySize` in method `convertToLegacyZoom`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertToLegacyZoom(android.graphics.Rect, android.graphics.Rect, Float, android.util.Size, android.hardware.Camera.Parameters) parameter #1:
++    Missing nullability on parameter `cropRegion` in method `convertToLegacyZoom`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertToLegacyZoom(android.graphics.Rect, android.graphics.Rect, Float, android.util.Size, android.hardware.Camera.Parameters) parameter #2:
++    Missing nullability on parameter `zoomRatio` in method `convertToLegacyZoom`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertToLegacyZoom(android.graphics.Rect, android.graphics.Rect, Float, android.util.Size, android.hardware.Camera.Parameters) parameter #3:
++    Missing nullability on parameter `previewSize` in method `convertToLegacyZoom`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertToLegacyZoom(android.graphics.Rect, android.graphics.Rect, Float, android.util.Size, android.hardware.Camera.Parameters) parameter #4:
++    Missing nullability on parameter `params` in method `convertToLegacyZoom`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertZoomRatio(android.graphics.Rect, float, android.util.Size, android.hardware.Camera.Parameters):
++    Missing nullability on method `convertZoomRatio` return
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertZoomRatio(android.graphics.Rect, float, android.util.Size, android.hardware.Camera.Parameters) parameter #0:
++    Missing nullability on parameter `activeArraySize` in method `convertZoomRatio`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertZoomRatio(android.graphics.Rect, float, android.util.Size, android.hardware.Camera.Parameters) parameter #2:
++    Missing nullability on parameter `previewSize` in method `convertZoomRatio`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#convertZoomRatio(android.graphics.Rect, float, android.util.Size, android.hardware.Camera.Parameters) parameter #3:
++    Missing nullability on parameter `params` in method `convertZoomRatio`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#getAvailablePreviewZoomCropRectangles(android.hardware.Camera.Parameters, android.graphics.Rect, android.util.Size):
++    Missing nullability on method `getAvailablePreviewZoomCropRectangles` return
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#getAvailablePreviewZoomCropRectangles(android.hardware.Camera.Parameters, android.graphics.Rect, android.util.Size) parameter #0:
++    Missing nullability on parameter `params` in method `getAvailablePreviewZoomCropRectangles`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#getAvailablePreviewZoomCropRectangles(android.hardware.Camera.Parameters, android.graphics.Rect, android.util.Size) parameter #1:
++    Missing nullability on parameter `activeArray` in method `getAvailablePreviewZoomCropRectangles`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#getAvailablePreviewZoomCropRectangles(android.hardware.Camera.Parameters, android.graphics.Rect, android.util.Size) parameter #2:
++    Missing nullability on parameter `previewSize` in method `getAvailablePreviewZoomCropRectangles`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#getAvailableZoomCropRectangles(android.hardware.Camera.Parameters, android.graphics.Rect):
++    Missing nullability on method `getAvailableZoomCropRectangles` return
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#getAvailableZoomCropRectangles(android.hardware.Camera.Parameters, android.graphics.Rect) parameter #0:
++    Missing nullability on parameter `params` in method `getAvailableZoomCropRectangles`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#getAvailableZoomCropRectangles(android.hardware.Camera.Parameters, android.graphics.Rect) parameter #1:
++    Missing nullability on parameter `activeArray` in method `getAvailableZoomCropRectangles`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#getClosestAvailableZoomCrop(android.hardware.Camera.Parameters, android.graphics.Rect, android.util.Size, android.graphics.Rect, android.graphics.Rect, android.graphics.Rect) parameter #0:
++    Missing nullability on parameter `params` in method `getClosestAvailableZoomCrop`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#getClosestAvailableZoomCrop(android.hardware.Camera.Parameters, android.graphics.Rect, android.util.Size, android.graphics.Rect, android.graphics.Rect, android.graphics.Rect) parameter #1:
++    Missing nullability on parameter `activeArray` in method `getClosestAvailableZoomCrop`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#getClosestAvailableZoomCrop(android.hardware.Camera.Parameters, android.graphics.Rect, android.util.Size, android.graphics.Rect, android.graphics.Rect, android.graphics.Rect) parameter #2:
++    Missing nullability on parameter `streamSize` in method `getClosestAvailableZoomCrop`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#getClosestAvailableZoomCrop(android.hardware.Camera.Parameters, android.graphics.Rect, android.util.Size, android.graphics.Rect, android.graphics.Rect, android.graphics.Rect) parameter #3:
++    Missing nullability on parameter `cropRegion` in method `getClosestAvailableZoomCrop`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#getClosestAvailableZoomCrop(android.hardware.Camera.Parameters, android.graphics.Rect, android.util.Size, android.graphics.Rect, android.graphics.Rect, android.graphics.Rect) parameter #4:
++    Missing nullability on parameter `reportedCropRegion` in method `getClosestAvailableZoomCrop`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#getClosestAvailableZoomCrop(android.hardware.Camera.Parameters, android.graphics.Rect, android.util.Size, android.graphics.Rect, android.graphics.Rect, android.graphics.Rect) parameter #5:
++    Missing nullability on parameter `previewCropRegion` in method `getClosestAvailableZoomCrop`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#getLargestSupportedJpegSizeByArea(android.hardware.Camera.Parameters):
++    Missing nullability on method `getLargestSupportedJpegSizeByArea` return
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#getLargestSupportedJpegSizeByArea(android.hardware.Camera.Parameters) parameter #0:
++    Missing nullability on parameter `params` in method `getLargestSupportedJpegSizeByArea`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#getMaxZoomRatio(android.hardware.Camera.Parameters) parameter #0:
++    Missing nullability on parameter `params` in method `getMaxZoomRatio`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#stringFromArea(android.hardware.Camera.Area):
++    Missing nullability on method `stringFromArea` return
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#stringFromArea(android.hardware.Camera.Area) parameter #0:
++    Missing nullability on parameter `area` in method `stringFromArea`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#stringFromAreaList(java.util.List<android.hardware.Camera.Area>):
++    Missing nullability on method `stringFromAreaList` return
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils#stringFromAreaList(java.util.List<android.hardware.Camera.Area>) parameter #0:
++    Missing nullability on parameter `areaList` in method `stringFromAreaList`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils.MeteringData#MeteringData(android.hardware.Camera.Area, android.graphics.Rect, android.graphics.Rect) parameter #0:
++    Missing nullability on parameter `meteringArea` in method `MeteringData`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils.MeteringData#MeteringData(android.hardware.Camera.Area, android.graphics.Rect, android.graphics.Rect) parameter #1:
++    Missing nullability on parameter `previewMetering` in method `MeteringData`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils.MeteringData#MeteringData(android.hardware.Camera.Area, android.graphics.Rect, android.graphics.Rect) parameter #2:
++    Missing nullability on parameter `reportedMetering` in method `MeteringData`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils.MeteringData#meteringArea:
++    Missing nullability on field `meteringArea` in class `class android.hardware.camera2.legacy.ParameterUtils.MeteringData`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils.MeteringData#previewMetering:
++    Missing nullability on field `previewMetering` in class `class android.hardware.camera2.legacy.ParameterUtils.MeteringData`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils.MeteringData#reportedMetering:
++    Missing nullability on field `reportedMetering` in class `class android.hardware.camera2.legacy.ParameterUtils.MeteringData`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle#WeightedRectangle(android.graphics.Rect, int) parameter #0:
++    Missing nullability on parameter `rect` in method `WeightedRectangle`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle#rect:
++    Missing nullability on field `rect` in class `class android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle#toFace():
++    Missing nullability on method `toFace` return
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle#toFace(int, android.graphics.Point, android.graphics.Point, android.graphics.Point):
++    Missing nullability on method `toFace` return
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle#toFace(int, android.graphics.Point, android.graphics.Point, android.graphics.Point) parameter #1:
++    Missing nullability on parameter `leftEyePosition` in method `toFace`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle#toFace(int, android.graphics.Point, android.graphics.Point, android.graphics.Point) parameter #2:
++    Missing nullability on parameter `rightEyePosition` in method `toFace`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle#toFace(int, android.graphics.Point, android.graphics.Point, android.graphics.Point) parameter #3:
++    Missing nullability on parameter `mouthPosition` in method `toFace`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle#toMetering():
++    Missing nullability on method `toMetering` return
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils.ZoomData#ZoomData(int, android.graphics.Rect, android.graphics.Rect, float) parameter #1:
++    Missing nullability on parameter `previewCrop` in method `ZoomData`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils.ZoomData#ZoomData(int, android.graphics.Rect, android.graphics.Rect, float) parameter #2:
++    Missing nullability on parameter `reportedCrop` in method `ZoomData`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils.ZoomData#previewCrop:
++    Missing nullability on field `previewCrop` in class `class android.hardware.camera2.legacy.ParameterUtils.ZoomData`
++MissingNullability: android.hardware.camera2.legacy.ParameterUtils.ZoomData#reportedCrop:
++    Missing nullability on field `reportedCrop` in class `class android.hardware.camera2.legacy.ParameterUtils.ZoomData`
++MissingNullability: android.hardware.camera2.legacy.RequestHandlerThread#RequestHandlerThread(String, android.os.Handler.Callback) parameter #0:
++    Missing nullability on parameter `name` in method `RequestHandlerThread`
++MissingNullability: android.hardware.camera2.legacy.RequestHandlerThread#RequestHandlerThread(String, android.os.Handler.Callback) parameter #1:
++    Missing nullability on parameter `callback` in method `RequestHandlerThread`
++MissingNullability: android.hardware.camera2.legacy.RequestHandlerThread#getHandler():
++    Missing nullability on method `getHandler` return
++MissingNullability: android.hardware.camera2.legacy.RequestHandlerThread#hasAnyMessages(int[]) parameter #0:
++    Missing nullability on parameter `what` in method `hasAnyMessages`
++MissingNullability: android.hardware.camera2.legacy.RequestHandlerThread#removeMessages(int[]) parameter #0:
++    Missing nullability on parameter `what` in method `removeMessages`
++MissingNullability: android.hardware.camera2.legacy.RequestHandlerThread#waitAndGetHandler():
++    Missing nullability on method `waitAndGetHandler` return
++MissingNullability: android.hardware.camera2.legacy.RequestHolder#getHolderTargets():
++    Missing nullability on method `getHolderTargets` return
++MissingNullability: android.hardware.camera2.legacy.RequestHolder#getRequest():
++    Missing nullability on method `getRequest` return
++MissingNullability: android.hardware.camera2.legacy.RequestHolder#jpegType(android.view.Surface) parameter #0:
++    Missing nullability on parameter `s` in method `jpegType`
++MissingNullability: android.hardware.camera2.legacy.RequestHolder.Builder#Builder(int, int, android.hardware.camera2.CaptureRequest, boolean, java.util.Collection<java.lang.Long>) parameter #2:
++    Missing nullability on parameter `request` in method `Builder`
++MissingNullability: android.hardware.camera2.legacy.RequestHolder.Builder#Builder(int, int, android.hardware.camera2.CaptureRequest, boolean, java.util.Collection<java.lang.Long>) parameter #4:
++    Missing nullability on parameter `jpegSurfaceIds` in method `Builder`
++MissingNullability: android.hardware.camera2.legacy.RequestHolder.Builder#build(long):
++    Missing nullability on method `build` return
++MissingNullability: android.hardware.camera2.legacy.RequestQueue#RequestQueue(java.util.List<java.lang.Long>) parameter #0:
++    Missing nullability on parameter `jpegSurfaceIds` in method `RequestQueue`
++MissingNullability: android.hardware.camera2.legacy.RequestQueue#getNext():
++    Missing nullability on method `getNext` return
++MissingNullability: android.hardware.camera2.legacy.RequestQueue#submit(android.hardware.camera2.CaptureRequest[], boolean):
++    Missing nullability on method `submit` return
++MissingNullability: android.hardware.camera2.legacy.RequestQueue#submit(android.hardware.camera2.CaptureRequest[], boolean) parameter #0:
++    Missing nullability on parameter `requests` in method `submit`
++MissingNullability: android.hardware.camera2.legacy.RequestQueue.RequestQueueEntry#RequestQueueEntry(android.hardware.camera2.legacy.BurstHolder, Long, boolean) parameter #0:
++    Missing nullability on parameter `burstHolder` in method `RequestQueueEntry`
++MissingNullability: android.hardware.camera2.legacy.RequestQueue.RequestQueueEntry#RequestQueueEntry(android.hardware.camera2.legacy.BurstHolder, Long, boolean) parameter #1:
++    Missing nullability on parameter `frameNumber` in method `RequestQueueEntry`
++MissingNullability: android.hardware.camera2.legacy.RequestQueue.RequestQueueEntry#getBurstHolder():
++    Missing nullability on method `getBurstHolder` return
++MissingNullability: android.hardware.camera2.legacy.RequestQueue.RequestQueueEntry#getFrameNumber():
++    Missing nullability on method `getFrameNumber` return
++MissingNullability: android.hardware.camera2.legacy.RequestThreadManager#RequestThreadManager(int, android.hardware.Camera, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.legacy.CameraDeviceState) parameter #1:
++    Missing nullability on parameter `camera` in method `RequestThreadManager`
++MissingNullability: android.hardware.camera2.legacy.RequestThreadManager#RequestThreadManager(int, android.hardware.Camera, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.legacy.CameraDeviceState) parameter #2:
++    Missing nullability on parameter `characteristics` in method `RequestThreadManager`
++MissingNullability: android.hardware.camera2.legacy.RequestThreadManager#RequestThreadManager(int, android.hardware.Camera, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.legacy.CameraDeviceState) parameter #3:
++    Missing nullability on parameter `deviceState` in method `RequestThreadManager`
++MissingNullability: android.hardware.camera2.legacy.RequestThreadManager#configure(java.util.Collection<android.util.Pair<android.view.Surface,android.util.Size>>) parameter #0:
++    Missing nullability on parameter `outputs` in method `configure`
++MissingNullability: android.hardware.camera2.legacy.RequestThreadManager#submitCaptureRequests(android.hardware.camera2.CaptureRequest[], boolean):
++    Missing nullability on method `submitCaptureRequests` return
++MissingNullability: android.hardware.camera2.legacy.RequestThreadManager#submitCaptureRequests(android.hardware.camera2.CaptureRequest[], boolean) parameter #0:
++    Missing nullability on parameter `requests` in method `submitCaptureRequests`
++MissingNullability: android.hardware.camera2.legacy.RequestThreadManager.FpsCounter#FpsCounter(String) parameter #0:
++    Missing nullability on parameter `streamType` in method `FpsCounter`
++MissingNullability: android.hardware.camera2.legacy.SizeAreaComparator#compare(android.hardware.Camera.Size, android.hardware.Camera.Size) parameter #0:
++    Missing nullability on parameter `size` in method `compare`
++MissingNullability: android.hardware.camera2.legacy.SizeAreaComparator#compare(android.hardware.Camera.Size, android.hardware.Camera.Size) parameter #1:
++    Missing nullability on parameter `size2` in method `compare`
++MissingNullability: android.hardware.camera2.legacy.SizeAreaComparator#findLargestByArea(java.util.List<android.hardware.Camera.Size>):
++    Missing nullability on method `findLargestByArea` return
++MissingNullability: android.hardware.camera2.legacy.SizeAreaComparator#findLargestByArea(java.util.List<android.hardware.Camera.Size>) parameter #0:
++    Missing nullability on parameter `sizes` in method `findLargestByArea`
++MissingNullability: android.hardware.camera2.legacy.SurfaceTextureRenderer#configureSurfaces(java.util.Collection<android.util.Pair<android.view.Surface,android.util.Size>>) parameter #0:
++    Missing nullability on parameter `surfaces` in method `configureSurfaces`
++MissingNullability: android.hardware.camera2.legacy.SurfaceTextureRenderer#drawIntoSurfaces(android.hardware.camera2.legacy.CaptureCollector) parameter #0:
++    Missing nullability on parameter `targetCollector` in method `drawIntoSurfaces`
++MissingNullability: android.hardware.camera2.legacy.SurfaceTextureRenderer#getSurfaceTexture():
++    Missing nullability on method `getSurfaceTexture` return
++
++
++NotCloseable: android.hardware.camera2.legacy.CameraDeviceUserShim:
++    Classes that release resources (disconnect()) should implement AutoCloseable and CloseGuard: class android.hardware.camera2.legacy.CameraDeviceUserShim
++NotCloseable: android.hardware.camera2.legacy.GLThreadManager:
++    Classes that release resources (quit()) should implement AutoCloseable and CloseGuard: class android.hardware.camera2.legacy.GLThreadManager
++NotCloseable: android.hardware.camera2.legacy.RequestThreadManager:
++    Classes that release resources (quit()) should implement AutoCloseable and CloseGuard: class android.hardware.camera2.legacy.RequestThreadManager
++
++
++ProtectedMember: android.hardware.camera2.legacy.RequestHandlerThread#onLooperPrepared():
++    Protected methods not allowed; must be public: method android.hardware.camera2.legacy.RequestHandlerThread.onLooperPrepared()}
++
++
++RawAidl: android.hardware.camera2.legacy.CameraDeviceUserShim:
++    Raw AIDL interfaces must not be exposed: CameraDeviceUserShim implements IInterface
++
++
++ReferencesHidden: android.hardware.camera2.legacy.CameraDeviceState#setCaptureResult(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.impl.CameraMetadataNative) parameter #1:
++    Class android.hardware.camera2.impl.CameraMetadataNative is hidden but was referenced (in parameter type) from public parameter result in android.hardware.camera2.legacy.CameraDeviceState.setCaptureResult(android.hardware.camera2.legacy.RequestHolder request, android.hardware.camera2.impl.CameraMetadataNative result)
++ReferencesHidden: android.hardware.camera2.legacy.CameraDeviceState#setCaptureResult(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.impl.CameraMetadataNative, int, Object) parameter #1:
++    Class android.hardware.camera2.impl.CameraMetadataNative is hidden but was referenced (in parameter type) from public parameter result in android.hardware.camera2.legacy.CameraDeviceState.setCaptureResult(android.hardware.camera2.legacy.RequestHolder request, android.hardware.camera2.impl.CameraMetadataNative result, int captureError, Object captureErrorArg)
++ReferencesHidden: android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener#onCaptureResult(android.hardware.camera2.impl.CameraMetadataNative, android.hardware.camera2.legacy.RequestHolder) parameter #0:
++    Class android.hardware.camera2.impl.CameraMetadataNative is hidden but was referenced (in parameter type) from public parameter result in android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener.onCaptureResult(android.hardware.camera2.impl.CameraMetadataNative result, android.hardware.camera2.legacy.RequestHolder holder)
++ReferencesHidden: android.hardware.camera2.legacy.CameraDeviceUserShim#configureStreams(android.hardware.camera2.utils.SessionConfigurationAndStreamIds):
++    Class android.hardware.camera2.utils.OutputAndInputStreamIds is hidden but was referenced (in return type) from public method android.hardware.camera2.legacy.CameraDeviceUserShim.configureStreams(android.hardware.camera2.utils.SessionConfigurationAndStreamIds)
++ReferencesHidden: android.hardware.camera2.legacy.CameraDeviceUserShim#configureStreams(android.hardware.camera2.utils.SessionConfigurationAndStreamIds) parameter #0:
++    Class android.hardware.camera2.utils.SessionConfigurationAndStreamIds is hidden but was referenced (in parameter type) from public parameter sessionConfigurationAndStreamIds in android.hardware.camera2.legacy.CameraDeviceUserShim.configureStreams(android.hardware.camera2.utils.SessionConfigurationAndStreamIds sessionConfigurationAndStreamIds)
++ReferencesHidden: android.hardware.camera2.legacy.CameraDeviceUserShim#connectBinderShim(android.hardware.camera2.ICameraDeviceCallbacks, int, android.util.Size) parameter #0:
++    Class android.hardware.camera2.ICameraDeviceCallbacks is hidden but was referenced (in parameter type) from public parameter callbacks in android.hardware.camera2.legacy.CameraDeviceUserShim.connectBinderShim(android.hardware.camera2.ICameraDeviceCallbacks callbacks, int cameraId, android.util.Size displaySize)
++ReferencesHidden: android.hardware.camera2.legacy.CameraDeviceUserShim#createDefaultRequest(int):
++    Class android.hardware.camera2.impl.CameraMetadataNative is hidden but was referenced (in return type) from public method android.hardware.camera2.legacy.CameraDeviceUserShim.createDefaultRequest(int)
++ReferencesHidden: android.hardware.camera2.legacy.CameraDeviceUserShim#endConfigure(int, android.hardware.camera2.impl.CameraMetadataNative, long) parameter #1:
++    Class android.hardware.camera2.impl.CameraMetadataNative is hidden but was referenced (in parameter type) from public parameter sessionParams in android.hardware.camera2.legacy.CameraDeviceUserShim.endConfigure(int operatingMode, android.hardware.camera2.impl.CameraMetadataNative sessionParams, long startTimeMs)
++ReferencesHidden: android.hardware.camera2.legacy.CameraDeviceUserShim#getCameraInfo():
++    Class android.hardware.camera2.impl.CameraMetadataNative is hidden but was referenced (in return type) from public method android.hardware.camera2.legacy.CameraDeviceUserShim.getCameraInfo()
++ReferencesHidden: android.hardware.camera2.legacy.CameraDeviceUserShim#startStreaming(int[], int[]):
++    Class android.hardware.camera2.utils.SubmitInfo is hidden but was referenced (in return type) from public method android.hardware.camera2.legacy.CameraDeviceUserShim.startStreaming(int[],int[])
++ReferencesHidden: android.hardware.camera2.legacy.CameraDeviceUserShim#submitRequest(android.hardware.camera2.CaptureRequest, boolean):
++    Class android.hardware.camera2.utils.SubmitInfo is hidden but was referenced (in return type) from public method android.hardware.camera2.legacy.CameraDeviceUserShim.submitRequest(android.hardware.camera2.CaptureRequest,boolean)
++ReferencesHidden: android.hardware.camera2.legacy.CameraDeviceUserShim#submitRequestList(android.hardware.camera2.CaptureRequest[], boolean):
++    Class android.hardware.camera2.utils.SubmitInfo is hidden but was referenced (in return type) from public method android.hardware.camera2.legacy.CameraDeviceUserShim.submitRequestList(android.hardware.camera2.CaptureRequest[],boolean)
++ReferencesHidden: android.hardware.camera2.legacy.CameraDeviceUserShim#switchToOffline(android.hardware.camera2.ICameraDeviceCallbacks, int[]):
++    Class android.hardware.camera2.ICameraOfflineSession is hidden but was referenced (in return type) from public method android.hardware.camera2.legacy.CameraDeviceUserShim.switchToOffline(android.hardware.camera2.ICameraDeviceCallbacks,int[])
++ReferencesHidden: android.hardware.camera2.legacy.CameraDeviceUserShim#switchToOffline(android.hardware.camera2.ICameraDeviceCallbacks, int[]) parameter #0:
++    Class android.hardware.camera2.ICameraDeviceCallbacks is hidden but was referenced (in parameter type) from public parameter cbs in android.hardware.camera2.legacy.CameraDeviceUserShim.switchToOffline(android.hardware.camera2.ICameraDeviceCallbacks cbs, int[] offlineOutputIds)
++ReferencesHidden: android.hardware.camera2.legacy.LegacyCameraDevice#LegacyCameraDevice(int, android.hardware.Camera, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.ICameraDeviceCallbacks) parameter #3:
++    Class android.hardware.camera2.ICameraDeviceCallbacks is hidden but was referenced (in parameter type) from public parameter callbacks in android.hardware.camera2.legacy.LegacyCameraDevice(int cameraId, android.hardware.Camera camera, android.hardware.camera2.CameraCharacteristics characteristics, android.hardware.camera2.ICameraDeviceCallbacks callbacks)
++ReferencesHidden: android.hardware.camera2.legacy.LegacyCameraDevice#submitRequest(android.hardware.camera2.CaptureRequest, boolean):
++    Class android.hardware.camera2.utils.SubmitInfo is hidden but was referenced (in return type) from public method android.hardware.camera2.legacy.LegacyCameraDevice.submitRequest(android.hardware.camera2.CaptureRequest,boolean)
++ReferencesHidden: android.hardware.camera2.legacy.LegacyCameraDevice#submitRequestList(android.hardware.camera2.CaptureRequest[], boolean):
++    Class android.hardware.camera2.utils.SubmitInfo is hidden but was referenced (in return type) from public method android.hardware.camera2.legacy.LegacyCameraDevice.submitRequestList(android.hardware.camera2.CaptureRequest[],boolean)
++ReferencesHidden: android.hardware.camera2.legacy.LegacyFaceDetectMapper#mapResultFaces(android.hardware.camera2.impl.CameraMetadataNative, android.hardware.camera2.legacy.LegacyRequest) parameter #0:
++    Class android.hardware.camera2.impl.CameraMetadataNative is hidden but was referenced (in parameter type) from public parameter result in android.hardware.camera2.legacy.LegacyFaceDetectMapper.mapResultFaces(android.hardware.camera2.impl.CameraMetadataNative result, android.hardware.camera2.legacy.LegacyRequest legacyRequest)
++ReferencesHidden: android.hardware.camera2.legacy.LegacyFocusStateMapper#mapResultTriggers(android.hardware.camera2.impl.CameraMetadataNative) parameter #0:
++    Class android.hardware.camera2.impl.CameraMetadataNative is hidden but was referenced (in parameter type) from public parameter result in android.hardware.camera2.legacy.LegacyFocusStateMapper.mapResultTriggers(android.hardware.camera2.impl.CameraMetadataNative result)
++ReferencesHidden: android.hardware.camera2.legacy.LegacyMetadataMapper#createCharacteristics(String, android.hardware.CameraInfo, int, android.util.Size) parameter #1:
++    Class android.hardware.CameraInfo is hidden but was referenced (in parameter type) from public parameter info in android.hardware.camera2.legacy.LegacyMetadataMapper.createCharacteristics(String parameters, android.hardware.CameraInfo info, int cameraId, android.util.Size displaySize)
++ReferencesHidden: android.hardware.camera2.legacy.LegacyMetadataMapper#createRequestTemplate(android.hardware.camera2.CameraCharacteristics, int):
++    Class android.hardware.camera2.impl.CameraMetadataNative is hidden but was referenced (in return type) from public method android.hardware.camera2.legacy.LegacyMetadataMapper.createRequestTemplate(android.hardware.camera2.CameraCharacteristics,int)
++ReferencesHidden: android.hardware.camera2.legacy.LegacyResultMapper#cachedConvertResultMetadata(android.hardware.camera2.legacy.LegacyRequest, long):
++    Class android.hardware.camera2.impl.CameraMetadataNative is hidden but was referenced (in return type) from public method android.hardware.camera2.legacy.LegacyResultMapper.cachedConvertResultMetadata(android.hardware.camera2.legacy.LegacyRequest,long)
++ReferencesHidden: android.hardware.camera2.legacy.RequestQueue#submit(android.hardware.camera2.CaptureRequest[], boolean):
++    Class android.hardware.camera2.utils.SubmitInfo is hidden but was referenced (in return type) from public method android.hardware.camera2.legacy.RequestQueue.submit(android.hardware.camera2.CaptureRequest[],boolean)
++ReferencesHidden: android.hardware.camera2.legacy.RequestThreadManager#submitCaptureRequests(android.hardware.camera2.CaptureRequest[], boolean):
++    Class android.hardware.camera2.utils.SubmitInfo is hidden but was referenced (in return type) from public method android.hardware.camera2.legacy.RequestThreadManager.submitCaptureRequests(android.hardware.camera2.CaptureRequest[],boolean)
++
++
+ RequiresPermission: android.accounts.AccountManager#addAccount(String, String, String[], android.os.Bundle, android.app.Activity, android.accounts.AccountManagerCallback<android.os.Bundle>, android.os.Handler):
+     Method 'addAccount' documentation duplicates auto-generated documentation by @RequiresPermission. If the permissions are only required under certain circumstances use conditional=true to suppress the auto-documentation
+ RequiresPermission: android.accounts.AccountManager#addAccountExplicitly(android.accounts.Account, String, android.os.Bundle):
+@@ -1181,12 +1889,72 @@ RequiresPermission: android.webkit.WebSettings#setGeolocationEnabled(boolean):
+     Method 'setGeolocationEnabled' documentation mentions permissions without declaring @RequiresPermission
+ 
+ 
++RethrowRemoteException: android.hardware.camera2.legacy.CameraDeviceUserShim#waitUntilIdle():
++    Methods calling system APIs should rethrow `RemoteException` as `RuntimeException` (but do not list it in the throws clause)
++
++
++StaticUtils: android.hardware.camera2.legacy.LegacyMetadataMapper:
++    Fully-static utility classes must not have constructor
++StaticUtils: android.hardware.camera2.legacy.LegacyRequestMapper:
++    Fully-static utility classes must not have constructor
++
++
+ Todo: android.hardware.camera2.params.StreamConfigurationMap:
+     Documentation mentions 'TODO'
+ Todo: android.provider.ContactsContract.RawContacts#newEntityIterator(android.database.Cursor):
+     Documentation mentions 'TODO'
+ 
+ 
++UnavailableSymbol: android.hardware.camera2.legacy.CameraDeviceState#setCaptureResult(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.impl.CameraMetadataNative):
++    Parameter of unavailable type android.hardware.camera2.impl.CameraMetadataNative in android.hardware.camera2.legacy.CameraDeviceState.setCaptureResult()
++UnavailableSymbol: android.hardware.camera2.legacy.CameraDeviceState#setCaptureResult(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.impl.CameraMetadataNative, int, Object):
++    Parameter of unavailable type android.hardware.camera2.impl.CameraMetadataNative in android.hardware.camera2.legacy.CameraDeviceState.setCaptureResult()
++UnavailableSymbol: android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener#onCaptureResult(android.hardware.camera2.impl.CameraMetadataNative, android.hardware.camera2.legacy.RequestHolder):
++    Parameter of unavailable type android.hardware.camera2.impl.CameraMetadataNative in android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener.onCaptureResult()
++UnavailableSymbol: android.hardware.camera2.legacy.CameraDeviceUserShim#configureStreams(android.hardware.camera2.utils.SessionConfigurationAndStreamIds):
++    Parameter of unavailable type android.hardware.camera2.utils.SessionConfigurationAndStreamIds in android.hardware.camera2.legacy.CameraDeviceUserShim.configureStreams()
++UnavailableSymbol: android.hardware.camera2.legacy.CameraDeviceUserShim#connectBinderShim(android.hardware.camera2.ICameraDeviceCallbacks, int, android.util.Size):
++    Parameter of unavailable type android.hardware.camera2.ICameraDeviceCallbacks in android.hardware.camera2.legacy.CameraDeviceUserShim.connectBinderShim()
++UnavailableSymbol: android.hardware.camera2.legacy.CameraDeviceUserShim#createDefaultRequest(int):
++    Return type of unavailable type android.hardware.camera2.impl.CameraMetadataNative in android.hardware.camera2.legacy.CameraDeviceUserShim.createDefaultRequest()
++UnavailableSymbol: android.hardware.camera2.legacy.CameraDeviceUserShim#endConfigure(int, android.hardware.camera2.impl.CameraMetadataNative, long):
++    Parameter of unavailable type android.hardware.camera2.impl.CameraMetadataNative in android.hardware.camera2.legacy.CameraDeviceUserShim.endConfigure()
++UnavailableSymbol: android.hardware.camera2.legacy.CameraDeviceUserShim#getCameraInfo():
++    Return type of unavailable type android.hardware.camera2.impl.CameraMetadataNative in android.hardware.camera2.legacy.CameraDeviceUserShim.getCameraInfo()
++UnavailableSymbol: android.hardware.camera2.legacy.CameraDeviceUserShim#startStreaming(int[], int[]):
++    Return type of unavailable type android.hardware.camera2.utils.SubmitInfo in android.hardware.camera2.legacy.CameraDeviceUserShim.startStreaming()
++UnavailableSymbol: android.hardware.camera2.legacy.CameraDeviceUserShim#submitRequest(android.hardware.camera2.CaptureRequest, boolean):
++    Return type of unavailable type android.hardware.camera2.utils.SubmitInfo in android.hardware.camera2.legacy.CameraDeviceUserShim.submitRequest()
++UnavailableSymbol: android.hardware.camera2.legacy.CameraDeviceUserShim#submitRequestList(android.hardware.camera2.CaptureRequest[], boolean):
++    Return type of unavailable type android.hardware.camera2.utils.SubmitInfo in android.hardware.camera2.legacy.CameraDeviceUserShim.submitRequestList()
++UnavailableSymbol: android.hardware.camera2.legacy.CameraDeviceUserShim#switchToOffline(android.hardware.camera2.ICameraDeviceCallbacks, int[]):
++    Parameter of unavailable type android.hardware.camera2.ICameraDeviceCallbacks in android.hardware.camera2.legacy.CameraDeviceUserShim.switchToOffline()
++UnavailableSymbol: android.hardware.camera2.legacy.CameraDeviceUserShim.CameraCallbackThread#onCaptureStarted(android.hardware.camera2.impl.CaptureResultExtras, long):
++    Parameter of unavailable type android.hardware.camera2.impl.CaptureResultExtras in android.hardware.camera2.legacy.CameraDeviceUserShim.CameraCallbackThread.onCaptureStarted()
++UnavailableSymbol: android.hardware.camera2.legacy.CameraDeviceUserShim.CameraCallbackThread#onDeviceError(int, android.hardware.camera2.impl.CaptureResultExtras):
++    Parameter of unavailable type android.hardware.camera2.impl.CaptureResultExtras in android.hardware.camera2.legacy.CameraDeviceUserShim.CameraCallbackThread.onDeviceError()
++UnavailableSymbol: android.hardware.camera2.legacy.CameraDeviceUserShim.CameraCallbackThread#onResultReceived(android.hardware.camera2.CameraMetadataInfo, android.hardware.camera2.impl.CaptureResultExtras, android.hardware.camera2.impl.PhysicalCaptureResultInfo[]):
++    Parameter of unavailable type android.hardware.camera2.impl.CaptureResultExtras in android.hardware.camera2.legacy.CameraDeviceUserShim.CameraCallbackThread.onResultReceived()
++UnavailableSymbol: android.hardware.camera2.legacy.LegacyCameraDevice#submitRequest(android.hardware.camera2.CaptureRequest, boolean):
++    Return type of unavailable type android.hardware.camera2.utils.SubmitInfo in android.hardware.camera2.legacy.LegacyCameraDevice.submitRequest()
++UnavailableSymbol: android.hardware.camera2.legacy.LegacyCameraDevice#submitRequestList(android.hardware.camera2.CaptureRequest[], boolean):
++    Return type of unavailable type android.hardware.camera2.utils.SubmitInfo in android.hardware.camera2.legacy.LegacyCameraDevice.submitRequestList()
++UnavailableSymbol: android.hardware.camera2.legacy.LegacyFaceDetectMapper#mapResultFaces(android.hardware.camera2.impl.CameraMetadataNative, android.hardware.camera2.legacy.LegacyRequest):
++    Parameter of unavailable type android.hardware.camera2.impl.CameraMetadataNative in android.hardware.camera2.legacy.LegacyFaceDetectMapper.mapResultFaces()
++UnavailableSymbol: android.hardware.camera2.legacy.LegacyFocusStateMapper#mapResultTriggers(android.hardware.camera2.impl.CameraMetadataNative):
++    Parameter of unavailable type android.hardware.camera2.impl.CameraMetadataNative in android.hardware.camera2.legacy.LegacyFocusStateMapper.mapResultTriggers()
++UnavailableSymbol: android.hardware.camera2.legacy.LegacyMetadataMapper#createCharacteristics(String, android.hardware.CameraInfo, int, android.util.Size):
++    Parameter of unavailable type android.hardware.CameraInfo in android.hardware.camera2.legacy.LegacyMetadataMapper.createCharacteristics()
++UnavailableSymbol: android.hardware.camera2.legacy.LegacyMetadataMapper#createRequestTemplate(android.hardware.camera2.CameraCharacteristics, int):
++    Return type of unavailable type android.hardware.camera2.impl.CameraMetadataNative in android.hardware.camera2.legacy.LegacyMetadataMapper.createRequestTemplate()
++UnavailableSymbol: android.hardware.camera2.legacy.LegacyResultMapper#cachedConvertResultMetadata(android.hardware.camera2.legacy.LegacyRequest, long):
++    Return type of unavailable type android.hardware.camera2.impl.CameraMetadataNative in android.hardware.camera2.legacy.LegacyResultMapper.cachedConvertResultMetadata()
++UnavailableSymbol: android.hardware.camera2.legacy.RequestQueue#submit(android.hardware.camera2.CaptureRequest[], boolean):
++    Return type of unavailable type android.hardware.camera2.utils.SubmitInfo in android.hardware.camera2.legacy.RequestQueue.submit()
++UnavailableSymbol: android.hardware.camera2.legacy.RequestThreadManager#submitCaptureRequests(android.hardware.camera2.CaptureRequest[], boolean):
++    Return type of unavailable type android.hardware.camera2.utils.SubmitInfo in android.hardware.camera2.legacy.RequestThreadManager.submitCaptureRequests()
++
++
+ UnflaggedApi: android.R.color#on_surface_disabled_material:
+     New API must be flagged with @FlaggedApi: field android.R.color.on_surface_disabled_material
+ UnflaggedApi: android.R.color#outline_disabled_material:
+@@ -1371,6 +2139,8 @@ UnflaggedApi: android.app.ApplicationStartInfo#getStartupTimestamps():
+     New API must be flagged with @FlaggedApi: method android.app.ApplicationStartInfo.getStartupTimestamps()
+ UnflaggedApi: android.app.ApplicationStartInfo#writeToParcel(android.os.Parcel, int):
+     New API must be flagged with @FlaggedApi: method android.app.ApplicationStartInfo.writeToParcel(android.os.Parcel,int)
++UnflaggedApi: android.app.Notification.BubbleMetadata#getDesiredHeight():
++    Changes to modifiers, from '@androidx.annotation.Dimension(unit=android.annotation.Dimension.DP) public' to '@androidx.annotation.Dimension(unit=0) public' must be flagged with @FlaggedApi: method android.app.Notification.BubbleMetadata.getDesiredHeight()
+ UnflaggedApi: android.app.Notification.TvExtender:
+     New API must be flagged with @FlaggedApi: class android.app.Notification.TvExtender
+ UnflaggedApi: android.app.Notification.TvExtender#TvExtender():
+@@ -1539,6 +2309,538 @@ UnflaggedApi: android.graphics.text.PositionedGlyphs#getItalicOverride(int):
+     New API must be flagged with @FlaggedApi: method android.graphics.text.PositionedGlyphs.getItalicOverride(int)
+ UnflaggedApi: android.graphics.text.PositionedGlyphs#getWeightOverride(int):
+     New API must be flagged with @FlaggedApi: method android.graphics.text.PositionedGlyphs.getWeightOverride(int)
++UnflaggedApi: android.hardware.camera2.legacy.BurstHolder:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.BurstHolder
++UnflaggedApi: android.hardware.camera2.legacy.BurstHolder#BurstHolder(int, boolean, android.hardware.camera2.CaptureRequest[], java.util.Collection<java.lang.Long>):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.BurstHolder(int,boolean,android.hardware.camera2.CaptureRequest[],java.util.Collection<java.lang.Long>)
++UnflaggedApi: android.hardware.camera2.legacy.BurstHolder#getNumberOfRequests():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.BurstHolder.getNumberOfRequests()
++UnflaggedApi: android.hardware.camera2.legacy.BurstHolder#getRequestId():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.BurstHolder.getRequestId()
++UnflaggedApi: android.hardware.camera2.legacy.BurstHolder#isRepeating():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.BurstHolder.isRepeating()
++UnflaggedApi: android.hardware.camera2.legacy.BurstHolder#produceRequestHolders(long):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.BurstHolder.produceRequestHolders(long)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.CameraDeviceState
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState#NO_CAPTURE_ERROR:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.CameraDeviceState.NO_CAPTURE_ERROR
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState#setCameraDeviceCallbacks(android.os.Handler, android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceState.setCameraDeviceCallbacks(android.os.Handler,android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState#setCaptureResult(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.impl.CameraMetadataNative):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceState.setCaptureResult(android.hardware.camera2.legacy.RequestHolder,android.hardware.camera2.impl.CameraMetadataNative)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState#setCaptureResult(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.impl.CameraMetadataNative, int, Object):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceState.setCaptureResult(android.hardware.camera2.legacy.RequestHolder,android.hardware.camera2.impl.CameraMetadataNative,int,Object)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState#setCaptureStart(android.hardware.camera2.legacy.RequestHolder, long, int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceState.setCaptureStart(android.hardware.camera2.legacy.RequestHolder,long,int)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState#setConfiguring():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceState.setConfiguring()
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState#setError(int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceState.setError(int)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState#setIdle():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceState.setIdle()
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState#setRepeatingRequestError(long, int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceState.setRepeatingRequestError(long,int)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState#setRequestQueueEmpty():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceState.setRequestQueueEmpty()
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener#onBusy():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener.onBusy()
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener#onCaptureResult(android.hardware.camera2.impl.CameraMetadataNative, android.hardware.camera2.legacy.RequestHolder):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener.onCaptureResult(android.hardware.camera2.impl.CameraMetadataNative,android.hardware.camera2.legacy.RequestHolder)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener#onCaptureStarted(android.hardware.camera2.legacy.RequestHolder, long):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener.onCaptureStarted(android.hardware.camera2.legacy.RequestHolder,long)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener#onConfiguring():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener.onConfiguring()
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener#onError(int, Object, android.hardware.camera2.legacy.RequestHolder):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener.onError(int,Object,android.hardware.camera2.legacy.RequestHolder)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener#onIdle():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener.onIdle()
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener#onRepeatingRequestError(long, int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener.onRepeatingRequestError(long,int)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener#onRequestQueueEmpty():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener.onRequestQueueEmpty()
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.CameraDeviceUserShim
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#CONSTRAINED_HIGH_SPEED_MODE:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.CameraDeviceUserShim.CONSTRAINED_HIGH_SPEED_MODE
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#CameraDeviceUserShim(int, android.hardware.camera2.legacy.LegacyCameraDevice, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.legacy.CameraDeviceUserShim.CameraLooper, android.hardware.camera2.legacy.CameraDeviceUserShim.CameraCallbackThread):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.CameraDeviceUserShim(int,android.hardware.camera2.legacy.LegacyCameraDevice,android.hardware.camera2.CameraCharacteristics,android.hardware.camera2.legacy.CameraDeviceUserShim.CameraLooper,android.hardware.camera2.legacy.CameraDeviceUserShim.CameraCallbackThread)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#NORMAL_MODE:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.CameraDeviceUserShim.NORMAL_MODE
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#NO_IN_FLIGHT_REPEATING_FRAMES:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.CameraDeviceUserShim.NO_IN_FLIGHT_REPEATING_FRAMES
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#SHARED_MODE:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.CameraDeviceUserShim.SHARED_MODE
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#TEMPLATE_MANUAL:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.CameraDeviceUserShim.TEMPLATE_MANUAL
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#TEMPLATE_PREVIEW:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.CameraDeviceUserShim.TEMPLATE_PREVIEW
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#TEMPLATE_RECORD:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.CameraDeviceUserShim.TEMPLATE_RECORD
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#TEMPLATE_STILL_CAPTURE:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.CameraDeviceUserShim.TEMPLATE_STILL_CAPTURE
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#TEMPLATE_VIDEO_SNAPSHOT:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.CameraDeviceUserShim.TEMPLATE_VIDEO_SNAPSHOT
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#TEMPLATE_ZERO_SHUTTER_LAG:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.CameraDeviceUserShim.TEMPLATE_ZERO_SHUTTER_LAG
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#VENDOR_MODE_START:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.CameraDeviceUserShim.VENDOR_MODE_START
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#asBinder():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.asBinder()
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#beginConfigure():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.beginConfigure()
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#cancelRequest(int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.cancelRequest(int)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#configureStreams(android.hardware.camera2.utils.SessionConfigurationAndStreamIds):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.configureStreams(android.hardware.camera2.utils.SessionConfigurationAndStreamIds)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#connectBinderShim(android.hardware.camera2.ICameraDeviceCallbacks, int, android.util.Size):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.connectBinderShim(android.hardware.camera2.ICameraDeviceCallbacks,int,android.util.Size)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#createDefaultRequest(int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.createDefaultRequest(int)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#createInputStream(int, int, int, boolean):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.createInputStream(int,int,int,boolean)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#createStream(android.hardware.camera2.params.OutputConfiguration):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.createStream(android.hardware.camera2.params.OutputConfiguration)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#deleteStream(int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.deleteStream(int)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#disconnect():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.disconnect()
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#endConfigure(int, android.hardware.camera2.impl.CameraMetadataNative, long):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.endConfigure(int,android.hardware.camera2.impl.CameraMetadataNative,long)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#finalizeOutputConfigurations(int, android.hardware.camera2.params.OutputConfiguration):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.finalizeOutputConfigurations(int,android.hardware.camera2.params.OutputConfiguration)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#flush():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.flush()
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#getCameraInfo():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.getCameraInfo()
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#getCaptureResultMetadataQueue():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.getCaptureResultMetadataQueue()
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#getGlobalAudioRestriction():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.getGlobalAudioRestriction()
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#getInputSurface():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.getInputSurface()
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#isPrimaryClient():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.isPrimaryClient()
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#isSessionConfigurationSupported(android.hardware.camera2.params.SessionConfiguration):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.isSessionConfigurationSupported(android.hardware.camera2.params.SessionConfiguration)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#prepare(int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.prepare(int)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#prepare2(int, int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.prepare2(int,int)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#setCameraAudioRestriction(int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.setCameraAudioRestriction(int)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#startStreaming(int[], int[]):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.startStreaming(int[],int[])
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#submitRequest(android.hardware.camera2.CaptureRequest, boolean):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.submitRequest(android.hardware.camera2.CaptureRequest,boolean)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#submitRequestList(android.hardware.camera2.CaptureRequest[], boolean):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.submitRequestList(android.hardware.camera2.CaptureRequest[],boolean)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#switchToOffline(android.hardware.camera2.ICameraDeviceCallbacks, int[]):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.switchToOffline(android.hardware.camera2.ICameraDeviceCallbacks,int[])
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#tearDown(int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.tearDown(int)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#updateOutputConfiguration(int, android.hardware.camera2.params.OutputConfiguration):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.updateOutputConfiguration(int,android.hardware.camera2.params.OutputConfiguration)
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#updateOutputConfigurations(int[], android.hardware.camera2.params.OutputConfiguration[]):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.updateOutputConfigurations(int[],android.hardware.camera2.params.OutputConfiguration[])
++UnflaggedApi: android.hardware.camera2.legacy.CameraDeviceUserShim#waitUntilIdle():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CameraDeviceUserShim.waitUntilIdle()
++UnflaggedApi: android.hardware.camera2.legacy.CaptureCollector:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.CaptureCollector
++UnflaggedApi: android.hardware.camera2.legacy.CaptureCollector#CaptureCollector(int, android.hardware.camera2.legacy.CameraDeviceState):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.CaptureCollector(int,android.hardware.camera2.legacy.CameraDeviceState)
++UnflaggedApi: android.hardware.camera2.legacy.CaptureCollector#failAll():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CaptureCollector.failAll()
++UnflaggedApi: android.hardware.camera2.legacy.CaptureCollector#failNextJpeg():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CaptureCollector.failNextJpeg()
++UnflaggedApi: android.hardware.camera2.legacy.CaptureCollector#failNextPreview():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CaptureCollector.failNextPreview()
++UnflaggedApi: android.hardware.camera2.legacy.CaptureCollector#hasPendingPreviewCaptures():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CaptureCollector.hasPendingPreviewCaptures()
++UnflaggedApi: android.hardware.camera2.legacy.CaptureCollector#jpegCaptured(long):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CaptureCollector.jpegCaptured(long)
++UnflaggedApi: android.hardware.camera2.legacy.CaptureCollector#jpegProduced():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CaptureCollector.jpegProduced()
++UnflaggedApi: android.hardware.camera2.legacy.CaptureCollector#previewCaptured(long):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CaptureCollector.previewCaptured(long)
++UnflaggedApi: android.hardware.camera2.legacy.CaptureCollector#previewProduced():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CaptureCollector.previewProduced()
++UnflaggedApi: android.hardware.camera2.legacy.CaptureCollector#queueRequest(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.legacy.LegacyRequest, long, java.util.concurrent.TimeUnit):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CaptureCollector.queueRequest(android.hardware.camera2.legacy.RequestHolder,android.hardware.camera2.legacy.LegacyRequest,long,java.util.concurrent.TimeUnit)
++UnflaggedApi: android.hardware.camera2.legacy.CaptureCollector#waitForEmpty(long, java.util.concurrent.TimeUnit):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CaptureCollector.waitForEmpty(long,java.util.concurrent.TimeUnit)
++UnflaggedApi: android.hardware.camera2.legacy.CaptureCollector#waitForPreviewsEmpty(long, java.util.concurrent.TimeUnit):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CaptureCollector.waitForPreviewsEmpty(long,java.util.concurrent.TimeUnit)
++UnflaggedApi: android.hardware.camera2.legacy.CaptureCollector#waitForRequestCompleted(android.hardware.camera2.legacy.RequestHolder, long, java.util.concurrent.TimeUnit, android.util.MutableLong):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.CaptureCollector.waitForRequestCompleted(android.hardware.camera2.legacy.RequestHolder,long,java.util.concurrent.TimeUnit,android.util.MutableLong)
++UnflaggedApi: android.hardware.camera2.legacy.GLThreadManager:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.GLThreadManager
++UnflaggedApi: android.hardware.camera2.legacy.GLThreadManager#GLThreadManager(int, int, android.hardware.camera2.legacy.CameraDeviceState):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.GLThreadManager(int,int,android.hardware.camera2.legacy.CameraDeviceState)
++UnflaggedApi: android.hardware.camera2.legacy.GLThreadManager#allowNewFrames():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.GLThreadManager.allowNewFrames()
++UnflaggedApi: android.hardware.camera2.legacy.GLThreadManager#getCurrentSurfaceTexture():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.GLThreadManager.getCurrentSurfaceTexture()
++UnflaggedApi: android.hardware.camera2.legacy.GLThreadManager#ignoreNewFrames():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.GLThreadManager.ignoreNewFrames()
++UnflaggedApi: android.hardware.camera2.legacy.GLThreadManager#queueNewFrame():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.GLThreadManager.queueNewFrame()
++UnflaggedApi: android.hardware.camera2.legacy.GLThreadManager#quit():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.GLThreadManager.quit()
++UnflaggedApi: android.hardware.camera2.legacy.GLThreadManager#setConfigurationAndWait(java.util.Collection<android.util.Pair<android.view.Surface,android.util.Size>>, android.hardware.camera2.legacy.CaptureCollector):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.GLThreadManager.setConfigurationAndWait(java.util.Collection<android.util.Pair<android.view.Surface,android.util.Size>>,android.hardware.camera2.legacy.CaptureCollector)
++UnflaggedApi: android.hardware.camera2.legacy.GLThreadManager#start():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.GLThreadManager.start()
++UnflaggedApi: android.hardware.camera2.legacy.GLThreadManager#waitUntilIdle():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.GLThreadManager.waitUntilIdle()
++UnflaggedApi: android.hardware.camera2.legacy.GLThreadManager#waitUntilStarted():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.GLThreadManager.waitUntilStarted()
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.LegacyCameraDevice
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#LegacyCameraDevice(int, android.hardware.Camera, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.ICameraDeviceCallbacks):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.LegacyCameraDevice(int,android.hardware.Camera,android.hardware.camera2.CameraCharacteristics,android.hardware.camera2.ICameraDeviceCallbacks)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#MAX_DIMEN_FOR_ROUNDING:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.LegacyCameraDevice.MAX_DIMEN_FOR_ROUNDING
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#NATIVE_WINDOW_SCALING_MODE_SCALE_TO_WINDOW:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.LegacyCameraDevice.NATIVE_WINDOW_SCALING_MODE_SCALE_TO_WINDOW
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#cancelRequest(int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyCameraDevice.cancelRequest(int)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#close():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyCameraDevice.close()
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#configureOutputs(android.util.SparseArray<android.view.Surface>):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyCameraDevice.configureOutputs(android.util.SparseArray<android.view.Surface>)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#detectSurfaceDataspace(android.view.Surface):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyCameraDevice.detectSurfaceDataspace(android.view.Surface)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#detectSurfaceType(android.view.Surface):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyCameraDevice.detectSurfaceType(android.view.Surface)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#detectSurfaceUsageFlags(android.view.Surface):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyCameraDevice.detectSurfaceUsageFlags(android.view.Surface)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#flush():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyCameraDevice.flush()
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#getAudioRestriction():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyCameraDevice.getAudioRestriction()
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#getSurfaceId(android.view.Surface):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyCameraDevice.getSurfaceId(android.view.Surface)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#getSurfaceSize(android.view.Surface):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyCameraDevice.getSurfaceSize(android.view.Surface)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#isClosed():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyCameraDevice.isClosed()
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#isFlexibleConsumer(android.view.Surface):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyCameraDevice.isFlexibleConsumer(android.view.Surface)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#isPreviewConsumer(android.view.Surface):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyCameraDevice.isPreviewConsumer(android.view.Surface)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#isVideoEncoderConsumer(android.view.Surface):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyCameraDevice.isVideoEncoderConsumer(android.view.Surface)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#setAudioRestriction(int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyCameraDevice.setAudioRestriction(int)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#submitRequest(android.hardware.camera2.CaptureRequest, boolean):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyCameraDevice.submitRequest(android.hardware.camera2.CaptureRequest,boolean)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#submitRequestList(android.hardware.camera2.CaptureRequest[], boolean):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyCameraDevice.submitRequestList(android.hardware.camera2.CaptureRequest[],boolean)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyCameraDevice#waitUntilIdle():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyCameraDevice.waitUntilIdle()
++UnflaggedApi: android.hardware.camera2.legacy.LegacyExceptionUtils:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.LegacyExceptionUtils
++UnflaggedApi: android.hardware.camera2.legacy.LegacyExceptionUtils#ALREADY_EXISTS:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.LegacyExceptionUtils.ALREADY_EXISTS
++UnflaggedApi: android.hardware.camera2.legacy.LegacyExceptionUtils#BAD_VALUE:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.LegacyExceptionUtils.BAD_VALUE
++UnflaggedApi: android.hardware.camera2.legacy.LegacyExceptionUtils#DEAD_OBJECT:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.LegacyExceptionUtils.DEAD_OBJECT
++UnflaggedApi: android.hardware.camera2.legacy.LegacyExceptionUtils#INVALID_OPERATION:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.LegacyExceptionUtils.INVALID_OPERATION
++UnflaggedApi: android.hardware.camera2.legacy.LegacyExceptionUtils#NO_ERROR:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.LegacyExceptionUtils.NO_ERROR
++UnflaggedApi: android.hardware.camera2.legacy.LegacyExceptionUtils#PERMISSION_DENIED:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.LegacyExceptionUtils.PERMISSION_DENIED
++UnflaggedApi: android.hardware.camera2.legacy.LegacyExceptionUtils#TIMED_OUT:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.LegacyExceptionUtils.TIMED_OUT
++UnflaggedApi: android.hardware.camera2.legacy.LegacyExceptionUtils#throwOnError(int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyExceptionUtils.throwOnError(int)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyExceptionUtils#throwOnServiceError(int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyExceptionUtils.throwOnServiceError(int)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException
++UnflaggedApi: android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException#BufferQueueAbandonedException():
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException()
++UnflaggedApi: android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException#BufferQueueAbandonedException(Exception):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException(Exception)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException#BufferQueueAbandonedException(String):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException(String)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException#BufferQueueAbandonedException(String, Throwable):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.LegacyExceptionUtils.BufferQueueAbandonedException(String,Throwable)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyFaceDetectMapper:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.LegacyFaceDetectMapper
++UnflaggedApi: android.hardware.camera2.legacy.LegacyFaceDetectMapper#LegacyFaceDetectMapper(android.hardware.Camera, android.hardware.camera2.CameraCharacteristics):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.LegacyFaceDetectMapper(android.hardware.Camera,android.hardware.camera2.CameraCharacteristics)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyFaceDetectMapper#mapResultFaces(android.hardware.camera2.impl.CameraMetadataNative, android.hardware.camera2.legacy.LegacyRequest):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyFaceDetectMapper.mapResultFaces(android.hardware.camera2.impl.CameraMetadataNative,android.hardware.camera2.legacy.LegacyRequest)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyFaceDetectMapper#processFaceDetectMode(android.hardware.camera2.CaptureRequest, android.hardware.Camera.Parameters):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyFaceDetectMapper.processFaceDetectMode(android.hardware.camera2.CaptureRequest,android.hardware.Camera.Parameters)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyFocusStateMapper:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.LegacyFocusStateMapper
++UnflaggedApi: android.hardware.camera2.legacy.LegacyFocusStateMapper#LegacyFocusStateMapper(android.hardware.Camera):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.LegacyFocusStateMapper(android.hardware.Camera)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyFocusStateMapper#mapResultTriggers(android.hardware.camera2.impl.CameraMetadataNative):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyFocusStateMapper.mapResultTriggers(android.hardware.camera2.impl.CameraMetadataNative)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyFocusStateMapper#processRequestTriggers(android.hardware.camera2.CaptureRequest, android.hardware.Camera.Parameters):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyFocusStateMapper.processRequestTriggers(android.hardware.camera2.CaptureRequest,android.hardware.Camera.Parameters)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyMetadataMapper:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.LegacyMetadataMapper
++UnflaggedApi: android.hardware.camera2.legacy.LegacyMetadataMapper#HAL_PIXEL_FORMAT_BGRA_8888:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.LegacyMetadataMapper.HAL_PIXEL_FORMAT_BGRA_8888
++UnflaggedApi: android.hardware.camera2.legacy.LegacyMetadataMapper#HAL_PIXEL_FORMAT_BLOB:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.LegacyMetadataMapper.HAL_PIXEL_FORMAT_BLOB
++UnflaggedApi: android.hardware.camera2.legacy.LegacyMetadataMapper#HAL_PIXEL_FORMAT_IMPLEMENTATION_DEFINED:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.LegacyMetadataMapper.HAL_PIXEL_FORMAT_IMPLEMENTATION_DEFINED
++UnflaggedApi: android.hardware.camera2.legacy.LegacyMetadataMapper#HAL_PIXEL_FORMAT_RGBA_8888:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.LegacyMetadataMapper.HAL_PIXEL_FORMAT_RGBA_8888
++UnflaggedApi: android.hardware.camera2.legacy.LegacyMetadataMapper#convertRequestMetadata(android.hardware.camera2.legacy.LegacyRequest):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyMetadataMapper.convertRequestMetadata(android.hardware.camera2.legacy.LegacyRequest)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyMetadataMapper#createCharacteristics(String, android.hardware.CameraInfo, int, android.util.Size):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyMetadataMapper.createCharacteristics(String,android.hardware.CameraInfo,int,android.util.Size)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyMetadataMapper#createCharacteristics(android.hardware.Camera.Parameters, android.hardware.Camera.CameraInfo, int, android.util.Size):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyMetadataMapper.createCharacteristics(android.hardware.Camera.Parameters,android.hardware.Camera.CameraInfo,int,android.util.Size)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyMetadataMapper#createRequestTemplate(android.hardware.camera2.CameraCharacteristics, int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyMetadataMapper.createRequestTemplate(android.hardware.camera2.CameraCharacteristics,int)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyRequest:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.LegacyRequest
++UnflaggedApi: android.hardware.camera2.legacy.LegacyRequest#LegacyRequest(android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.CaptureRequest, android.util.Size, android.hardware.Camera.Parameters):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.LegacyRequest(android.hardware.camera2.CameraCharacteristics,android.hardware.camera2.CaptureRequest,android.util.Size,android.hardware.Camera.Parameters)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyRequest#captureRequest:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.LegacyRequest.captureRequest
++UnflaggedApi: android.hardware.camera2.legacy.LegacyRequest#characteristics:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.LegacyRequest.characteristics
++UnflaggedApi: android.hardware.camera2.legacy.LegacyRequest#parameters:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.LegacyRequest.parameters
++UnflaggedApi: android.hardware.camera2.legacy.LegacyRequest#previewSize:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.LegacyRequest.previewSize
++UnflaggedApi: android.hardware.camera2.legacy.LegacyRequest#setParameters(android.hardware.Camera.Parameters):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyRequest.setParameters(android.hardware.Camera.Parameters)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyRequestMapper:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.LegacyRequestMapper
++UnflaggedApi: android.hardware.camera2.legacy.LegacyRequestMapper#convertRequestMetadata(android.hardware.camera2.legacy.LegacyRequest):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyRequestMapper.convertRequestMetadata(android.hardware.camera2.legacy.LegacyRequest)
++UnflaggedApi: android.hardware.camera2.legacy.LegacyResultMapper:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.LegacyResultMapper
++UnflaggedApi: android.hardware.camera2.legacy.LegacyResultMapper#cachedConvertResultMetadata(android.hardware.camera2.legacy.LegacyRequest, long):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.LegacyResultMapper.cachedConvertResultMetadata(android.hardware.camera2.legacy.LegacyRequest,long)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.ParameterUtils
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#CAMERA_AREA_DEFAULT:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.ParameterUtils.CAMERA_AREA_DEFAULT
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#NORMALIZED_RECTANGLE_DEFAULT:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.ParameterUtils.NORMALIZED_RECTANGLE_DEFAULT
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#NORMALIZED_RECTANGLE_MAX:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.ParameterUtils.NORMALIZED_RECTANGLE_MAX
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#NORMALIZED_RECTANGLE_MIN:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.ParameterUtils.NORMALIZED_RECTANGLE_MIN
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#RECTANGLE_EMPTY:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.ParameterUtils.RECTANGLE_EMPTY
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#containsSize(java.util.List<android.hardware.Camera.Size>, int, int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.containsSize(java.util.List<android.hardware.Camera.Size>,int,int)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#convertCameraAreaToActiveArrayRectangle(android.graphics.Rect, android.hardware.camera2.legacy.ParameterUtils.ZoomData, android.hardware.Camera.Area):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.convertCameraAreaToActiveArrayRectangle(android.graphics.Rect,android.hardware.camera2.legacy.ParameterUtils.ZoomData,android.hardware.Camera.Area)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#convertFaceFromLegacy(android.hardware.Camera.Face, android.graphics.Rect, android.hardware.camera2.legacy.ParameterUtils.ZoomData):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.convertFaceFromLegacy(android.hardware.Camera.Face,android.graphics.Rect,android.hardware.camera2.legacy.ParameterUtils.ZoomData)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#convertMeteringRectangleToLegacy(android.graphics.Rect, android.hardware.camera2.params.MeteringRectangle, android.hardware.camera2.legacy.ParameterUtils.ZoomData):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.convertMeteringRectangleToLegacy(android.graphics.Rect,android.hardware.camera2.params.MeteringRectangle,android.hardware.camera2.legacy.ParameterUtils.ZoomData)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#convertScalerCropRegion(android.graphics.Rect, android.graphics.Rect, android.util.Size, android.hardware.Camera.Parameters):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.convertScalerCropRegion(android.graphics.Rect,android.graphics.Rect,android.util.Size,android.hardware.Camera.Parameters)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#convertSize(android.hardware.Camera.Size):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.convertSize(android.hardware.Camera.Size)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#convertSizeList(java.util.List<android.hardware.Camera.Size>):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.convertSizeList(java.util.List<android.hardware.Camera.Size>)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#convertSizeListToArray(java.util.List<android.hardware.Camera.Size>):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.convertSizeListToArray(java.util.List<android.hardware.Camera.Size>)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#convertToLegacyZoom(android.graphics.Rect, android.graphics.Rect, Float, android.util.Size, android.hardware.Camera.Parameters):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.convertToLegacyZoom(android.graphics.Rect,android.graphics.Rect,Float,android.util.Size,android.hardware.Camera.Parameters)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#convertZoomRatio(android.graphics.Rect, float, android.util.Size, android.hardware.Camera.Parameters):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.convertZoomRatio(android.graphics.Rect,float,android.util.Size,android.hardware.Camera.Parameters)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#getAvailablePreviewZoomCropRectangles(android.hardware.Camera.Parameters, android.graphics.Rect, android.util.Size):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.getAvailablePreviewZoomCropRectangles(android.hardware.Camera.Parameters,android.graphics.Rect,android.util.Size)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#getAvailableZoomCropRectangles(android.hardware.Camera.Parameters, android.graphics.Rect):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.getAvailableZoomCropRectangles(android.hardware.Camera.Parameters,android.graphics.Rect)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#getClosestAvailableZoomCrop(android.hardware.Camera.Parameters, android.graphics.Rect, android.util.Size, android.graphics.Rect, android.graphics.Rect, android.graphics.Rect):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.getClosestAvailableZoomCrop(android.hardware.Camera.Parameters,android.graphics.Rect,android.util.Size,android.graphics.Rect,android.graphics.Rect,android.graphics.Rect)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#getLargestSupportedJpegSizeByArea(android.hardware.Camera.Parameters):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.getLargestSupportedJpegSizeByArea(android.hardware.Camera.Parameters)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#getMaxZoomRatio(android.hardware.Camera.Parameters):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.getMaxZoomRatio(android.hardware.Camera.Parameters)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#stringFromArea(android.hardware.Camera.Area):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.stringFromArea(android.hardware.Camera.Area)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils#stringFromAreaList(java.util.List<android.hardware.Camera.Area>):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.stringFromAreaList(java.util.List<android.hardware.Camera.Area>)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils.MeteringData:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.ParameterUtils.MeteringData
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils.MeteringData#MeteringData(android.hardware.Camera.Area, android.graphics.Rect, android.graphics.Rect):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.ParameterUtils.MeteringData(android.hardware.Camera.Area,android.graphics.Rect,android.graphics.Rect)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils.MeteringData#meteringArea:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.ParameterUtils.MeteringData.meteringArea
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils.MeteringData#previewMetering:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.ParameterUtils.MeteringData.previewMetering
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils.MeteringData#reportedMetering:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.ParameterUtils.MeteringData.reportedMetering
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle#WeightedRectangle(android.graphics.Rect, int):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle(android.graphics.Rect,int)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle#rect:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle.rect
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle#toFace():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle.toFace()
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle#toFace(int, android.graphics.Point, android.graphics.Point, android.graphics.Point):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle.toFace(int,android.graphics.Point,android.graphics.Point,android.graphics.Point)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle#toMetering():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle.toMetering()
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle#weight:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.ParameterUtils.WeightedRectangle.weight
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils.ZoomData:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.ParameterUtils.ZoomData
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils.ZoomData#ZoomData(int, android.graphics.Rect, android.graphics.Rect, float):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.ParameterUtils.ZoomData(int,android.graphics.Rect,android.graphics.Rect,float)
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils.ZoomData#previewCrop:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.ParameterUtils.ZoomData.previewCrop
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils.ZoomData#reportedCrop:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.ParameterUtils.ZoomData.reportedCrop
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils.ZoomData#reportedZoomRatio:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.ParameterUtils.ZoomData.reportedZoomRatio
++UnflaggedApi: android.hardware.camera2.legacy.ParameterUtils.ZoomData#zoomIndex:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.ParameterUtils.ZoomData.zoomIndex
++UnflaggedApi: android.hardware.camera2.legacy.RequestHandlerThread:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.RequestHandlerThread
++UnflaggedApi: android.hardware.camera2.legacy.RequestHandlerThread#MSG_POKE_IDLE_HANDLER:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.RequestHandlerThread.MSG_POKE_IDLE_HANDLER
++UnflaggedApi: android.hardware.camera2.legacy.RequestHandlerThread#RequestHandlerThread(String, android.os.Handler.Callback):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.RequestHandlerThread(String,android.os.Handler.Callback)
++UnflaggedApi: android.hardware.camera2.legacy.RequestHandlerThread#getHandler():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHandlerThread.getHandler()
++UnflaggedApi: android.hardware.camera2.legacy.RequestHandlerThread#hasAnyMessages(int[]):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHandlerThread.hasAnyMessages(int[])
++UnflaggedApi: android.hardware.camera2.legacy.RequestHandlerThread#removeMessages(int[]):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHandlerThread.removeMessages(int[])
++UnflaggedApi: android.hardware.camera2.legacy.RequestHandlerThread#waitAndGetHandler():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHandlerThread.waitAndGetHandler()
++UnflaggedApi: android.hardware.camera2.legacy.RequestHandlerThread#waitUntilIdle():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHandlerThread.waitUntilIdle()
++UnflaggedApi: android.hardware.camera2.legacy.RequestHandlerThread#waitUntilStarted():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHandlerThread.waitUntilStarted()
++UnflaggedApi: android.hardware.camera2.legacy.RequestHolder:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.RequestHolder
++UnflaggedApi: android.hardware.camera2.legacy.RequestHolder#failRequest():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHolder.failRequest()
++UnflaggedApi: android.hardware.camera2.legacy.RequestHolder#getFrameNumber():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHolder.getFrameNumber()
++UnflaggedApi: android.hardware.camera2.legacy.RequestHolder#getHolderTargets():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHolder.getHolderTargets()
++UnflaggedApi: android.hardware.camera2.legacy.RequestHolder#getRequest():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHolder.getRequest()
++UnflaggedApi: android.hardware.camera2.legacy.RequestHolder#getRequestId():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHolder.getRequestId()
++UnflaggedApi: android.hardware.camera2.legacy.RequestHolder#getSubsequeceId():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHolder.getSubsequeceId()
++UnflaggedApi: android.hardware.camera2.legacy.RequestHolder#hasJpegTargets():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHolder.hasJpegTargets()
++UnflaggedApi: android.hardware.camera2.legacy.RequestHolder#hasPreviewTargets():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHolder.hasPreviewTargets()
++UnflaggedApi: android.hardware.camera2.legacy.RequestHolder#isOutputAbandoned():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHolder.isOutputAbandoned()
++UnflaggedApi: android.hardware.camera2.legacy.RequestHolder#isRepeating():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHolder.isRepeating()
++UnflaggedApi: android.hardware.camera2.legacy.RequestHolder#jpegType(android.view.Surface):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHolder.jpegType(android.view.Surface)
++UnflaggedApi: android.hardware.camera2.legacy.RequestHolder#numJpegTargets():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHolder.numJpegTargets()
++UnflaggedApi: android.hardware.camera2.legacy.RequestHolder#numPreviewTargets():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHolder.numPreviewTargets()
++UnflaggedApi: android.hardware.camera2.legacy.RequestHolder#requestFailed():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHolder.requestFailed()
++UnflaggedApi: android.hardware.camera2.legacy.RequestHolder#setOutputAbandoned():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHolder.setOutputAbandoned()
++UnflaggedApi: android.hardware.camera2.legacy.RequestHolder.Builder:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.RequestHolder.Builder
++UnflaggedApi: android.hardware.camera2.legacy.RequestHolder.Builder#Builder(int, int, android.hardware.camera2.CaptureRequest, boolean, java.util.Collection<java.lang.Long>):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.RequestHolder.Builder(int,int,android.hardware.camera2.CaptureRequest,boolean,java.util.Collection<java.lang.Long>)
++UnflaggedApi: android.hardware.camera2.legacy.RequestHolder.Builder#build(long):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestHolder.Builder.build(long)
++UnflaggedApi: android.hardware.camera2.legacy.RequestQueue:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.RequestQueue
++UnflaggedApi: android.hardware.camera2.legacy.RequestQueue#INVALID_FRAME:
++    New API must be flagged with @FlaggedApi: field android.hardware.camera2.legacy.RequestQueue.INVALID_FRAME
++UnflaggedApi: android.hardware.camera2.legacy.RequestQueue#RequestQueue(java.util.List<java.lang.Long>):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.RequestQueue(java.util.List<java.lang.Long>)
++UnflaggedApi: android.hardware.camera2.legacy.RequestQueue#getNext():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestQueue.getNext()
++UnflaggedApi: android.hardware.camera2.legacy.RequestQueue#stopRepeating():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestQueue.stopRepeating()
++UnflaggedApi: android.hardware.camera2.legacy.RequestQueue#stopRepeating(int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestQueue.stopRepeating(int)
++UnflaggedApi: android.hardware.camera2.legacy.RequestQueue#submit(android.hardware.camera2.CaptureRequest[], boolean):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestQueue.submit(android.hardware.camera2.CaptureRequest[],boolean)
++UnflaggedApi: android.hardware.camera2.legacy.RequestQueue.RequestQueueEntry:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.RequestQueue.RequestQueueEntry
++UnflaggedApi: android.hardware.camera2.legacy.RequestQueue.RequestQueueEntry#RequestQueueEntry(android.hardware.camera2.legacy.BurstHolder, Long, boolean):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.RequestQueue.RequestQueueEntry(android.hardware.camera2.legacy.BurstHolder,Long,boolean)
++UnflaggedApi: android.hardware.camera2.legacy.RequestQueue.RequestQueueEntry#getBurstHolder():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestQueue.RequestQueueEntry.getBurstHolder()
++UnflaggedApi: android.hardware.camera2.legacy.RequestQueue.RequestQueueEntry#getFrameNumber():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestQueue.RequestQueueEntry.getFrameNumber()
++UnflaggedApi: android.hardware.camera2.legacy.RequestQueue.RequestQueueEntry#isQueueEmpty():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestQueue.RequestQueueEntry.isQueueEmpty()
++UnflaggedApi: android.hardware.camera2.legacy.RequestThreadManager:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.RequestThreadManager
++UnflaggedApi: android.hardware.camera2.legacy.RequestThreadManager#RequestThreadManager(int, android.hardware.Camera, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.legacy.CameraDeviceState):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.RequestThreadManager(int,android.hardware.Camera,android.hardware.camera2.CameraCharacteristics,android.hardware.camera2.legacy.CameraDeviceState)
++UnflaggedApi: android.hardware.camera2.legacy.RequestThreadManager#cancelRepeating(int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestThreadManager.cancelRepeating(int)
++UnflaggedApi: android.hardware.camera2.legacy.RequestThreadManager#configure(java.util.Collection<android.util.Pair<android.view.Surface,android.util.Size>>):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestThreadManager.configure(java.util.Collection<android.util.Pair<android.view.Surface,android.util.Size>>)
++UnflaggedApi: android.hardware.camera2.legacy.RequestThreadManager#flush():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestThreadManager.flush()
++UnflaggedApi: android.hardware.camera2.legacy.RequestThreadManager#getAudioRestriction():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestThreadManager.getAudioRestriction()
++UnflaggedApi: android.hardware.camera2.legacy.RequestThreadManager#quit():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestThreadManager.quit()
++UnflaggedApi: android.hardware.camera2.legacy.RequestThreadManager#setAudioRestriction(int):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestThreadManager.setAudioRestriction(int)
++UnflaggedApi: android.hardware.camera2.legacy.RequestThreadManager#start():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestThreadManager.start()
++UnflaggedApi: android.hardware.camera2.legacy.RequestThreadManager#submitCaptureRequests(android.hardware.camera2.CaptureRequest[], boolean):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestThreadManager.submitCaptureRequests(android.hardware.camera2.CaptureRequest[],boolean)
++UnflaggedApi: android.hardware.camera2.legacy.RequestThreadManager.FpsCounter:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.RequestThreadManager.FpsCounter
++UnflaggedApi: android.hardware.camera2.legacy.RequestThreadManager.FpsCounter#FpsCounter(String):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.RequestThreadManager.FpsCounter(String)
++UnflaggedApi: android.hardware.camera2.legacy.RequestThreadManager.FpsCounter#checkFps():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestThreadManager.FpsCounter.checkFps()
++UnflaggedApi: android.hardware.camera2.legacy.RequestThreadManager.FpsCounter#countAndLog():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestThreadManager.FpsCounter.countAndLog()
++UnflaggedApi: android.hardware.camera2.legacy.RequestThreadManager.FpsCounter#countFrame():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestThreadManager.FpsCounter.countFrame()
++UnflaggedApi: android.hardware.camera2.legacy.RequestThreadManager.FpsCounter#staggeredLog():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.RequestThreadManager.FpsCounter.staggeredLog()
++UnflaggedApi: android.hardware.camera2.legacy.SizeAreaComparator:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.SizeAreaComparator
++UnflaggedApi: android.hardware.camera2.legacy.SizeAreaComparator#compare(android.hardware.Camera.Size, android.hardware.Camera.Size):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.SizeAreaComparator.compare(android.hardware.Camera.Size,android.hardware.Camera.Size)
++UnflaggedApi: android.hardware.camera2.legacy.SizeAreaComparator#findLargestByArea(java.util.List<android.hardware.Camera.Size>):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.SizeAreaComparator.findLargestByArea(java.util.List<android.hardware.Camera.Size>)
++UnflaggedApi: android.hardware.camera2.legacy.SurfaceTextureRenderer:
++    New API must be flagged with @FlaggedApi: class android.hardware.camera2.legacy.SurfaceTextureRenderer
++UnflaggedApi: android.hardware.camera2.legacy.SurfaceTextureRenderer#SurfaceTextureRenderer(int):
++    New API must be flagged with @FlaggedApi: constructor android.hardware.camera2.legacy.SurfaceTextureRenderer(int)
++UnflaggedApi: android.hardware.camera2.legacy.SurfaceTextureRenderer#cleanupEGLContext():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.SurfaceTextureRenderer.cleanupEGLContext()
++UnflaggedApi: android.hardware.camera2.legacy.SurfaceTextureRenderer#configureSurfaces(java.util.Collection<android.util.Pair<android.view.Surface,android.util.Size>>):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.SurfaceTextureRenderer.configureSurfaces(java.util.Collection<android.util.Pair<android.view.Surface,android.util.Size>>)
++UnflaggedApi: android.hardware.camera2.legacy.SurfaceTextureRenderer#drawIntoSurfaces(android.hardware.camera2.legacy.CaptureCollector):
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.SurfaceTextureRenderer.drawIntoSurfaces(android.hardware.camera2.legacy.CaptureCollector)
++UnflaggedApi: android.hardware.camera2.legacy.SurfaceTextureRenderer#flush():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.SurfaceTextureRenderer.flush()
++UnflaggedApi: android.hardware.camera2.legacy.SurfaceTextureRenderer#getSurfaceTexture():
++    New API must be flagged with @FlaggedApi: method android.hardware.camera2.legacy.SurfaceTextureRenderer.getSurfaceTexture()
+ UnflaggedApi: android.media.MediaRoute2Info#TYPE_REMOTE_CAR:
+     New API must be flagged with @FlaggedApi: field android.media.MediaRoute2Info.TYPE_REMOTE_CAR
+ UnflaggedApi: android.media.MediaRoute2Info#TYPE_REMOTE_COMPUTER:
+@@ -1691,3 +2993,153 @@ UnflaggedApi: android.view.inputmethod.InlineSuggestionsRequest.Builder#setClien
+     New API must be flagged with @FlaggedApi: method android.view.inputmethod.InlineSuggestionsRequest.Builder.setClientSupported(boolean)
+ UnflaggedApi: android.view.inputmethod.InlineSuggestionsRequest.Builder#setServiceSupported(boolean):
+     New API must be flagged with @FlaggedApi: method android.view.inputmethod.InlineSuggestionsRequest.Builder.setServiceSupported(boolean)
++
++
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/accessibilityservice/TouchInteractionController.java:
++    Could not resolve a class called 'AccessibilityNodeInfo.AccessibilityAction' as could not find a package or class called 'AccessibilityNodeInfo' in 'method android.accessibilityservice.TouchInteractionController.performClick()'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/app/Activity.java:
++    Could not resolve a class called 'androidx.fragment.app.Fragment' as could not find a package or class called 'fragment' in 'package androidx'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/app/Fragment.java:
++    Could not resolve a class called 'androidx.fragment.app.Fragment' as could not find a package or class called 'fragment' in 'package androidx'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/app/FragmentManagerNonConfig.java:
++    Could not resolve a class called 'Parcelable' in 'class android.app.FragmentManagerNonConfig'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/app/HandoffActivityData.java:
++    Could not resolve a class called 'Intent' in 'method android.app.HandoffActivityData.getExtras()'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/app/HandoffActivityParams.java:
++    Could not resolve a class called 'URL' in 'method android.app.HandoffActivityParams.Builder.setAllowHandoffWithoutPackageInstalled(boolean)'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/app/UiModeManager.java:
++    Could not resolve a class called 'androidx.appcompat.app.AppCompatDelegate' as could not find a package or class called 'appcompat' in 'package androidx'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/app/admin/FreezePeriod.java:
++    Could not resolve a class called 'java.time' as could not find a class called 'time' in 'package java'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/app/admin/PolicyIdentifier.java:
++    Could not resolve a class called 'Intent' in 'field PolicyIdentifier.LOCKSCREEN_MESSAGE'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/app/backup/BackupDataInput.java:
++    Could not resolve a class called 'ParcelFileDescriptor' in 'class android.app.backup.BackupDataInput'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/app/slice/SliceMetrics.java:
++    Could not resolve a class called 'androidx.slice.widget.EventInfo' as could not find a package or class called 'slice' in 'package androidx'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/app/slice/SliceSpec.java:
++    Could not resolve a class called 'Set' in 'class android.app.slice.SliceSpec'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/content/pm/ShortcutManager.java:
++    Could not resolve a class called 'ShortcutInfoCompat' in 'method android.content.pm.ShortcutManager.requestPinShortcut(android.content.pm.ShortcutInfo, android.content.IntentSender)'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/content/res/FontScaleConverter.java:
++    Could not resolve a class called 'DisplayMetrics' in 'method android.content.res.FontScaleConverter.forScale(float)'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/credentials/CredentialManager.java:
++    Could not resolve a class or type parameter called 'com.android.server.credentials.NonCredentialProviderCallerException' as could not find a package or class called 'credentials' in 'package com.android.server'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/hardware/camera2/CameraCaptureSession.java:
++    Could not resolve a class called 'Size' in 'method android.hardware.camera2.CameraCaptureSession.finalizeOutputConfigurations(java.util.List<android.hardware.camera2.params.OutputConfiguration>)'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/hardware/camera2/CameraConstrainedHighSpeedCaptureSession.java:
++    Could not resolve a class called 'SessionConfiguration' in 'class android.hardware.camera2.CameraConstrainedHighSpeedCaptureSession'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/hardware/camera2/MultiResolutionImageReader.java:
++    Could not resolve a class called 'OutputConfiguration' in 'method android.hardware.camera2.MultiResolutionImageReader.OnActiveOutputSurfacesListener.onActiveOutputSurfaces(java.util.List<android.view.Surface>, long, long)'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/os/Parcel.java:
++    Could not resolve a class called 'T' in 'class android.os.Parcel'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/provider/CallLog.java:
++    Could not resolve a class called 'com.android.server.telecom.Call' as could not find a class called 'Call' in 'package com.android.server.telecom'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/provider/ContactsContract.java:
++    Could not resolve a class called 'ClipData' in 'field ContactsContract.Intents.ACTION_VOICE_SEND_MESSAGE_TO_CONTACTS'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/provider/DocumentsProvider.java:
++    Could not resolve a class called 'OnCloseListener' in 'method android.provider.DocumentsProvider.openDocument(String, String, android.os.CancellationSignal)'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/service/restrictions/RestrictionsReceiver.java:
++    Could not resolve a class called 'ComponentName' in 'class android.service.restrictions.RestrictionsReceiver'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/text/style/BackgroundColorSpan.java:
++    Could not resolve a class called 'Resources.Theme' as could not find a package or class called 'Resources' in 'constructor android.text.style.BackgroundColorSpan.BackgroundColorSpan(int)'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/text/style/BulletSpan.java:
++    Could not resolve a class called 'Resources.Theme' as could not find a package or class called 'Resources' in 'constructor android.text.style.BulletSpan.BulletSpan(int, int, int)'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/text/style/ForegroundColorSpan.java:
++    Could not resolve a class called 'Resources.Theme' as could not find a package or class called 'Resources' in 'constructor android.text.style.ForegroundColorSpan.ForegroundColorSpan(int)'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/text/util/Linkify.java:
++    Could not resolve a class called 'TextLinks.Request' as could not find a package or class called 'TextLinks' in 'field Linkify.MAP_ADDRESSES'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/view/SurfaceControl.java:
++    Could not resolve a class called 'MediaQualityManager' in 'method android.view.SurfaceControl.Transaction.setContentPriority(android.view.SurfaceControl, int)'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/view/View.java:
++    Could not resolve a class called 'androidx.core.view.ViewCompat' as could not find a package or class called 'core' in 'package androidx'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/view/WindowManager.java:
++    Could not resolve a class called 'SurfacePackage' in 'method android.view.WindowManager.transferTouchGesture(android.window.InputTransferToken, android.window.InputTransferToken)'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/view/accessibility/AccessibilityNodeInfo.java:
++    Could not resolve a class called 'Color' in 'method android.view.accessibility.AccessibilityNodeInfo.ExtraRenderingInfo.getBackgroundColor()'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/view/inputmethod/CompletionInfo.java:
++    Could not resolve a class called 'View' in 'class android.view.inputmethod.CompletionInfo'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/view/inputmethod/InputConnection.java:
++    Could not resolve a class called 'View' in 'method android.view.inputmethod.InputConnection.setSelection(int, int)'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/view/inputmethod/InputMethod.java:
++    Could not resolve a class called 'Build.VERSION_CODES' as could not find a package or class called 'Build' in 'field InputMethod.SHOW_FORCED'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/webkit/CookieManager.java:
++    Could not resolve a class called 'T' in 'method android.webkit.CookieManager.removeAllCookies(android.webkit.ValueCallback<java.lang.Boolean>)'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/webkit/GeolocationPermissions.java:
++    Could not resolve a class called 'T' in 'method android.webkit.GeolocationPermissions.getAllowed(String, android.webkit.ValueCallback<java.lang.Boolean>)'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/webkit/SslErrorHandler.java:
++    Could not resolve a class called 'SslError' in 'method android.webkit.SslErrorHandler.cancel()'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/widget/TextView.java:
++    Could not resolve a class called 'androidx.core.content.ContextCompat' as could not find a package or class called 'core' in 'package androidx'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/core/java/android/window/TrustedPresentationThresholds.java:
++    Could not resolve a class called 'Consumer' in 'class android.window.TrustedPresentationThresholds'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/graphics/java/android/graphics/text/TextRunShaper.java:
++    Could not resolve a class called 'TextShaper.GlyphsConsumer' as could not find a package or class called 'TextShaper' in 'class android.graphics.text.TextRunShaper'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/identity/java/android/security/identity/EphemeralPublicKeyNotFoundException.java:
++    Could not resolve a class called 'Map' in 'class android.security.identity.EphemeralPublicKeyNotFoundException'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/identity/java/android/security/identity/IdentityCredentialStore.java:
++    Could not resolve a class called 'android.content.pm' as could not find a class called 'pm' in 'package android.content'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/identity/java/android/security/identity/InvalidRequestMessageException.java:
++    Could not resolve a class called 'Map' in 'class android.security.identity.InvalidRequestMessageException'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/identity/java/android/security/identity/PresentationSession.java:
++    Could not resolve a class called 'Map' in 'class android.security.identity.PresentationSession'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/identity/java/android/security/identity/ResultData.java:
++    Could not resolve a class called 'PublicKey' in 'method android.security.identity.ResultData.getMessageAuthenticationCode()'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/media/java/android/media/AudioManager.java:
++    Could not resolve a class called 'IntentFilter' in 'field AudioManager.ACTION_SPEAKERPHONE_STATE_CHANGED'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/media/java/android/media/AudioPlaybackCaptureConfiguration.java:
++    Could not resolve a class called 'Intent' in 'class android.media.AudioPlaybackCaptureConfiguration'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/media/java/android/media/RemoteController.java:
++    Could not resolve a class called 'PendingIntent' in 'method android.media.RemoteController.sendMediaKeyEvent(android.view.KeyEvent)'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/media/java/android/media/VolumeShaper.java:
++    Could not resolve a class called 'VolumeShaper.Builder' as could not find a class called 'Builder' in 'class android.media.VolumeShaper'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/media/java/android/media/audiofx/AudioEffect.java:
++    Could not resolve a class called 'Intent' in 'field AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/media/java/android/media/tv/TvContract.java:
++    Could not resolve a class called 'Genres' in 'field TvContract.RecordedPrograms.COLUMN_BROADCAST_GENRE'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/telephony/java/android/telephony/NetworkScan.java:
++    Could not resolve a class called 'NetworkScanCallback' in 'class android.telephony.NetworkScan'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/telephony/java/android/telephony/SmsMessage.java:
++    Could not resolve a class called 'PendingIntent' in 'field SmsMessage.FORMAT_3GPP2'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/frameworks/base/telephony/java/android/telephony/ims/ImsRcsManager.java:
++    Could not resolve a class called 'RegistrationCallback' in 'method android.telephony.ims.ImsRcsManager.unregisterImsRegistrationCallback(android.telephony.ims.RegistrationManager.RegistrationCallback)'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/out/srcjars/android/Manifest.java:
++    Could not resolve a class called 'Set' in 'field Manifest.permission.WRITE_CALL_LOG'
++UnresolvedLink: /home/rinando/android/system/out/soong/.temp/sbox/dcabbf69fbe8e32ae16e786d21b129ef1759ab95/out/srcjars/android/R.java:
++    Could not resolve a class called 'Activity' in 'field R.attr.usesPermissionFlags'
++
++
++VisiblySynchronized: android.hardware.camera2.legacy.CameraDeviceState#setCameraDeviceCallbacks(android.os.Handler, android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener):
++    Internal locks must not be exposed: method android.hardware.camera2.legacy.CameraDeviceState.setCameraDeviceCallbacks(android.os.Handler,android.hardware.camera2.legacy.CameraDeviceState.CameraDeviceStateListener)
++VisiblySynchronized: android.hardware.camera2.legacy.CameraDeviceState#setCaptureResult(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.impl.CameraMetadataNative):
++    Internal locks must not be exposed: method android.hardware.camera2.legacy.CameraDeviceState.setCaptureResult(android.hardware.camera2.legacy.RequestHolder,android.hardware.camera2.impl.CameraMetadataNative)
++VisiblySynchronized: android.hardware.camera2.legacy.CameraDeviceState#setCaptureResult(android.hardware.camera2.legacy.RequestHolder, android.hardware.camera2.impl.CameraMetadataNative, int, Object):
++    Internal locks must not be exposed: method android.hardware.camera2.legacy.CameraDeviceState.setCaptureResult(android.hardware.camera2.legacy.RequestHolder,android.hardware.camera2.impl.CameraMetadataNative,int,Object)
++VisiblySynchronized: android.hardware.camera2.legacy.CameraDeviceState#setCaptureStart(android.hardware.camera2.legacy.RequestHolder, long, int):
++    Internal locks must not be exposed: method android.hardware.camera2.legacy.CameraDeviceState.setCaptureStart(android.hardware.camera2.legacy.RequestHolder,long,int)
++VisiblySynchronized: android.hardware.camera2.legacy.CameraDeviceState#setConfiguring():
++    Internal locks must not be exposed: method android.hardware.camera2.legacy.CameraDeviceState.setConfiguring()
++VisiblySynchronized: android.hardware.camera2.legacy.CameraDeviceState#setError(int):
++    Internal locks must not be exposed: method android.hardware.camera2.legacy.CameraDeviceState.setError(int)
++VisiblySynchronized: android.hardware.camera2.legacy.CameraDeviceState#setIdle():
++    Internal locks must not be exposed: method android.hardware.camera2.legacy.CameraDeviceState.setIdle()
++VisiblySynchronized: android.hardware.camera2.legacy.CameraDeviceState#setRepeatingRequestError(long, int):
++    Internal locks must not be exposed: method android.hardware.camera2.legacy.CameraDeviceState.setRepeatingRequestError(long,int)
++VisiblySynchronized: android.hardware.camera2.legacy.CameraDeviceState#setRequestQueueEmpty():
++    Internal locks must not be exposed: method android.hardware.camera2.legacy.CameraDeviceState.setRequestQueueEmpty()
++VisiblySynchronized: android.hardware.camera2.legacy.RequestQueue#getNext():
++    Internal locks must not be exposed: method android.hardware.camera2.legacy.RequestQueue.getNext()
++VisiblySynchronized: android.hardware.camera2.legacy.RequestQueue#stopRepeating():
++    Internal locks must not be exposed: method android.hardware.camera2.legacy.RequestQueue.stopRepeating()
++VisiblySynchronized: android.hardware.camera2.legacy.RequestQueue#stopRepeating(int):
++    Internal locks must not be exposed: method android.hardware.camera2.legacy.RequestQueue.stopRepeating(int)
++VisiblySynchronized: android.hardware.camera2.legacy.RequestQueue#submit(android.hardware.camera2.CaptureRequest[], boolean):
++    Internal locks must not be exposed: method android.hardware.camera2.legacy.RequestQueue.submit(android.hardware.camera2.CaptureRequest[],boolean)
++VisiblySynchronized: android.hardware.camera2.legacy.RequestThreadManager.FpsCounter#checkFps():
++    Internal locks must not be exposed: method android.hardware.camera2.legacy.RequestThreadManager.FpsCounter.checkFps()
++VisiblySynchronized: android.hardware.camera2.legacy.RequestThreadManager.FpsCounter#countAndLog():
++    Internal locks must not be exposed: method android.hardware.camera2.legacy.RequestThreadManager.FpsCounter.countAndLog()
++VisiblySynchronized: android.hardware.camera2.legacy.RequestThreadManager.FpsCounter#countFrame():
++    Internal locks must not be exposed: method android.hardware.camera2.legacy.RequestThreadManager.FpsCounter.countFrame()
++VisiblySynchronized: android.hardware.camera2.legacy.RequestThreadManager.FpsCounter#staggeredLog():
++    Internal locks must not be exposed: method android.hardware.camera2.legacy.RequestThreadManager.FpsCounter.staggeredLog()
+-- 
+2.51.0
+

@@ -1,0 +1,100 @@
+From b102ba59ed44b229df5b8395d5a9db63f6ab62aa Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Wed, 7 Oct 2026 17:27:48 +0200
+Subject: [PATCH 13/17] Hide CameraDeviceUserShim from the public SDK API
+ surface
+
+CameraDeviceUserShim is a pure internal Binder-interface implementation
+detail (IInterface/ICameraDeviceUser is itself @hide), not real SDK
+API, matching the rest of this restored HALv1 compatibility package.
+Being non-hidden pulled its full method surface, including
+getCaptureResultMetadataQueue()'s MQDescriptor<Byte, Byte> return
+type, into current.txt, which frameworks/base's
+systemfeatures-lookup-srcs generator's strict API-text parser can't
+resolve (it requires fully-qualified non-java.lang types). @hide is a
+documentation/stub-visibility annotation only; it has no effect on how
+platform code calls this class at runtime.
+
+Manually dropped the class's block from current.txt to match, since
+regenerating it via 'm api-stubs-docs-non-updatable-update-current-api'
+circularly depends on the same broken systemfeatures-lookup-srcs step.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Change-Id: I8f8689158f394d346ea38ecc8589ae1f28ab9e1a
+---
+ core/api/current.txt                          | 45 -------------------
+ .../camera2/legacy/CameraDeviceUserShim.java  |  2 +
+ 2 files changed, 2 insertions(+), 45 deletions(-)
+
+diff --git a/core/api/current.txt b/core/api/current.txt
+index 669a988d21a3..117f9eeb6e73 100644
+--- a/core/api/current.txt
++++ b/core/api/current.txt
+@@ -21459,51 +21459,6 @@ package android.hardware.camera2.legacy {
+     method public void onRequestQueueEmpty();
+   }
+ 
+-  public class CameraDeviceUserShim implements android.os.IInterface {
+-    ctor protected CameraDeviceUserShim(int, android.hardware.camera2.legacy.LegacyCameraDevice, android.hardware.camera2.CameraCharacteristics, android.hardware.camera2.legacy.CameraDeviceUserShim.CameraLooper, android.hardware.camera2.legacy.CameraDeviceUserShim.CameraCallbackThread);
+-    method public android.os.IBinder asBinder();
+-    method public void beginConfigure();
+-    method public long cancelRequest(int);
+-    method public android.hardware.camera2.utils.OutputAndInputStreamIds configureStreams(android.hardware.camera2.utils.SessionConfigurationAndStreamIds);
+-    method public static android.hardware.camera2.legacy.CameraDeviceUserShim connectBinderShim(android.hardware.camera2.ICameraDeviceCallbacks, int, android.util.Size);
+-    method public android.hardware.camera2.impl.CameraMetadataNative createDefaultRequest(int);
+-    method public int createInputStream(int, int, int, boolean);
+-    method public int createStream(android.hardware.camera2.params.OutputConfiguration);
+-    method public void deleteStream(int);
+-    method public void disconnect();
+-    method public int[] endConfigure(int, android.hardware.camera2.impl.CameraMetadataNative, long);
+-    method public void finalizeOutputConfigurations(int, android.hardware.camera2.params.OutputConfiguration);
+-    method public long flush();
+-    method public android.hardware.camera2.impl.CameraMetadataNative getCameraInfo();
+-    method public MQDescriptor<Byte, Byte> getCaptureResultMetadataQueue();
+-    method public int getGlobalAudioRestriction();
+-    method public android.view.Surface getInputSurface();
+-    method public boolean isPrimaryClient();
+-    method public boolean isSessionConfigurationSupported(android.hardware.camera2.params.SessionConfiguration);
+-    method public void prepare(int);
+-    method public void prepare2(int, int);
+-    method public void setCameraAudioRestriction(int);
+-    method public android.hardware.camera2.utils.SubmitInfo startStreaming(int[], int[]);
+-    method public android.hardware.camera2.utils.SubmitInfo submitRequest(android.hardware.camera2.CaptureRequest, boolean);
+-    method public android.hardware.camera2.utils.SubmitInfo submitRequestList(android.hardware.camera2.CaptureRequest[], boolean);
+-    method public android.hardware.camera2.ICameraOfflineSession switchToOffline(android.hardware.camera2.ICameraDeviceCallbacks, int[]);
+-    method public void tearDown(int);
+-    method public void updateOutputConfiguration(int, android.hardware.camera2.params.OutputConfiguration);
+-    method public void updateOutputConfigurations(int[], android.hardware.camera2.params.OutputConfiguration[]);
+-    method public void waitUntilIdle() throws android.os.RemoteException;
+-    field public static final int CONSTRAINED_HIGH_SPEED_MODE = 1; // 0x1
+-    field public static final int NORMAL_MODE = 0; // 0x0
+-    field public static final int NO_IN_FLIGHT_REPEATING_FRAMES = -1; // 0xffffffff
+-    field public static final int SHARED_MODE = 2; // 0x2
+-    field public static final int TEMPLATE_MANUAL = 6; // 0x6
+-    field public static final int TEMPLATE_PREVIEW = 1; // 0x1
+-    field public static final int TEMPLATE_RECORD = 3; // 0x3
+-    field public static final int TEMPLATE_STILL_CAPTURE = 2; // 0x2
+-    field public static final int TEMPLATE_VIDEO_SNAPSHOT = 4; // 0x4
+-    field public static final int TEMPLATE_ZERO_SHUTTER_LAG = 5; // 0x5
+-    field public static final int VENDOR_MODE_START = 32768; // 0x8000
+-  }
+-
+   public class CaptureCollector {
+     ctor public CaptureCollector(int, android.hardware.camera2.legacy.CameraDeviceState);
+     method public void failAll();
+diff --git a/core/java/android/hardware/camera2/legacy/CameraDeviceUserShim.java b/core/java/android/hardware/camera2/legacy/CameraDeviceUserShim.java
+index 0d6b84733390..723b6d44fe67 100644
+--- a/core/java/android/hardware/camera2/legacy/CameraDeviceUserShim.java
++++ b/core/java/android/hardware/camera2/legacy/CameraDeviceUserShim.java
+@@ -67,6 +67,8 @@ import static android.system.OsConstants.ENODEV;
+  * <p>
+  * Keep up to date with ICameraDeviceUser.aidl.
+  * </p>
++ *
++ * @hide
+  */
+ @SuppressWarnings("deprecation")
+ public class CameraDeviceUserShim implements ICameraDeviceUser {
+-- 
+2.51.0
+

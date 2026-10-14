@@ -1,0 +1,37 @@
+From 36e9b24c9db92328f98042f23accc81465be3f97 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Thu, 8 Oct 2026 05:16:32 +0200
+Subject: [PATCH 5/5] consumerir: disable the dead android.hardware.ir@1.0 HIDL
+ service
+
+android.hardware.ir@1.0 (HIDL) was removed upstream in favor of the
+AIDL android.hardware.ir interface -- only hardware/interfaces/ir/aidl
+exists now, so this module fails Soong analysis with 'depends on
+undefined module android.hardware.ir@1.0'. gts210wifi doesn't ship an
+IR blaster and never references this service, so disable it rather
+than porting it to AIDL for a feature this device doesn't have.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Change-Id: I6d816f8bd31c3464743124699bc1465f85adecc2
+---
+ hidl/consumerir/Android.bp | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/hidl/consumerir/Android.bp b/hidl/consumerir/Android.bp
+index fb3e301..c5596ae 100644
+--- a/hidl/consumerir/Android.bp
++++ b/hidl/consumerir/Android.bp
+@@ -16,6 +16,10 @@
+ 
+ cc_binary {
+     name: "android.hardware.ir@1.0-service.samsung",
++    // android.hardware.ir@1.0 (HIDL) was removed upstream in favor of the AIDL
++    // android.hardware.ir interface, and gts210wifi doesn't ship an IR blaster
++    // or install this service.
++    enabled: false,
+     defaults: ["samsung_header_path_defaults"],
+     relative_install_path: "hw",
+     init_rc: ["android.hardware.ir@1.0-service.samsung.rc"],
+-- 
+2.51.0
+

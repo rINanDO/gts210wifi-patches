@@ -1,0 +1,103 @@
+From 6fc538d3ad380d53bc35ac30302aac6c86ce6555 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Mon, 12 Oct 2026 17:21:01 +0200
+Subject: [PATCH 16/17] CameraDeviceUserShim: implement the consolidated
+ configureStreams call
+
+Camera preview/capture never started: every session configuration
+attempt (from CameraX's camera2-pipe backend, which always uses the
+consolidated path) failed immediately:
+
+  E CameraDeviceUserShim: The consolidated configureStreams call is not
+    supported on legacy devices
+  E CameraCaptureSession: Session 0: Failed to create capture session;
+    configuration failed
+  W CXCP: Failed to execute call: Camera encountered an error:
+    CAMERA_ERROR (3): The consolidated configureStreams call is not
+    supported on legacy devices
+
+This device's camera HAL is Camera1-only (ExynosCamera), so framework
+reports it as a LEGACY-hardware-level Camera2 device and routes it
+through this compatibility shim. CameraDeviceImpl picks between two
+ways of pushing a new stream configuration to the camera service:
+beginConfigure()+createStream()*+endConfigure() when
+Flags.configureStreamsBatch() is disabled, or the single consolidated
+configureStreams() call when it's enabled (see
+CameraDeviceImpl.configureStreamsChecked). That flag now defaults to
+enabled, but configureStreams() here was never implemented for legacy
+devices - it just logged and threw unconditionally - so every legacy
+camera on a build where the flag defaults on was left with no way to
+ever configure a capture session.
+
+Implement it in terms of the same beginConfigure/deleteStream/
+createStream/endConfigure building blocks this shim already supports,
+the same sequence CameraDeviceImpl's own non-consolidated branch uses,
+including their existing legacy-specific validation (operating mode
+must be NORMAL_MODE, no input streams). This isn't a device-specific
+workaround: any LEGACY-hardware-level Camera2 device would hit the
+same wall once this flag is on, since the shim had no fallback at all.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Change-Id: Ic501cc7e8a3b0821f42dda05e267f29aed9271f8
+---
+ .../camera2/legacy/CameraDeviceUserShim.java  | 44 +++++++++++++++++--
+ 1 file changed, 41 insertions(+), 3 deletions(-)
+
+diff --git a/core/java/android/hardware/camera2/legacy/CameraDeviceUserShim.java b/core/java/android/hardware/camera2/legacy/CameraDeviceUserShim.java
+index 723b6d44fe67..d6a60aadeae2 100644
+--- a/core/java/android/hardware/camera2/legacy/CameraDeviceUserShim.java
++++ b/core/java/android/hardware/camera2/legacy/CameraDeviceUserShim.java
+@@ -610,9 +610,47 @@ public class CameraDeviceUserShim implements ICameraDeviceUser {
+     @Override
+     public OutputAndInputStreamIds configureStreams(
+             SessionConfigurationAndStreamIds sessionConfigurationAndStreamIds) {
+-        String err = "The consolidated configureStreams call is not supported on legacy devices";
+-        Log.e(TAG, err);
+-        throw new ServiceSpecificException(ICameraService.ERROR_INVALID_OPERATION, err);
++        if (DEBUG) {
++            Log.d(TAG, "configureStreams called.");
++        }
++        SessionConfiguration sessionConfiguration =
++                sessionConfigurationAndStreamIds.sessionConfigurationDelta;
++        if (sessionConfiguration.getInputConfiguration() != null
++                || sessionConfigurationAndStreamIds.deletedInputStreamId != -1) {
++            String err =
++                    "Creating or deleting an input stream is not supported on legacy devices";
++            Log.e(TAG, err);
++            throw new ServiceSpecificException(ICameraService.ERROR_INVALID_OPERATION, err);
++        }
++
++        // This is the same beginConfigure->deleteStream*->createStream*->endConfigure sequence
++        // CameraDeviceImpl falls back to when Flags.configureStreamsBatch() is disabled; legacy
++        // (Camera1-backed) devices never support the consolidated call above, so implement it in
++        // terms of the operations this shim already supports instead of always throwing, which
++        // used to make it impossible to ever configure a capture session on a legacy device once
++        // that flag defaulted to enabled.
++        beginConfigure();
++
++        for (int deletedStreamId : sessionConfigurationAndStreamIds.deletedStreamIds) {
++            deleteStream(deletedStreamId);
++        }
++
++        List<OutputConfiguration> outputConfigs = sessionConfiguration.getOutputConfigurations();
++        int[] outputStreamIds = new int[outputConfigs.size()];
++        for (int i = 0; i < outputConfigs.size(); i++) {
++            outputStreamIds[i] = createStream(outputConfigs.get(i));
++        }
++
++        CaptureRequest sessionParams = sessionConfiguration.getSessionParameters();
++        int[] offlineStreamIds = endConfigure(sessionConfiguration.getSessionType(),
++                sessionParams != null ? sessionParams.getNativeCopy() : null,
++                sessionConfigurationAndStreamIds.createSessionTime);
++
++        OutputAndInputStreamIds result = new OutputAndInputStreamIds();
++        result.outputStreamIds = outputStreamIds;
++        result.inputStreamId = -1;
++        result.offlineStreamIds = offlineStreamIds;
++        return result;
+     }
+ 
+     @Override
+-- 
+2.51.0
+

@@ -1,0 +1,108 @@
+From 4a4610165216d750d744dc8df68ade7ddaa0f87e Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Thu, 8 Oct 2026 15:08:19 +0200
+Subject: [PATCH 18/18] libcameraservice: Fix CameraClient's stale
+ IGraphicBufferProducer types
+
+CameraClient::setPreviewTarget/setPreviewCallbackTarget/setVideoTarget
+still used sp<IGraphicBufferProducer> directly instead of the
+gui/Flags.h SurfaceType alias their base class (CameraService::Client)
+declares them against, which is conditionally android::Surface or
+IGraphicBufferProducer depending on WB_LIBCAMERASERVICE_WITH_DEPENDENCIES.
+The mismatch meant none of the three actually overrode the base's pure
+virtuals, making CameraClient abstract (same failure mode as the
+AudioRestriction fix in 9843a50638, different methods).
+
+setPreviewTarget needs the same dependency-flag dual path its sibling
+Camera2Client::setPreviewTarget already has, since under
+WB_LIBCAMERASERVICE_WITH_DEPENDENCIES the incoming SurfaceType is
+already a Surface and getIGraphicBufferProducer() is needed to get back
+to the producer. setPreviewCallbackTarget and setVideoTarget are
+unimplemented no-ops in CameraClient, so only their signatures change.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Change-Id: Ia57e92d3483fc3ed1b8a11dbbe97227d0a4e10a1
+---
+ .../camera/libcameraservice/api1/CameraClient.cpp  | 14 +++++++++++---
+ .../camera/libcameraservice/api1/CameraClient.h    |  6 +++---
+ 2 files changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/services/camera/libcameraservice/api1/CameraClient.cpp b/services/camera/libcameraservice/api1/CameraClient.cpp
+index 6bb8aed4ad..d5027fc48e 100644
+--- a/services/camera/libcameraservice/api1/CameraClient.cpp
++++ b/services/camera/libcameraservice/api1/CameraClient.cpp
+@@ -343,18 +343,26 @@ status_t CameraClient::setPreviewWindow(const sp<IBinder>& binder,
+ 
+ // set the buffer consumer that the preview will use
+ status_t CameraClient::setPreviewTarget(
+-        const sp<IGraphicBufferProducer>& bufferProducer) {
++        const sp<SurfaceType>& bufferProducer) {
+     LOG1("setPreviewTarget(%p) (pid %d)", bufferProducer.get(),
+             getCallingPid());
+ 
+     sp<IBinder> binder;
+     sp<ANativeWindow> window;
+     if (bufferProducer != 0) {
++#if WB_LIBCAMERASERVICE_WITH_DEPENDENCIES
++        binder = IInterface::asBinder(bufferProducer->getIGraphicBufferProducer());
++        // Using controlledByApp flag to ensure that the buffer queue remains in
++        // async mode for the old camera API, where many applications depend
++        // on that behavior.
++        window = new Surface(bufferProducer->getIGraphicBufferProducer(), /*controlledByApp*/ true);
++#else
+         binder = IInterface::asBinder(bufferProducer);
+         // Using controlledByApp flag to ensure that the buffer queue remains in
+         // async mode for the old camera API, where many applications depend
+         // on that behavior.
+         window = new Surface(bufferProducer, /*controlledByApp*/ true);
++#endif
+     }
+     return setPreviewWindow(binder, window);
+ }
+@@ -375,7 +383,7 @@ void CameraClient::setPreviewCallbackFlag(int callback_flag) {
+ }
+ 
+ status_t CameraClient::setPreviewCallbackTarget(
+-        const sp<IGraphicBufferProducer>& callbackProducer) {
++        const sp<SurfaceType>& callbackProducer) {
+     (void)callbackProducer;
+     ALOGE("%s: Unimplemented!", __FUNCTION__);
+     return INVALID_OPERATION;
+@@ -1219,7 +1227,7 @@ int CameraClient::getOrientation(int degrees, bool mirror) {
+     return -1;
+ }
+ 
+-status_t CameraClient::setVideoTarget(const sp<IGraphicBufferProducer>& bufferProducer) {
++status_t CameraClient::setVideoTarget(const sp<SurfaceType>& bufferProducer) {
+     (void)bufferProducer;
+     ALOGE("%s: %d: CameraClient doesn't support setting a video target.", __FUNCTION__, __LINE__);
+     return INVALID_OPERATION;
+diff --git a/services/camera/libcameraservice/api1/CameraClient.h b/services/camera/libcameraservice/api1/CameraClient.h
+index d1140d0f81..2275032b1e 100644
+--- a/services/camera/libcameraservice/api1/CameraClient.h
++++ b/services/camera/libcameraservice/api1/CameraClient.h
+@@ -37,10 +37,10 @@ public:
+     virtual status_t        connect(const sp<hardware::ICameraClient>& client);
+     virtual status_t        lock();
+     virtual status_t        unlock();
+-    virtual status_t        setPreviewTarget(const sp<IGraphicBufferProducer>& bufferProducer);
++    virtual status_t        setPreviewTarget(const sp<SurfaceType>& bufferProducer);
+     virtual void            setPreviewCallbackFlag(int flag);
+     virtual status_t        setPreviewCallbackTarget(
+-            const sp<IGraphicBufferProducer>& callbackProducer);
++            const sp<SurfaceType>& callbackProducer);
+     virtual status_t        startPreview();
+     virtual void            stopPreview();
+     virtual bool            previewEnabled();
+@@ -58,7 +58,7 @@ public:
+     virtual status_t        setParameters(const String8& params);
+     virtual String8         getParameters() const;
+     virtual status_t        sendCommand(int32_t cmd, int32_t arg1, int32_t arg2);
+-    virtual status_t        setVideoTarget(const sp<IGraphicBufferProducer>& bufferProducer);
++    virtual status_t        setVideoTarget(const sp<SurfaceType>& bufferProducer);
+     virtual status_t        setAudioRestriction(
+                                     hardware::camera2::ICameraDeviceUser::AudioRestriction mode);
+     virtual hardware::camera2::ICameraDeviceUser::AudioRestriction
+-- 
+2.51.0
+

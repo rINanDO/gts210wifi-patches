@@ -1,0 +1,32 @@
+From 04f1697a34da7477e8205ba0b3a361b397929940 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Wed, 7 Oct 2026 14:52:12 +0200
+Subject: [PATCH 8/8] LayerStatePermissions: fix READ_FRAME_BUFFER key type
+
+The earlier revert of "Avoid string allocations when checking for
+permissions" changed mPermissionMap from
+std::vector<std::pair<String16, int>> to
+std::unordered_map<std::string, int>, but missed updating the last
+entry, which still constructed its key with String16(...) instead of a
+plain string literal. std::string has no implicit conversion from
+String16, so this failed to compile.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Change-Id: Iffd4170b73404551c07668480cbfe51a92f75908
+---
+ libs/gui/LayerStatePermissions.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libs/gui/LayerStatePermissions.cpp b/libs/gui/LayerStatePermissions.cpp
+index 33ac420ac5..ac83b454d2 100644
+--- a/libs/gui/LayerStatePermissions.cpp
++++ b/libs/gui/LayerStatePermissions.cpp
+@@ -33,7 +33,7 @@ std::unordered_map<std::string, int> LayerStatePermissions::mPermissionMap = {
+          layer_state_t::Permission::ROTATE_SURFACE_FLINGER},
+         {"android.permission.INTERNAL_SYSTEM_WINDOW",
+          layer_state_t::Permission::INTERNAL_SYSTEM_WINDOW},
+-        {String16("android.permission.READ_FRAME_BUFFER"),
++        {"android.permission.READ_FRAME_BUFFER",
+          layer_state_t::Permission::READ_FRAME_BUFFER},
+ };
+ 

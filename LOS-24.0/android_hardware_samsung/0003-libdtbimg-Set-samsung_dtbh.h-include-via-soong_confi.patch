@@ -1,0 +1,31 @@
+From 411f901ea3c0733e6f3a5ab1c90cc81ca9962ff6 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Sat, 4 Jul 2026 16:21:05 +0200
+Subject: [PATCH 3/5] libdtbimg: Set samsung_dtbh.h include via
+ soong_config_set
+
+Use $(call soong_config_set,samsungVars,target_specific_header_path,$(LOCAL_PATH)/include)
+
+Change-Id: I4967ce43a09a27622df1209c01623fe9b3d4041e
+---
+ dtbhtool/Android.bp | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/dtbhtool/Android.bp b/dtbhtool/Android.bp
+index 6921b9c..3a1416f 100644
+--- a/dtbhtool/Android.bp
++++ b/dtbhtool/Android.bp
+@@ -50,5 +50,9 @@ cc_library {
+     static_libs: [
+         "libfdt",
+     ],
+-    local_include_dirs: ["libdtbimg"],
++    include_dirs: select(soong_config_variable("samsungVars", "target_specific_header_path"), {
++            any @ value: [ value ],
++            default: [],
++        }),
++    local_include_dirs: ["libdtbimg"]
+ }
+-- 
+2.51.0
+
