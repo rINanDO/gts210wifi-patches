@@ -1,51 +1,57 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Reverts the gts210wifi patch set: aborts any unfinished `git am` and resets
+# each patched repository to its manifest revision with `repo sync`.
+#
+# Usage: ./revert.sh [source-root]
+#   source-root defaults to the current directory
+#
+# The repository list lives in common.sh.
 
-# Array of directories and corresponding patches
-declare -A patches=(
-    ["art"]="android_art"
-    ["bionic"]="android_bionic"
-    ["bootable/recovery"]="android_bootable_recovery"
-    ["build/make"]="android_build"
-    ["build/soong"]="android_build_soong"
-    ["device/lineage/sepolicy"]="android_device_lineage_sepolicy"
-    ["external/perfetto"]="android_external_perfetto"
-    ["frameworks/av"]="android_frameworks_av"
-    ["frameworks/base"]="android_frameworks_base"
-    ["frameworks/native"]="android_frameworks_native"
-    ["frameworks/hardware/interfaces"]="android_frameworks_hardware_interfaces"
-    ["hardware/libhardware_legacy"]="android_hardware_libhardware_legacy"
-    ["hardware/lineage/compat"]="android_hardware_lineage_compat"
-    ["hardware/lineage/interfaces"]="android_hardware_lineage_interfaces"
-    ["hardware/samsung"]="android_hardware_samsung"
-    ["packages/modules/Connectivity"]="android_packages_modules_Connectivity"
-    ["packages/modules/DnsResolver"]="android_packages_modules_DnsResolver"
-    ["packages/modules/NetworkStack"]="android_packages_modules_NetworkStack"
-    ["prebuilts/build-tools"]="android_prebuilts_build-tools"
-    ["system/bpf"]="android_system_bpf" 
-    ["system/core"]="android_system_core"
-    ["system/linkerconfig"]="android_system_linkerconfig"
-    ["system/netd"]="android_system_netd"
-    ["system/tools/mkbootimg"]="android_system_tools_mkbootimg"
-    ["system/tools/hidl"]="android_system_tools_hidl"
-    ["system/vold"]="android_system_vold"
-    ["vendor/lineage"]="android_vendor_lineage"
-)
+# When sourced, re-run in a child shell so `exit` and shell options can't
+# leak into (or close) the calling terminal.
+if (return 0 2>/dev/null); then
+    bash "${BASH_SOURCE[0]}" "$@"
+    return
+fi
 
-# Base path for the patches
-patches_base_path=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+set -uo pipefail
+source "$(dirname -- "${BASH_SOURCE[0]}")/common.sh"
 
-for dir in "${!patches[@]}"; do
-    cd $dir || { echo "Directory $dir not found"; exit 1; }
+init revert "${1:-}"
 
-    patch_dir=${patches[$dir]}
-    patch_files=($patches_base_path/$patch_dir/*.patch)
+total=${#PATCHED_REPOS[@]}
+index=0
+for entry in "${PATCHED_REPOS[@]}"; do
+    read -r path patch_dir <<< "$entry"
+    index=$((index + 1))
+    repo_dir="$SOURCE_ROOT/$path"
+    log="$(log_file "$path")"
 
-    num_patches=${#patch_files[@]}
+    repo_begin "$index" "$total" "$path"
 
-    if [ $num_patches -gt 0 ]; then
-        git am --abort
-	repo sync .
+    if [ ! -d "$repo_dir" ]; then
+        repo_fail "directory not found" "$path"
+        continue
     fi
 
-    cd - > /dev/null
+    mapfile -t patches < <(patch_files "$patch_dir")
+    if [ ${#patches[@]} -eq 0 ]; then
+        repo_skip "no patches in $patch_dir/"
+        continue
+    fi
+
+    note=""
+    if am_in_progress "$repo_dir"; then
+        git -C "$repo_dir" am --abort > "$log" 2>&1
+        note=" (aborted unfinished git am)"
+    fi
+
+    if (cd "$repo_dir" && repo sync .) >> "$log" 2>&1; then
+        repo_ok "synced$note"
+    else
+        repo_fail "repo sync failed$note" "$path"
+    fi
 done
+
+finish

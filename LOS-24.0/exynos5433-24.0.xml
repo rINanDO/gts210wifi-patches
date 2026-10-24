@@ -1,29 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Local manifest for the Samsung Galaxy Tab S2 9.7 Wi-Fi (gts210wifi, Exynos 5433).
+
+  Copy to .repo/local_manifests/ in the LineageOS 24.0 source root.
+  Every rINanDO repo below has a "lineage-24.0" branch; create-lineage-24.0-branches.sh
+  reads the <project path> entries from this file.
+-->
 <manifest>
 
-  <!-- DEVICES -->
-  <project name="rINanDO/android_device_samsung_gts2-common" path="device/samsung/gts2-common" remote="github" revision="lineage-24.0" />
-  <project name="rINanDO/android_device_samsung_gts210wifi" path="device/samsung/gts210wifi" remote="github" revision="lineage-24.0" />
-  <project name="rINanDO/android_device_samsung_slsi_sepolicy" path="device/samsung_slsi/sepolicy" remote="github" revision="lineage-24.0" />
+  <!-- DEVICE -->
+  <project path="device/samsung/gts2-common"          name="rINanDO/android_device_samsung_gts2-common"          remote="github" revision="lineage-24.0" />
+  <project path="device/samsung/gts210wifi"           name="rINanDO/android_device_samsung_gts210wifi"           remote="github" revision="lineage-24.0" />
+  <project path="device/samsung_slsi/sepolicy"        name="rINanDO/android_device_samsung_slsi_sepolicy"        remote="github" revision="lineage-24.0" />
 
   <!-- KERNEL -->
-  <project name="rINanDO/android_kernel_samsung_universal5433" path="kernel/samsung/universal5433" remote="github" revision="lineage-24.0" />
+  <project path="kernel/samsung/universal5433"        name="rINanDO/android_kernel_samsung_universal5433"        remote="github" revision="lineage-24.0" />
 
-  <!-- KERNEL TOOLCHAIN (dropped from the main manifest in de40b97 "manifest: Drop GCC
-       prebuilts"; this 3.10 kernel predates clang-built-linux support and still needs
-       a GCC cross-compiler) -->
-  <project name="LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9" path="prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9" groups="pdk,linux,arm" clone-depth="1" remote="github" revision="lineage-19.1" />
-
-  <!-- VENDOR -->
-  <project name="rINanDO/proprietary_vendor_samsung" path="vendor/samsung" remote="github" revision="lineage-24.0" />
-
- <!-- Samsung Hardware Repo -->
-  <project path="hardware/samsung" name="rinando/android_hardware_samsung" remote="github" revision="lineage-24.0"/>
+  <!-- KERNEL TOOLCHAIN
+       Dropped from the main manifest in de40b97 ("manifest: Drop GCC prebuilts"). This
+       3.10 kernel predates clang-built-linux support and still needs a GCC cross-compiler. -->
+  <project path="prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9" name="LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9" remote="github" revision="lineage-19.1" groups="pdk,linux,arm" clone-depth="1" />
 
   <!-- HARDWARE -->
-  <project name="rINanDO/android_hardware_samsung_slsi_exynos" path="hardware/samsung_slsi/exynos" remote="github" revision="lineage-24.0" />
-  <project name="rINanDO/android_hardware_samsung_slsi_exynos5" path="hardware/samsung_slsi/exynos5" remote="github" revision="lineage-24.0" />
-  <project name="rINanDO/android_hardware_samsung_slsi_openmax" path="hardware/samsung_slsi/openmax" remote="github" revision="lineage-24.0" />
-  <project name="rINanDO/android_hardware_samsung_slsi_exynos5433" path="hardware/samsung_slsi/exynos5433" remote="github" revision="lineage-24.0" />
+  <project path="hardware/samsung"                    name="rinando/android_hardware_samsung"                    remote="github" revision="lineage-24.0" />
+  <project path="hardware/samsung_slsi/exynos"        name="rINanDO/android_hardware_samsung_slsi_exynos"        remote="github" revision="lineage-24.0" />
+  <project path="hardware/samsung_slsi/exynos5"       name="rINanDO/android_hardware_samsung_slsi_exynos5"       remote="github" revision="lineage-24.0" />
+  <project path="hardware/samsung_slsi/exynos5433"    name="rINanDO/android_hardware_samsung_slsi_exynos5433"    remote="github" revision="lineage-24.0" />
+  <project path="hardware/samsung_slsi/openmax"       name="rINanDO/android_hardware_samsung_slsi_openmax"       remote="github" revision="lineage-24.0" />
+
+  <!-- VENDOR -->
+  <project path="vendor/samsung"                      name="rINanDO/proprietary_vendor_samsung"                  remote="github" revision="lineage-24.0" />
 
 </manifest>

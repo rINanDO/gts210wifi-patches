@@ -1,0 +1,150 @@
+#!/usr/bin/env bash
+#
+# Shared configuration and helpers for apply.sh and revert.sh.
+# This file is sourced, not executed.
+
+# ---------------------------------------------------------------------------
+# Repositories carrying patches from this patch set.
+#
+# One entry per line: "<path in source tree>  <patch directory in LOS-24.0/>"
+# Keep the list sorted by path. To track a new repo, add a line here and drop
+# its `git format-patch` output into the matching patch directory.
+# ---------------------------------------------------------------------------
+PATCHED_REPOS=(
+    "art                              android_art"
+    "bionic                           android_bionic"
+    "bootable/recovery                android_bootable_recovery"
+    "build/make                       android_build"
+    "build/soong                      android_build_soong"
+    "device/lineage/sepolicy          android_device_lineage_sepolicy"
+    "external/perfetto                android_external_perfetto"
+    "frameworks/av                    android_frameworks_av"
+    "frameworks/base                  android_frameworks_base"
+    "frameworks/hardware/interfaces   android_frameworks_hardware_interfaces"
+    "frameworks/native                android_frameworks_native"
+    "hardware/libhardware_legacy      android_hardware_libhardware_legacy"
+    "hardware/lineage/compat          android_hardware_lineage_compat"
+    "hardware/lineage/interfaces      android_hardware_lineage_interfaces"
+    "hardware/samsung                 android_hardware_samsung"
+    "packages/modules/Connectivity    android_packages_modules_Connectivity"
+    "packages/modules/DnsResolver     android_packages_modules_DnsResolver"
+    "packages/modules/NetworkStack    android_packages_modules_NetworkStack"
+    "prebuilts/build-tools            android_prebuilts_build-tools"
+    "system/bpf                       android_system_bpf"
+    "system/core                      android_system_core"
+    "system/linkerconfig              android_system_linkerconfig"
+    "system/netd                      android_system_netd"
+    "system/tools/hidl                android_system_tools_hidl"
+    "system/tools/mkbootimg           android_system_tools_mkbootimg"
+    "system/vold                      android_system_vold"
+    "vendor/lineage                   android_vendor_lineage"
+)
+
+PATCHES_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+
+shopt -s nullglob
+
+# ---------------------------------------------------------------------------
+# Output helpers
+# ---------------------------------------------------------------------------
+if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+    C_RESET=$'\e[0m' C_BOLD=$'\e[1m' C_DIM=$'\e[2m'
+    C_RED=$'\e[31m' C_GREEN=$'\e[32m' C_YELLOW=$'\e[33m' C_BLUE=$'\e[34m'
+else
+    C_RESET='' C_BOLD='' C_DIM='' C_RED='' C_GREEN='' C_YELLOW='' C_BLUE=''
+fi
+
+die() {
+    echo "${C_RED}error:${C_RESET} $*" >&2
+    exit 1
+}
+
+header() {
+    echo "${C_BOLD}${C_BLUE}==>${C_RESET}${C_BOLD} $*${C_RESET}"
+}
+
+# "1 patch" / "3 patches"
+plural() {
+    if [ "$1" -eq 1 ]; then echo "$1 $2"; else echo "$1 ${2}es"; fi
+}
+
+# Prints the left half of a progress line, e.g. "[ 3/27] build/make ......"
+# The line is completed by repo_ok / repo_skip / repo_fail.
+repo_begin() {
+    local index=$1 total=$2 path=$3
+    local dots
+    dots=$(printf '%*s' $((36 - ${#path})) '' | tr ' ' '.')
+    printf '%s[%2d/%d]%s %s %s%s%s ' \
+        "$C_DIM" "$index" "$total" "$C_RESET" "$path" "$C_DIM" "$dots" "$C_RESET"
+}
+
+repo_ok()   { echo "${C_GREEN}OK${C_RESET}    $*"; count_ok=$((count_ok + 1)); }
+repo_skip() { echo "${C_YELLOW}SKIP${C_RESET}  $*"; count_skip=$((count_skip + 1)); }
+repo_fail() {
+    echo "${C_RED}FAIL${C_RESET}  $1"
+    failed+=("$2")
+}
+
+# ---------------------------------------------------------------------------
+# Common setup
+# ---------------------------------------------------------------------------
+count_ok=0
+count_skip=0
+failed=()
+
+# init <action-name> [source-root]
+#   Resolves SOURCE_ROOT (defaults to the current directory) and creates
+#   LOG_DIR, where per-repo command output is captured.
+init() {
+    local action=$1
+    SOURCE_ROOT="$(cd -- "${2:-$PWD}" 2>/dev/null && pwd)" \
+        || die "source root not found: ${2:-$PWD}"
+    [ -d "$SOURCE_ROOT/.repo" ] \
+        || die "$SOURCE_ROOT is not a repo checkout (no .repo/). Run from the source root or pass it as the first argument."
+    LOG_DIR="$(mktemp -d -t "gts210wifi-${action}.XXXXXX")"
+
+    header "${action^} LOS-24.0 patches"
+    echo "    source root: $SOURCE_ROOT"
+    echo "    patch set:   $PATCHES_DIR"
+    echo
+}
+
+# Lists the .patch files for a patch directory, one per line, in order.
+patch_files() {
+    local f
+    for f in "$PATCHES_DIR/$1"/*.patch; do
+        echo "$f"
+    done
+}
+
+am_in_progress() {
+    (cd "$1" && [ -d "$(git rev-parse --git-path rebase-apply)" ])
+}
+
+# Path of the file capturing command output for a repo.
+log_file() {
+    echo "$LOG_DIR/${1//\//_}.log"
+}
+
+# Prints the result totals, points at the logs of failed repos and exits
+# non-zero if anything failed. Logs are removed when everything succeeded.
+finish() {
+    local path
+    echo
+    header "Done: ${C_GREEN}${count_ok} ok${C_RESET}${C_BOLD}, ${C_YELLOW}${count_skip} skipped${C_RESET}${C_BOLD}, ${C_RED}${#failed[@]} failed${C_RESET}"
+    if [ ${#failed[@]} -eq 0 ]; then
+        rm -rf "$LOG_DIR"
+        exit 0
+    fi
+    echo
+    echo "Failed repositories (full output in $LOG_DIR):"
+    for path in "${failed[@]}"; do
+        if [ -s "$(log_file "$path")" ]; then
+            echo "  ${C_RED}*${C_RESET} $path  ${C_DIM}->  $(log_file "$path")${C_RESET}"
+        else
+            echo "  ${C_RED}*${C_RESET} $path"
+        fi
+    done
+    exit 1
+}
+

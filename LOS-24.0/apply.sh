@@ -1,48 +1,58 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Applies the gts210wifi patch set on top of a synced LineageOS 24.0 tree.
+#
+# Usage: ./apply.sh [source-root]
+#   source-root defaults to the current directory
+#
+# The repository list lives in common.sh. A repo whose patches don't apply is
+# left in the middle of `git am` so it can be resolved by hand; revert.sh
+# cleans that up.
 
-# Array of directories and corresponding patches
-declare -A patches=(
-    ["art"]="android_art"
-    ["bionic"]="android_bionic"
-    ["bootable/recovery"]="android_bootable_recovery"
-    ["build/make"]="android_build"
-    ["build/soong"]="android_build_soong"
-    ["device/lineage/sepolicy"]="android_device_lineage_sepolicy"
-    ["external/perfetto"]="android_external_perfetto"
-    ["frameworks/av"]="android_frameworks_av"
-    ["frameworks/base"]="android_frameworks_base"
-    ["frameworks/native"]="android_frameworks_native"
-    ["frameworks/hardware/interfaces"]="android_frameworks_hardware_interfaces"
-    ["hardware/libhardware_legacy"]="android_hardware_libhardware_legacy"
-    ["hardware/lineage/compat"]="android_hardware_lineage_compat"
-    ["hardware/lineage/interfaces"]="android_hardware_lineage_interfaces"
-    ["hardware/samsung"]="android_hardware_samsung"
-    ["packages/modules/Connectivity"]="android_packages_modules_Connectivity"
-    ["packages/modules/DnsResolver"]="android_packages_modules_DnsResolver"
-    ["packages/modules/NetworkStack"]="android_packages_modules_NetworkStack"
-    ["prebuilts/build-tools"]="android_prebuilts_build-tools"
-    ["system/bpf"]="android_system_bpf" 
-    ["system/core"]="android_system_core"
-    ["system/linkerconfig"]="android_system_linkerconfig"
-    ["system/netd"]="android_system_netd"
-    ["system/tools/mkbootimg"]="android_system_tools_mkbootimg"
-    ["system/tools/hidl"]="android_system_tools_hidl"
-    ["system/vold"]="android_system_vold"
-    ["vendor/lineage"]="android_vendor_lineage"
-)
+# When sourced, re-run in a child shell so `exit` and shell options can't
+# leak into (or close) the calling terminal.
+if (return 0 2>/dev/null); then
+    bash "${BASH_SOURCE[0]}" "$@"
+    return
+fi
 
-# Base path for the patches
-patches_base_path=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+set -uo pipefail
+source "$(dirname -- "${BASH_SOURCE[0]}")/common.sh"
 
-for dir in "${!patches[@]}"; do
-    cd $dir || { echo "Directory $dir not found"; exit 1; }
+init apply "${1:-}"
 
-    patch_dir=${patches[$dir]}
-    patch_files=($patches_base_path/$patch_dir/*.patch)
+total=${#PATCHED_REPOS[@]}
+index=0
+for entry in "${PATCHED_REPOS[@]}"; do
+    read -r path patch_dir <<< "$entry"
+    index=$((index + 1))
+    repo_dir="$SOURCE_ROOT/$path"
+    log="$(log_file "$path")"
 
-    for patch_file in "${patch_files[@]}"; do
-        git am --3way < "$patch_file"
-    done
+    repo_begin "$index" "$total" "$path"
 
-    cd - > /dev/null
+    if [ ! -d "$repo_dir" ]; then
+        repo_fail "directory not found" "$path"
+        continue
+    fi
+
+    mapfile -t patches < <(patch_files "$patch_dir")
+    if [ ${#patches[@]} -eq 0 ]; then
+        repo_skip "no patches in $patch_dir/"
+        continue
+    fi
+
+    if am_in_progress "$repo_dir"; then
+        repo_fail "a previous git am is still in progress (run revert.sh first)" "$path"
+        continue
+    fi
+
+    if git -C "$repo_dir" am --3way "${patches[@]}" > "$log" 2>&1; then
+        repo_ok "$(plural ${#patches[@]} patch) applied"
+    else
+        reason=$(grep -m1 '^Patch failed at' "$log")
+        repo_fail "${reason:-git am failed}" "$path"
+    fi
 done
+
+finish
