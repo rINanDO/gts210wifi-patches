@@ -42,6 +42,11 @@ PATCHED_REPOS=(
 
 PATCHES_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
+DEVICE="gts210wifi"
+LINEAGE_BRANCH="lineage-24.0"
+LINEAGE_MANIFEST_URL="${LINEAGE_MANIFEST_URL:-https://github.com/LineageOS/android.git}"
+LOCAL_MANIFEST="exynos5433-24.0.xml"
+
 shopt -s nullglob
 
 # ---------------------------------------------------------------------------
@@ -63,9 +68,31 @@ header() {
     echo "${C_BOLD}${C_BLUE}==>${C_RESET}${C_BOLD} $*${C_RESET}"
 }
 
-# "1 patch" / "3 patches"
+warn() {
+    echo "${C_YELLOW}warning:${C_RESET} $*" >&2
+}
+
+# Prints an indented, bulleted list of the remaining arguments under a title.
+list() {
+    local title=$1 item
+    shift
+    echo "    $title"
+    for item in "$@"; do
+        echo "      ${C_DIM}*${C_RESET} $item"
+    done
+}
+
+# Asks a yes/no question; anything but y/yes is a no. Skipped when ASSUME_YES=1.
+confirm() {
+    local answer
+    [ "${ASSUME_YES:-0}" -eq 1 ] && return 0
+    read -r -p "$* [y/N] " answer
+    [[ "$answer" =~ ^[Yy]([Ee][Ss])?$ ]]
+}
+
+# plural <count> <singular> [plural]: "1 commit" / "3 commits", "2 patches"
 plural() {
-    if [ "$1" -eq 1 ]; then echo "$1 $2"; else echo "$1 ${2}es"; fi
+    if [ "$1" -eq 1 ]; then echo "$1 $2"; else echo "$1 ${3:-${2}s}"; fi
 }
 
 # Prints the left half of a progress line, e.g. "[ 3/27] build/make ......"
@@ -92,15 +119,35 @@ count_ok=0
 count_skip=0
 failed=()
 
-# init <action-name> [source-root]
-#   Resolves SOURCE_ROOT (defaults to the current directory) and creates
-#   LOG_DIR, where per-repo command output is captured.
-init() {
-    local action=$1
-    SOURCE_ROOT="$(cd -- "${2:-$PWD}" 2>/dev/null && pwd)" \
-        || die "source root not found: ${2:-$PWD}"
+# resolve_source_root [source-root]
+#   Sets SOURCE_ROOT (defaults to the current directory) and checks that it is
+#   a repo checkout.
+resolve_source_root() {
+    SOURCE_ROOT="$(cd -- "${1:-$PWD}" 2>/dev/null && pwd)" \
+        || die "source root not found: ${1:-$PWD}"
     [ -d "$SOURCE_ROOT/.repo" ] \
         || die "$SOURCE_ROOT is not a repo checkout (no .repo/). Run from the source root or pass it as the first argument."
+}
+
+require_tools() {
+    local tool
+    for tool in "$@"; do
+        command -v "$tool" > /dev/null 2>&1 || die "'$tool' is required but not installed"
+    done
+}
+
+# Prints the <project path> entries of a manifest file, one per line.
+manifest_paths() {
+    xmllint --xpath '//project/@path' "$1" 2>/dev/null \
+        | tr ' ' '\n' | sed -n 's/^path="\(.*\)"$/\1/p'
+}
+
+# init <action-name> [source-root]
+#   Resolves SOURCE_ROOT and creates LOG_DIR, where per-repo command output is
+#   captured.
+init() {
+    local action=$1
+    resolve_source_root "${2:-}"
     LOG_DIR="$(mktemp -d -t "gts210wifi-${action}.XXXXXX")"
 
     header "${action^} LOS-24.0 patches"

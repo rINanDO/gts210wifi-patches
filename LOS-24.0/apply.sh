@@ -48,7 +48,7 @@ for entry in "${PATCHED_REPOS[@]}"; do
     fi
 
     if git -C "$repo_dir" am --3way "${patches[@]}" > "$log" 2>&1; then
-        repo_ok "$(plural ${#patches[@]} patch) applied"
+        repo_ok "$(plural ${#patches[@]} patch patches) applied"
     else
         reason=$(grep -m1 '^Patch failed at' "$log")
         repo_fail "${reason:-git am failed}" "$path"
