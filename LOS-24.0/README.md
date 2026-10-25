@@ -87,3 +87,115 @@ aborts that and resets the patched repos with `repo sync`.
 - Device, kernel, hardware and vendor repos are forks, listed in
   `exynos5433-24.0.xml`. `create-lineage-24.0-branches.sh` creates and pushes
   the `lineage-24.0` branch in each of them.
+
+## What the patches address
+
+The Tab S2 (exynos5433) is a legacy device: a Linux 3.10 kernel, no Treble,
+no separate vendor partition, and closed-source blobs built for Android 6-7.
+LineageOS 24.0 builds against current AOSP, which has removed much of the
+compatibility code these blobs and this kernel depend on. The patches put
+it back, grouped here by problem rather than by repository.
+
+- **No BPF in the kernel** (`system_bpf`, `system_netd`,
+  `packages_modules_Connectivity`, `packages_modules_DnsResolver`,
+  `frameworks_native`): Android now requires eBPF for network statistics,
+  per-app firewalling and DNS. The BPF loaders, netd and DnsResolver no
+  longer abort when BPF is missing. Beyond the usual no-BPF patches, this
+  release needed more:
+  - NetBpfLoad has two new kernel-version gates (5.10 and 5.15) that stopped
+    it before it set `bpf.progs_loaded`.
+  - `BpfNetMaps` crashed system_server when the BPF maps were missing: once
+    at boot (uid permission maps) and once as soon as Wi-Fi got an IP
+    address (local-network access map). Both are now guarded.
+  - `LocalNetEventHandler` and `LoopbackEventHandler` aborted system_server
+    when their BPF ring buffers weren't there.
+
+  `gpuservice` is disabled, because its GPU memory accounting needs BPF.
+- **Kernel without netlink TCP info** (`packages_modules_NetworkStack`):
+  reverts the NetworkStack changes that require querying TCP info over a
+  netlink socket and parsing kernel netlink events, and fixes the code those
+  reverts restored so it builds against current NetworkStack.
+- **cgroup v1-only kernel** (`system_core`, `frameworks_base`,
+  `system_netd`, `system_zygote`): the kernel has no cgroup v2. These revert
+  the v2-only freezer and memcg defaults, let cgroup setup continue when a
+  controller fails to mount, and make process-group creation failures
+  non-fatal in the framework and netd. `system_zygote` does the same for
+  Android 17's Rust `zygote_next`, which starts the native-only sandboxed
+  processes of Chrome and WebView. It aborted every child with "Unable to
+  create cgroup for process". It now also skips capabilities newer than the
+  kernel (3.10 stops at `CAP_BLOCK_SUSPEND`) when dropping the bounding set,
+  and logs Rust panics to logcat, because `zygote_next`'s stderr goes to
+  /dev/null. These patches are the same as galaxys7-patches'
+  `system_zygote`.
+- **Old kernel syscalls** (`bionic`, `art`, `external_perfetto`,
+  `frameworks_native`): `memfd_create` version checks, `MADV_WIPEONFORK` in
+  `arc4random`, `renameat2` (`renameat()` is reverted to the old
+  implementation) and `epoll_pwait2` (Linux 5.11; without a fallback
+  `BLASTBufferQueue` can't release buffers). `Bitmap` keeps using ashmem
+  instead of memfd, because memfd broke apps such as YouTube with "Could not
+  copy bitmap to parcel blob". `libbinder` no longer aborts when it shrinks
+  its thread pool.
+- **Old prebuilt blobs** (`bionic`): linker shim libraries
+  (`LD_SHIM_LIBS`), ignoring library namespaces so vendor blobs can load
+  system libraries, a per-process target SDK override, and the pre-Android 9
+  mutex behaviour these blobs expect.
+- **No Treble, no vendor partition** (`system_linkerconfig`, `build_soong`,
+  `build_make`):
+  - restores the non-Treble linker configuration;
+  - fixes Soong's filesystem generator for vendor-only modules installed
+    under `/system/vendor`;
+  - fixes the OTA build writing `recovery-from-boot.p` to a path nothing
+    reads, which made `otapackage` fail with `AssertionError`.
+- **Samsung boot image and kernel build** (`build_make`, `build_soong`,
+  `system_tools_mkbootimg`, `prebuilts_build-tools`, `vendor_lineage`,
+  `hardware_samsung`):
+  - `dt.img` support in boot and recovery images (`mkbootimg --dt`);
+  - device-specific header overrides (`TARGET_SPECIFIC_HEADER_PATH`), and
+    automatic use of the kernel header library;
+  - xz 5.2.5 for the kernel build;
+  - uncompressed APEXes;
+  - LineageOS's kernel flags no longer replace the device's own GCC flags
+    with clang-only ones;
+  - `lineage_generator` modules are skipped when this board config doesn't
+    export the variables they need.
+- **Camera HAL v1** (`frameworks_av`, `frameworks_base`, `system_core`,
+  `device_lineage_sepolicy`): the camera blob only speaks the HAL v1 API,
+  which AOSP removed. This restores HALv1 support in cameraserver and
+  mediaserver, the `camera2.legacy` shim, the old recording path and the
+  HALv1 sepolicy. On top of that:
+  - fixes the restored code for current interfaces (`AudioRestriction`,
+    `SurfaceType`, the batched and consolidated `configureStreams` calls);
+  - keeps `camera2.legacy` out of the public API;
+  - fixes the two crashes that stopped camera preview (consolidated
+    `configureStreams` rejected, null `multiResConcurrentReadersInfo`).
+- **Legacy HIDL HALs** (`hardware_lineage_interfaces`,
+  `hardware_libhardware_legacy`, `device_lineage_sepolicy`,
+  `frameworks_base`, `frameworks_native`, `frameworks_hardware_interfaces`,
+  `system_tools_hidl`):
+  - restores the legacy Wi-Fi HIDL HAL (1.0-legacy, with dynamic softAP
+    interfaces) and the Wi-Fi headers it builds against;
+  - restores the legacy GNSS passthrough HAL, the sepolicy labels for both
+    HALs, and `android.frameworks.schedulerservice`;
+  - `HintManagerService` no longer crashes when there is no AIDL power HAL;
+  - `libperfmgr` is linked statically: the power HAL couldn't find
+    `libperfmgr.so`, so it never registered and system_server was killed by
+    the watchdog at boot.
+- **Samsung hardware** (`hardware_samsung`, `hardware_lineage_compat`):
+  - restores macloader and wifiloader;
+  - fixes audio/RIL, `libdtbimg` headers and the USB gadget HAL's namespace
+    import;
+  - disables the IR HIDL service, which was removed upstream (this device
+    has no IR blaster);
+  - fixes a `libsensor` null-pointer crash in
+    `SensorManager::getSensorList`.
+- **Stability and build fixes** (`frameworks_base`, `frameworks_av`,
+  `frameworks_native`, `bootable_recovery`, `system_vold`, `build_make`):
+  - `AdvancedProtectionService` no longer crash-loops system_server on a
+    feature flag it can't resolve;
+  - media codec fixes (no crash when a codec fails to load, no leaks when a
+    buffer lock times out or an observer dies);
+  - missing `<algorithm>`/`<vector>` includes for the current libc++;
+  - `link_type_error` downgraded to a warning;
+  - fast reboot on legacy devices too;
+  - reverts of the SurfaceFlinger fuzzer removal and of SurfaceFlinger's
+    string-free permission check (with a build fix for the latter).

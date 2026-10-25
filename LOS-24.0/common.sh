@@ -37,6 +37,7 @@ PATCHED_REPOS=(
     "system/tools/hidl                android_system_tools_hidl"
     "system/tools/mkbootimg           android_system_tools_mkbootimg"
     "system/vold                      android_system_vold"
+    "system/zygote                    android_system_zygote"
     "vendor/lineage                   android_vendor_lineage"
 )
 
