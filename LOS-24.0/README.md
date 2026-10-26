@@ -192,6 +192,8 @@ it back, grouped here by problem rather than by repository.
   `frameworks_native`, `bootable_recovery`, `system_vold`, `build_make`):
   - `AdvancedProtectionService` no longer crash-loops system_server on a
     feature flag it can't resolve;
+  - `FileIntegrity` skips fs-verity, which this kernel lacks, instead of
+    logging a stack trace on every settings and permissions write;
   - media codec fixes (no crash when a codec fails to load, no leaks when a
     buffer lock times out or an observer dies);
   - missing `<algorithm>`/`<vector>` includes for the current libc++;
