@@ -187,7 +187,10 @@ it back, grouped here by problem rather than by repository.
   - disables the IR HIDL service, which was removed upstream (this device
     has no IR blaster);
   - fixes a `libsensor` null-pointer crash in
-    `SensorManager::getSensorList`.
+    `SensorManager::getSensorList`;
+  - the fingerprint HAL also looks for templates in `/data/biometrics`. The
+    old `libbauthserver.so` can't list its own enrollments and stores them
+    there, so the HAL found none and every fingerprint was removed at boot.
 - **Stability and build fixes** (`frameworks_base`, `frameworks_av`,
   `frameworks_native`, `bootable_recovery`, `system_vold`, `build_make`):
   - `AdvancedProtectionService` no longer crash-loops system_server on a
