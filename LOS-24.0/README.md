@@ -197,6 +197,9 @@ it back, grouped here by problem rather than by repository.
     feature flag it can't resolve;
   - `FileIntegrity` skips fs-verity, which this kernel lacks, instead of
     logging a stack trace on every settings and permissions write;
+  - lmkd no longer exits at every boot: it uses the kernel's low memory
+    killer, but tried to start PSI monitoring when ActivityManager asked,
+    and this kernel has no PSI;
   - media codec fixes (no crash when a codec fails to load, no leaks when a
     buffer lock times out or an observer dies);
   - missing `<algorithm>`/`<vector>` includes for the current libc++;

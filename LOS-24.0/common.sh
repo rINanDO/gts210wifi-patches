@@ -33,6 +33,7 @@ PATCHED_REPOS=(
     "system/bpf                       android_system_bpf"
     "system/core                      android_system_core"
     "system/linkerconfig              android_system_linkerconfig"
+    "system/memory/lmkd               android_system_memory_lmkd"
     "system/netd                      android_system_netd"
     "system/tools/hidl                android_system_tools_hidl"
     "system/tools/mkbootimg           android_system_tools_mkbootimg"
