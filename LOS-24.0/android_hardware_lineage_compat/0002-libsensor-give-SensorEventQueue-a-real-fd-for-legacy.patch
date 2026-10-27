@@ -1,0 +1,252 @@
+From 048552d634c3ccefdc0ff967664d27ef5c0bfaf9 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Tue, 27 Oct 2026 23:37:07 +0100
+Subject: [PATCH] libsensor: give SensorEventQueue a real fd for legacy clients
+
+Old clients such as Samsung's gpsd wait for sensor events on
+SensorEventQueue::getFd() with their own Looper, but libsensorndkbridge
+has no fd: it delivers events by calling the queue's callback from
+ALooper_pollOnce() on its own looper. getFd() wasn't implemented, so
+gpsd's shim stubbed it and gpsd got a garbage fd and never received
+any sensor events.
+
+Give each queue an eventfd that the bridge callback signals, and run
+the bridge's looper on a thread so the callbacks are called. read()
+clears the eventfd and signals it again when the client's buffer was
+too small for all pending events.
+
+Old clients also use the SensorManager reference and the event queue
+without checking them, so keep the SensorManager instance and always
+return a queue even if initialising them fails; their methods then just
+return errors. getSensorList() no longer calls malloc() with a negative
+count when the bridge returns an error.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: Ic36c014c3a9184d6aff85c3ce12e3173f63cfc27
+---
+ Android.bp                     |  1 +
+ libsensor/SensorEventQueue.cpp | 86 ++++++++++++++++++++++++++++++++--
+ libsensor/SensorEventQueue.h   | 13 ++++-
+ libsensor/SensorManager.cpp    | 29 +++++++++---
+ 4 files changed, 118 insertions(+), 11 deletions(-)
+
+diff --git a/Android.bp b/Android.bp
+index 2fd45b4..06273c2 100644
+--- a/Android.bp
++++ b/Android.bp
+@@ -676,6 +676,7 @@ cc_library_shared {
+         "libsensor/SensorManager.cpp",
+     ],
+     shared_libs: [
++        "liblog",
+         "libsensorndkbridge",
+         "libutils",
+     ],
+diff --git a/libsensor/SensorEventQueue.cpp b/libsensor/SensorEventQueue.cpp
+index 47ae1e9..b6e3471 100644
+--- a/libsensor/SensorEventQueue.cpp
++++ b/libsensor/SensorEventQueue.cpp
+@@ -6,13 +6,93 @@
+ 
+ #include "SensorEventQueue.h"
+ 
++#include <android/looper.h>
++#include <sys/eventfd.h>
++#include <unistd.h>
++
++#include <mutex>
++#include <thread>
++
+ namespace android {
+ 
+-SensorEventQueue::SensorEventQueue(ASensorEventQueue* aSensorEventQueue)
+-    : mASensorEventQueue(aSensorEventQueue) {}
++/*
++ * libsensorndkbridge has no file descriptor to wait on: it delivers events by
++ * calling the queue's callback from ALooper_pollOnce() on its own looper. Old
++ * clients wait on SensorEventQueue::getFd() with their own Looper instead, so
++ * each queue gets an eventfd that the callback signals, and a thread runs the
++ * bridge's looper to call the callbacks.
++ */
++static void startLooperThread() {
++    static std::once_flag sOnce;
++    std::call_once(sOnce, [] {
++        std::thread([] {
++            while (true) {
++                ALooper_pollOnce(-1, nullptr, nullptr, nullptr);
++            }
++        }).detach();
++    });
++}
++
++SensorEventQueue::SensorEventQueue()
++    : mASensorManager(nullptr),
++      mASensorEventQueue(nullptr),
++      mEventFd(eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC)) {}
++
++SensorEventQueue::~SensorEventQueue() {
++    if (mASensorEventQueue != nullptr) {
++        ASensorManager_destroyEventQueue(mASensorManager, mASensorEventQueue);
++    }
++    if (mEventFd >= 0) {
++        close(mEventFd);
++    }
++}
++
++status_t SensorEventQueue::init(ASensorManager* aSensorManager) {
++    if (mEventFd < 0) {
++        return NO_INIT;
++    }
++
++    mASensorManager = aSensorManager;
++    mASensorEventQueue = ASensorManager_createEventQueue(mASensorManager, ALooper_forThread(), 0,
++                                                         onEvents, this);
++    if (mASensorEventQueue == nullptr) {
++        return NO_INIT;
++    }
++
++    startLooperThread();
++
++    return OK;
++}
++
++int SensorEventQueue::onEvents(int /*fd*/, int /*events*/, void* data) {
++    static_cast<SensorEventQueue*>(data)->signalEvents();
++
++    // keep the callback registered
++    return 1;
++}
++
++void SensorEventQueue::signalEvents() const {
++    uint64_t value = 1;
++    TEMP_FAILURE_RETRY(write(mEventFd, &value, sizeof(value)));
++}
++
++int SensorEventQueue::getFd() const {
++    return mEventFd;
++}
+ 
+ ssize_t SensorEventQueue::read(ASensorEvent* events, size_t numEvents) {
+-    return ASensorEventQueue_getEvents(mASensorEventQueue, events, numEvents);
++    uint64_t value;
++    TEMP_FAILURE_RETRY(::read(mEventFd, &value, sizeof(value)));
++
++    ssize_t count = ASensorEventQueue_getEvents(mASensorEventQueue, events, numEvents);
++
++    // The buffer was too small to take all events: wake the client up again
++    // for the rest.
++    if (count > 0 && static_cast<size_t>(count) == numEvents) {
++        signalEvents();
++    }
++
++    return count;
+ }
+ 
+ status_t SensorEventQueue::waitForEvent() const {
+diff --git a/libsensor/SensorEventQueue.h b/libsensor/SensorEventQueue.h
+index e8d6e82..a1c8752 100644
+--- a/libsensor/SensorEventQueue.h
++++ b/libsensor/SensorEventQueue.h
+@@ -16,9 +16,13 @@ namespace android {
+ 
+ class SensorEventQueue : public RefBase {
+   public:
+-    SensorEventQueue(ASensorEventQueue* aSensorEventQueue);
+-    ~SensorEventQueue() = default;
++    SensorEventQueue();
++    ~SensorEventQueue();
+ 
++    // Custom methods
++    status_t init(ASensorManager* aSensorManager);
++
++    int getFd() const;
+     ssize_t read(ASensorEvent* events, size_t numEvents);
+ 
+     status_t waitForEvent() const;
+@@ -31,7 +35,12 @@ class SensorEventQueue : public RefBase {
+     status_t setEventRate(Sensor const* sensor, nsecs_t ns) const;
+ 
+   private:
++    static int onEvents(int fd, int events, void* data);
++    void signalEvents() const;
++
++    ASensorManager* mASensorManager;
+     ASensorEventQueue* mASensorEventQueue;
++    int mEventFd;
+ };
+ 
+ }  // namespace android
+diff --git a/libsensor/SensorManager.cpp b/libsensor/SensorManager.cpp
+index c2eb01e..047bc9e 100644
+--- a/libsensor/SensorManager.cpp
++++ b/libsensor/SensorManager.cpp
+@@ -4,8 +4,12 @@
+  * SPDX-License-Identifier: Apache-2.0
+  */
+ 
++#define LOG_TAG "libsensor_vendor"
++
+ #include "SensorManager.h"
+ 
++#include <log/log.h>
++
+ namespace android {
+ 
+ SensorManager* SensorManager::sInstance = nullptr;
+@@ -15,11 +19,10 @@ Mutex SensorManager::sInstanceLock;
+ SensorManager* SensorManager::getInstance() {
+     Mutex::Autolock autoLock(sInstanceLock);
+     if (sInstance == nullptr) {
++        // Keep the instance even if init fails: getInstanceForPackage()
++        // returns a reference, and old clients use it without checking.
++        // Its methods then just return errors.
+         sInstance = new SensorManager;
+-        if (sInstance->initCheck() != OK) {
+-            delete sInstance;
+-            sInstance = nullptr;
+-        }
+     }
+     return sInstance;
+ }
+@@ -36,6 +39,8 @@ SensorManager::SensorManager() : mInitCheck(NO_INIT) {
+     mASensorManager = ASensorManager_getInstanceForPackage("");
+     if (mASensorManager != NULL) {
+         mInitCheck = OK;
++    } else {
++        ALOGE("Failed to get the sensor manager");
+     }
+ }
+ 
+@@ -47,6 +52,10 @@ ssize_t SensorManager::getSensorList(Sensor const* const** list) {
+     ASensorRef aSensor;
+ 
+     count = ASensorManager_getSensorList(mASensorManager, &aSensorList);
++    if (count < 0) {
++        ALOGE("Failed to get the sensor list: %d", count);
++        return count;
++    }
+ 
+     mSensors = static_cast<Sensor const**>(malloc(count * sizeof(Sensor*)));
+     assert(mSensors != nullptr);
+@@ -70,8 +79,16 @@ Sensor const* SensorManager::getDefaultSensor(int type) {
+ 
+ sp<SensorEventQueue> SensorManager::createEventQueue(String8 /*packageName*/, int /*mode*/,
+                                                      String16 /*attributionTag*/) {
+-    return sp(new SensorEventQueue(ASensorManager_createEventQueue(
+-            mASensorManager, ALooper_forThread(), 0, nullptr, nullptr)));
++    // Old clients don't check for a null queue, so always return one. If
++    // init() fails, its methods just return errors.
++    sp<SensorEventQueue> queue = sp<SensorEventQueue>::make();
++    if (queue->init(mASensorManager) != OK) {
++        ALOGE("Failed to create sensor event queue");
++    } else {
++        ALOGI("Created sensor event queue, fd %d", queue->getFd());
++    }
++
++    return queue;
+ }
+ 
+ status_t SensorManager::initCheck() const {
+-- 
+2.51.0
+

@@ -188,6 +188,12 @@ it back, grouped here by problem rather than by repository.
     has no IR blaster);
   - fixes a `libsensor` null-pointer crash in
     `SensorManager::getSensorList`;
+  - `libsensor` gives each sensor event queue a real file descriptor.
+    `gpsd` waits for sensor events on `SensorEventQueue::getFd()`, but
+    the current sensor bridge only delivers them through a callback, so
+    `gpsd` never got any and GPS ran without motion sensors. With the
+    shim and SELinux fixes in `device/samsung/gts2-common`, `gpsd` now
+    uses the accelerometer, magnetometer and gyroscope;
   - the fingerprint HAL also looks for templates in `/data/biometrics`. The
     old `libbauthserver.so` can't list its own enrollments and stores them
     there, so the HAL found none and every fingerprint was removed at boot.
