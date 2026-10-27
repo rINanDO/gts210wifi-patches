@@ -207,3 +207,25 @@ it back, grouped here by problem rather than by repository.
   - fast reboot on legacy devices too;
   - reverts of the SurfaceFlinger fuzzer removal and of SurfaceFlinger's
     string-free permission check (with a build fix for the latter).
+
+## Fixes in the device and kernel repos
+
+Some problems are fixed in the forked repos from `exynos5433-24.0.xml`
+instead of with patches. They come with `repo sync` and need no
+`apply.sh`.
+
+- **Speaker volume** (`kernel/samsung/universal5433`,
+  `device/samsung/gts2-common`):
+  - Short sounds such as taps and notifications played at a random volume
+    after a pause. The codec driver unmuted the speaker and started the
+    stream straight away, while the unmute was still ramping the volume
+    up from mute. The driver now waits for the ramp to finish. This
+    happened on 23.2 as well, but the louder 24.0 volume curves made it
+    much more noticeable.
+  - AOSP's ring, notification and alarm curves are made for phone
+    speakers, so even the lowest step was loud on the tablet. Ring and
+    notifications now use the media curve. The alarm gets its own curve,
+    which starts at -40 dB instead of -30 dB but stays well above the
+    media curve's -58 dB, so it can still wake you up.
+  - The longer AudioFlinger standby time from earlier builds, a first
+    attempt at the random volume, is gone: it didn't help.
