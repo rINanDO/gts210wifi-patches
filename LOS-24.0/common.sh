@@ -25,7 +25,6 @@ PATCHED_REPOS=(
     "hardware/libhardware_legacy      android_hardware_libhardware_legacy"
     "hardware/lineage/compat          android_hardware_lineage_compat"
     "hardware/lineage/interfaces      android_hardware_lineage_interfaces"
-    "hardware/samsung                 android_hardware_samsung"
     "packages/modules/Connectivity    android_packages_modules_Connectivity"
     "packages/modules/DnsResolver     android_packages_modules_DnsResolver"
     "packages/modules/NetworkStack    android_packages_modules_NetworkStack"

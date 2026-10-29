@@ -84,9 +84,10 @@ aborts that and resets the patched repos with `repo sync`.
 - The patched repositories are listed once, in `common.sh` (`PATCHED_REPOS`).
   To track a new repo, add a line there and put its `git format-patch` output
   in the matching `android_*` directory.
-- Device, kernel, hardware and vendor repos are forks, listed in
-  `exynos5433-24.0.xml`. `create-lineage-24.0-branches.sh` creates and pushes
-  the `lineage-24.0` branch in each of them.
+- Device, kernel, hardware and vendor repos, including `hardware/samsung`,
+  are forks listed in `exynos5433-24.0.xml`.
+  `create-lineage-24.0-branches.sh` creates and pushes the `lineage-24.0`
+  branch in each of them.
 
 ## What the patches address
 
@@ -147,8 +148,7 @@ it back, grouped here by problem rather than by repository.
   - fixes the OTA build writing `recovery-from-boot.p` to a path nothing
     reads, which made `otapackage` fail with `AssertionError`.
 - **Samsung boot image and kernel build** (`build_make`, `build_soong`,
-  `system_tools_mkbootimg`, `prebuilts_build-tools`, `vendor_lineage`,
-  `hardware_samsung`):
+  `system_tools_mkbootimg`, `prebuilts_build-tools`, `vendor_lineage`):
   - `dt.img` support in boot and recovery images (`mkbootimg --dt`);
   - device-specific header overrides (`TARGET_SPECIFIC_HEADER_PATH`), and
     automatic use of the kernel header library;
@@ -180,12 +180,7 @@ it back, grouped here by problem rather than by repository.
   - `libperfmgr` is linked statically: the power HAL couldn't find
     `libperfmgr.so`, so it never registered and system_server was killed by
     the watchdog at boot.
-- **Samsung hardware** (`hardware_samsung`, `hardware_lineage_compat`):
-  - restores macloader and wifiloader;
-  - fixes audio/RIL, `libdtbimg` headers and the USB gadget HAL's namespace
-    import;
-  - disables the IR HIDL service, which was removed upstream (this device
-    has no IR blaster);
+- **Sensors for gpsd** (`hardware_lineage_compat`):
   - fixes a `libsensor` null-pointer crash in
     `SensorManager::getSensorList`;
   - `libsensor` gives each sensor event queue a real file descriptor.
@@ -193,10 +188,7 @@ it back, grouped here by problem rather than by repository.
     the current sensor bridge only delivers them through a callback, so
     `gpsd` never got any and GPS ran without motion sensors. With the
     shim and SELinux fixes in `device/samsung/gts2-common`, `gpsd` now
-    uses the accelerometer, magnetometer and gyroscope;
-  - the fingerprint HAL also looks for templates in `/data/biometrics`. The
-    old `libbauthserver.so` can't list its own enrollments and stores them
-    there, so the HAL found none and every fingerprint was removed at boot.
+    uses the accelerometer, magnetometer and gyroscope.
 - **Stability and build fixes** (`frameworks_base`, `frameworks_av`,
   `frameworks_native`, `bootable_recovery`, `system_vold`, `build_make`):
   - `AdvancedProtectionService` no longer crash-loops system_server on a
@@ -220,6 +212,15 @@ Some problems are fixed in the forked repos from `exynos5433-24.0.xml`
 instead of with patches. They come with `repo sync` and need no
 `apply.sh`.
 
+- **Samsung hardware** (`hardware/samsung`):
+  - restores macloader and wifiloader;
+  - fixes audio/RIL, `libdtbimg` headers and the USB gadget HAL's namespace
+    import;
+  - disables the IR HIDL service, which was removed upstream (this device
+    has no IR blaster);
+  - the fingerprint HAL also looks for templates in `/data/biometrics`. The
+    old `libbauthserver.so` can't list its own enrollments and stores them
+    there, so the HAL found none and every fingerprint was removed at boot.
 - **Speaker volume** (`kernel/samsung/universal5433`,
   `device/samsung/gts2-common`):
   - Short sounds such as taps and notifications played at a random volume
