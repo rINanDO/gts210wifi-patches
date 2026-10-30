@@ -222,3 +222,9 @@ instead of with patches. They come with `repo sync` and need no
 - **Low memory killer** (`kernel/samsung/universal5433`): it picked the
   same dying process again, once per thread, and killed more apps than
   needed. It now skips processes that are already exiting.
+  It also kept waiting while zram was full: it only kills when free memory
+  and the file cache are both low, and the file cache, mostly code of
+  running apps, stayed above the limit while the system thrashed. Below 10%
+  free swap it now ignores the file cache, so cached apps are killed
+  instead (`/sys/module/lowmemorykiller/parameters/swap_free_low_percent`,
+  0 disables it).
