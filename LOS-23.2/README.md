@@ -153,9 +153,14 @@ it back, grouped here by problem rather than by repository.
     the current sensor bridge only delivers them through a callback, so
     `gpsd` never got any and GPS ran without motion sensors. With the
     shim and SELinux fixes in `device/samsung/gts2-common`, `gpsd` now
-    uses the accelerometer, magnetometer and gyroscope.
+    uses the accelerometer, magnetometer and gyroscope;
+  - `libsensor` picks the default sensor from the sensor list instead of
+    asking the sensor service. For a sensor the tablet lacks, the service
+    replies with an error message, and in `gpsd`, which also loads the old
+    `libutils-v32`, reading that message crashed it every minute.
 - **Stability and build fixes** (`frameworks_base`, `frameworks_av`,
-  `frameworks_native`, `system_core`, `system_memory_lmkd`, `build_make`):
+  `frameworks_native`, `system_core`, `system_memory_lmkd`, `build_make`,
+  `hardware_lineage_interfaces`):
   - `FileIntegrity` skips fs-verity, which this kernel lacks, instead of
     logging a stack trace on every settings and permissions write;
   - lmkd no longer exits at every boot: it uses the kernel's low memory
@@ -164,6 +169,8 @@ it back, grouped here by problem rather than by repository.
   - media codec fixes (no crash when a codec fails to load, no leaks when a
     buffer lock times out or an observer dies, high frame rate recording);
   - `link_type_error` downgraded to a warning;
+  - the health HAL's fast charge dump uses the right format for a 64-bit
+    value on 32-bit ARM, which failed the build;
   - fast reboot on legacy devices too;
   - reverts of the SurfaceFlinger fuzzer removal and of SurfaceFlinger's
     string-free permission check.
@@ -198,6 +205,15 @@ instead of with patches. They come with `repo sync` and need no
   - SELinux now lets `gpsd` use the sensor service;
   - the GNSS HAL could crash at boot when the Broadcom blob called a
     callback that was being replaced at the same time.
+- **Boot** (`device/samsung/gts2-common`): there is no metadata partition,
+  and the system image had no `/metadata`, so aconfigd couldn't create its
+  flag storage. System_server then crash-looped on the boot animation with
+  "Missing permission definition for permission
+  android.permission.RANGING". gts2-common now mounts a tmpfs on
+  `/metadata` early in boot.
+- **adb** (`kernel/samsung/universal5433`): adb stayed "offline", because
+  adbd only does asynchronous USB I/O and this kernel's FunctionFS didn't
+  support it. FunctionFS AIO is backported from Linux 3.16.
 - **Speaker volume** (`kernel/samsung/universal5433`): short sounds such as
   taps and notifications played at a random volume after a pause. The codec
   driver unmuted the speaker and started the stream straight away, while the

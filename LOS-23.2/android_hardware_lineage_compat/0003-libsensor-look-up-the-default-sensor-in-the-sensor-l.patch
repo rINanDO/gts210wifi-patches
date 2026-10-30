@@ -1,0 +1,69 @@
+From 38fae84aa61730b7128bf9bcdd4d2898c9530f17 Mon Sep 17 00:00:00 2001
+From: Dominggoes Isakh <drjisakh@gmail.com>
+Date: Fri, 30 Oct 2026 15:02:29 +0100
+Subject: [PATCH] libsensor: look up the default sensor in the sensor list
+
+SensorManager::getDefaultSensor() called ASensorManager_getDefaultSensor(),
+which asks sensorservice over binder. For a sensor type the device lacks,
+sensorservice replies with a service-specific error (RESULT_NOT_EXIST),
+and the system libbinder parses the status message as a String16.
+
+gts2's gpsd blob links libutils-v32, so in that process the String16
+symbols bind to the old library and gpsd segfaults in String16::setTo
+right after creating its sensor event queue. It restarts every minute and
+never gets a GPS fix.
+
+Pick the default sensor from the cached sensor list instead, with the same
+wake-up rule frameworks/native libsensor uses. This also drops the
+duplicate binder call the old code made for every found sensor.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Change-Id: I69d09ebec1187a4ecfb101c5e683688011fc7366
+---
+ libsensor/SensorManager.cpp | 29 ++++++++++++++++++++++++++---
+ 1 file changed, 26 insertions(+), 3 deletions(-)
+
+diff --git a/libsensor/SensorManager.cpp b/libsensor/SensorManager.cpp
+index 047bc9e..9fe06f6 100644
+--- a/libsensor/SensorManager.cpp
++++ b/libsensor/SensorManager.cpp
+@@ -71,10 +71,33 @@ ssize_t SensorManager::getSensorList(Sensor const* const** list) {
+ }
+ 
+ Sensor const* SensorManager::getDefaultSensor(int type) {
+-    const ASensor* sensor = ASensorManager_getDefaultSensor(mASensorManager, type);
++    // Pick the default sensor from the (cached) sensor list, like
++    // frameworks/native libsensor does, instead of calling
++    // ASensorManager_getDefaultSensor(). For a type the device lacks,
++    // sensorservice answers that call with a service-specific error whose
++    // message String16 is parsed by the system libbinder; in legacy
++    // clients that also load libutils-v32 (gpsd) the String16 symbols bind
++    // to the old library and the client crashes.
++    ASensorList list;
++    int count = ASensorManager_getSensorList(mASensorManager, &list);
++    if (count <= 0) {
++        return nullptr;
++    }
++
++    // These types are wake-up sensors by default, the rest non-wake-up:
++    // proximity, significant motion, tilt detector, wake/glance/pick up/
++    // wrist tilt gesture, low latency off-body detect and hinge angle.
++    bool wakeUp = type == ASENSOR_TYPE_PROXIMITY || type == ASENSOR_TYPE_SIGNIFICANT_MOTION ||
++                  (type >= 22 && type <= 26) || type == ASENSOR_TYPE_LOW_LATENCY_OFFBODY_DETECT ||
++                  type == ASENSOR_TYPE_HINGE_ANGLE;
++
++    for (int i = 0; i < count; i++) {
++        if (ASensor_getType(list[i]) == type && ASensor_isWakeUpSensor(list[i]) == wakeUp) {
++            return new Sensor(list[i]);
++        }
++    }
+ 
+-    return sensor != nullptr ? new Sensor(ASensorManager_getDefaultSensor(mASensorManager, type))
+-                             : nullptr;
++    return nullptr;
+ }
+ 
+ sp<SensorEventQueue> SensorManager::createEventQueue(String8 /*packageName*/, int /*mode*/,
+-- 
+2.54.0
+
